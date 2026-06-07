@@ -18,7 +18,6 @@
 | **LLM** | внешний сервис для оценки питания, рекомендаций и диалога |
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryTextColor': '#e2e8f0', 'lineColor': '#94a3b8', 'background': '#0f172a', 'mainBkg': '#1e293b', 'nodeBorder': '#475569', 'clusterBkg': '#1e293b', 'titleColor': '#f1f5f9'}}}%%
 flowchart TB
     subgraph clients [Клиенты]
         Bot["Telegram-бот"]
@@ -53,7 +52,6 @@ flowchart TB
 - Клиенты не дублируют бизнес-логику; данные и контекст едины для всех интерфейсов.
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryTextColor': '#e2e8f0', 'lineColor': '#94a3b8', 'background': '#0f172a', 'mainBkg': '#1e293b', 'nodeBorder': '#475569', 'clusterBkg': '#1e293b', 'titleColor': '#f1f5f9'}}}%%
 flowchart LR
     Bot["Bot-клиент"]
     Web["Web-клиент"]
@@ -96,7 +94,6 @@ flowchart LR
 - комментарии и рекомендации в рамках медицинского сопровождения.
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryTextColor': '#e2e8f0', 'lineColor': '#94a3b8', 'background': '#0f172a', 'mainBkg': '#1e293b', 'nodeBorder': '#475569', 'actorTextColor': '#e2e8f0', 'signalColor': '#94a3b8', 'noteBkgColor': '#334155'}}}%%
 sequenceDiagram
     participant D as Диабетик
     participant C as Клиент Bot/Web
@@ -133,7 +130,6 @@ sequenceDiagram
 | **LLM-компонент** | внешний провайдер (OpenRouter): vision, диалог, рекомендации |
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryTextColor': '#e2e8f0', 'lineColor': '#94a3b8', 'background': '#0f172a', 'mainBkg': '#1e293b', 'nodeBorder': '#475569', 'clusterBkg': '#1e293b', 'titleColor': '#f1f5f9'}}}%%
 flowchart TB
     subgraph presentation [Presentation layer]
         BotClient["bot/"]
@@ -184,7 +180,6 @@ MVP — первый шаг: проверка сценариев и ценнос
 | **Консультация** | запись и проведение онлайн/офлайн приёма |
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryTextColor': '#e2e8f0', 'lineColor': '#94a3b8', 'background': '#0f172a', 'mainBkg': '#1e293b', 'nodeBorder': '#475569'}}}%%
 erDiagram
     Diabetic ||--o{ FoodEvent : "фиксирует"
     Diabetic ||--o{ InsulinEvent : "фиксирует"
@@ -209,7 +204,6 @@ erDiagram
 | **Календарь / видеосвязь** (опционально) | онлайн-консультации |
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryTextColor': '#e2e8f0', 'lineColor': '#94a3b8', 'background': '#0f172a', 'mainBkg': '#1e293b', 'nodeBorder': '#475569', 'clusterBkg': '#1e293b', 'titleColor': '#f1f5f9'}}}%%
 flowchart LR
     System["diaai"]
     TG["Telegram"]
