@@ -1,0 +1,154 @@
+# Внешние интеграции
+
+Опирается на [idea.md](idea.md), [vision.md](vision.md), [data-model.md](data-model.md).
+
+Обзор связей системы **diaai** с внешними сервисами.
+
+```mermaid
+flowchart TB
+    subgraph diaai [diaai]
+        Bot["bot"]
+        Backend["backend"]
+        Web["web"]
+    end
+
+    subgraph mvp [MVP]
+        TG["Telegram API"]
+        OR["OpenRouter"]
+    end
+
+    subgraph future [Future]
+        S3["Object Storage"]
+        Cal["Календарь / видео"]
+        PG["PostgreSQL managed"]
+    end
+
+    Bot <-->|HTTPS polling| TG
+    Bot -->|HTTPS REST| OR
+    Backend -.->|HTTPS REST| OR
+    Backend -.->|SQL| PG
+    Backend -.->|HTTPS| S3
+    Web -.->|HTTPS| Cal
+    Backend -.->|HTTPS| Cal
+```
+
+---
+
+## Внешние системы
+
+### Telegram Bot API
+
+| | |
+|---|---|
+| **Сервис** | [Telegram Bot API](https://core.telegram.org/bots/api) · токен через [@BotFather](https://t.me/BotFather) |
+| **Назначение** | первый клиент продукта: приём текста и фото, отправка ответов, команда `/start` |
+| **Направление** | bidirectional |
+| **Протокол** | HTTPS; long polling (MVP), webhook (возможно позже) |
+| **Критичность** | **MVP** |
+
+Компонент: `bot` (сейчас — напрямую; целевое — через backend для единого контекста).
+
+---
+
+### OpenRouter (LLM)
+
+| | |
+|---|---|
+| **Сервис** | [OpenRouter](https://openrouter.ai/) · [API docs](https://openrouter.ai/docs) · ключ: [settings/keys](https://openrouter.ai/settings/keys) |
+| **Назначение** | диалог, оценка ХЕ / БЖЕ / БЖУ, vision-анализ фото блюда и продукта, справочные рекомендации |
+| **Направление** | bidirectional (запрос → ответ модели) |
+| **Протокол** | HTTPS REST, OpenAI-compatible API (`/v1/chat/completions`) |
+| **Критичность** | **MVP** |
+
+Компонент: `bot` (сейчас); целевое — вызовы только из `backend`.
+
+Инструкция по ключам: [how-to-get-tokens.md](how-to-get-tokens.md).
+
+---
+
+### PostgreSQL (managed)
+
+| | |
+|---|---|
+| **Сервис** | Self-hosted или managed (RDS, Supabase, Neon и т.п.) — провайдер не фиксируется |
+| **Назначение** | персистентное хранение пользователей, событий, аналитики, консультаций |
+| **Направление** | bidirectional |
+| **Протокол** | SQL по TCP/TLS |
+| **Критичность** | **Future** (с первым backend; см. [adr-001-database.md](adr/adr-001-database.md)) |
+
+Компонент: `backend`. MVP-бот работает без БД (RAM).
+
+---
+
+### Object Storage (S3-совместимое)
+
+| | |
+|---|---|
+| **Сервис** | S3, MinIO, Cloudflare R2 и аналоги — провайдер не фиксируется |
+| **Назначение** | хранение фото блюд и продуктов; в БД — только ссылки и метаданные |
+| **Направление** | out (upload) / in (read по URL) |
+| **Протокол** | HTTPS (S3 API) |
+| **Критичность** | **Future** |
+
+Компонент: `backend`.
+
+---
+
+### Календарь и видеосвязь
+
+| | |
+|---|---|
+| **Сервис** | Не выбран (Google Calendar, Zoom, Telegram-звонки и т.п. — на этапе проектирования) |
+| **Назначение** | онлайн-консультации диабетик ↔ доктор, запись на приём |
+| **Направление** | bidirectional |
+| **Протокол** | HTTPS REST / OAuth (зависит от провайдера) |
+| **Критичность** | **Future** |
+
+Компонент: `web`, `backend`.
+
+---
+
+## Зависимости и риски
+
+```mermaid
+flowchart LR
+    subgraph critical [Критично для MVP]
+        TG2["Telegram"]
+        OR2["OpenRouter"]
+    end
+
+    subgraph later [С появлением backend]
+        PG2["PostgreSQL"]
+        S32["Object Storage"]
+    end
+
+    User["Пользователь"] --> TG2
+    TG2 --> OR2
+    OR2 -.->|сбой| Risk1["Нет ответа бота"]
+    TG2 -.->|сбой| Risk2["Нет канала связи"]
+    PG2 -.->|сбой| Risk3["Потеря персистентности"]
+```
+
+| Интеграция | Критичность | Риск | Митигация |
+|------------|-------------|------|-----------|
+| **Telegram** | MVP, блокирующая | недоступность API, блокировки | понятное сообщение пользователю; мониторинг polling |
+| **OpenRouter** | MVP, блокирующая | лимиты, таймауты, смена моделей | fallback-сообщение; таймауты; `LLM_MODEL` через env |
+| **PostgreSQL** | Future | недоступность БД | retry, бэкапы; managed SLA |
+| **Object Storage** | Future | потеря медиа | CDN/репликация; не хранить бинарники в БД |
+| **Календарь / видео** | Future | не выбран провайдер | отложено до сценария консультаций |
+
+**Общие замечания**
+
+- Секреты (`TELEGRAM_BOT_TOKEN`, API keys) — только в `.env`, не в репозитории.
+- LLM и Telegram — **внешние зависимости**; при их недоступности продукт деградирует, но не должен падать без сообщения пользователю.
+- Целевая архитектура: все внешние вызовы LLM и медиа — через **backend**, чтобы bot и web не дублировали интеграции.
+
+---
+
+## Что вне scope
+
+- Конкретные SDK и библиотеки
+- Эндпоинты и форматы payload
+- SLA и тарифы провайдеров
+
+Детали реализации — в tasklist backend / bot.
