@@ -1,0 +1,53 @@
+---
+description: Workflow проекта diaai — итерации, tasklist, plan/summary
+alwaysApply: true
+---
+
+# Workflow
+
+Полная спецификация: [docs/templates/workflow.md](docs/templates/workflow.md). Шаблон tasklist: [docs/templates/tasklist.md](docs/templates/tasklist.md).
+
+## Подход
+
+AI-driven / Spec-driven: работа **по областям** (bot, backend, web, infra) → **итерации** → **задачи**. Спецификации и артефакты в `docs/`, код — в `bot/` / `backend/` / `web/` / `src/diaai/` (MVP).
+
+## Иерархия
+
+| Уровень | Документ | Суть |
+|---------|----------|------|
+| Область | `docs/tasks/tasklist-<область>.md` | план итераций области |
+| Итерация | `docs/tasks/impl/<область>/iteration-N-<имя>/` | законченный блок ценности |
+| Задача | `.../tasks/task-NN-<имя>/` | минимальная единица работы |
+
+## Обязательные артефакты
+
+**Перед реализацией** — `plan.md` (итерация и каждая задача): что делаем, затронутые файлы, архитектура.
+
+**После завершения** — `summary.md`: что сделано, отклонения от плана, решения, проблемы.
+
+Дополнительно по необходимости: ADR в `docs/adr/`, обновление `vision.md`, `data-model.md`, `integrations.md`.
+
+## Цикл работы агента
+
+1. **Планирование** — цель и ценность итерации → запись в tasklist → `plan.md` → декомпозиция на задачи с `plan.md`.
+2. **Реализация** — по плану, последовательно; KISS и [conventions.mdc](conventions.mdc).
+3. **Завершение** — `summary.md` на задачу и итерацию → обновить статус в tasklist → `make lint` / `make format` для кода.
+
+## Правила
+
+- Не начинай реализацию итерации без `plan.md`.
+- Не закрывай задачу без `summary.md`.
+- Одна область — один tasklist; не смешивай bot и backend в одном плане итерации.
+- Крупные архитектурные решения — ADR (`docs/adr/adr-NNN-*.md`), не только комментарии в коде.
+- При неясностях сверяйся с [docs/vision.md](docs/vision.md), не выдумывай scope.
+
+## Пример пути
+
+```
+docs/tasks/tasklist-bot.md
+docs/tasks/impl/bot/iteration-1-photo-analysis/
+  plan.md
+  summary.md
+  tasks/task-01-vision-handler/plan.md
+  tasks/task-01-vision-handler/summary.md
+```
