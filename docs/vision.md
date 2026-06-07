@@ -1,7 +1,7 @@
 # Техническое видение проекта
 
 Опирается на [идею проекта](idea.md).  
-Детализация: [data-model.md](data-model.md) · [integrations.md](integrations.md)
+Детализация: [data-model.md](data-model.md) · [integrations.md](integrations.md) · [adr/](adr/)
 
 ---
 
@@ -230,6 +230,7 @@ diaai/
 │   ├── idea.md
 │   ├── vision.md
 │   ├── data-model.md    # доменные сущности и связи
+│   ├── adr/             # архитектурные решения (ADR)
 │   ├── integrations.md  # внешние сервисы
 │   └── how-to-get-tokens.md
 ├── prompts/             # системные промпты LLM
@@ -248,6 +249,22 @@ diaai/
 - **Явная конфигурация** — секреты через env, не в коде.
 - **LLM как сервис** — промпты и роли задаются централизованно; vision для фото.
 - **Поэтапность** — MVP бота → backend + БД → web + роли.
+
+---
+
+## Архитектурные решения
+
+Значимые решения фиксируются в [docs/adr/](adr/) (Architecture Decision Records).
+
+| ADR | Решение | Статус |
+|-----|---------|--------|
+| [adr-001-database.md](adr/adr-001-database.md) | **PostgreSQL** — основная СУБД | Принято |
+
+**Кратко (ADR-001):** PostgreSQL выбран как единая реляционная БД для backend: пользователи, события, консультации, аналитика. JSONB — для ответов LLM и метаданных; фото — в object storage; при росте временных рядов — TimescaleDB или read-replica без смены СУБД.
+
+Альтернативы (MySQL, MongoDB, SQLite для prod, отдельная TS-БД) отклонены — см. полное обоснование в ADR.
+
+На этапе MVP-бота БД не используется (RAM); PostgreSQL подключается с первым backend.
 
 ---
 
