@@ -90,7 +90,7 @@ flowchart LR
 - события питания и инсулина сохраняются в PostgreSQL
 - данные не теряются при перезапуске
 
-**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md)
+**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [итерация 2 в tasklist](tasks/tasklist-backend.md#итерация-2-backend-ядро-и-бд-)
 
 ---
 
@@ -129,7 +129,7 @@ flowchart LR
 - система выдаёт рекомендации на основе истории питания и инсулина
 - сигналы изменений доступны через API
 
-**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md)
+**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [итерация 4 в tasklist](tasks/tasklist-backend.md#итерация-4-аналитика-и-динамика-)
 
 ---
 
@@ -162,3 +162,5 @@ flowchart LR
 | [integrations.md](integrations.md) | внешние сервисы и критичность |
 | [adr/](adr/) | архитектурные решения |
 | [templates/workflow.md](templates/workflow.md) | процесс работы и структура tasklist'ов |
+| [prompts/generate-tasklist.md](prompts/generate-tasklist.md) | prompt и эталон декомпозиции tasklist'ов |
+| [tasks/tasklist-backend.md](tasks/tasklist-backend.md) | детализация итераций 2 и 4 (backend) |
