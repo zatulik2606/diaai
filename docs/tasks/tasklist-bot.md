@@ -17,7 +17,7 @@
 | Итерация | Название | Цель | Статус | Документы |
 |----------|----------|------|--------|-----------|
 | 1 | MVP Telegram-бота | Диалог, ХЕ/БЖЕ/БЖУ, фото, история в RAM | ✅ Done | [план](impl/bot/iteration-1-mvp/plan.md) · [summary](impl/bot/iteration-1-mvp/summary.md) |
-| 3 | Миграция на backend | Бот как тонкий клиент, без локального состояния | 📋 Planned | [план](impl/bot/iteration-2-backend-client/plan.md) · [summary](impl/bot/iteration-2-backend-client/summary.md) |
+| 3 | Миграция на backend | Бот как тонкий клиент, без локального состояния | ✅ Done | [backend task-07](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
 
 ---
 
@@ -50,11 +50,13 @@
 
 ---
 
-## Итерация 3: Миграция на backend 📋
+## Итерация 3: Миграция на backend ✅
 
 ### Цель
 
 Перевести бота на backend API: история и LLM — через ядро системы.
+
+Реализовано в рамках [backend task-07](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md).
 
 ### Ценность
 
@@ -62,16 +64,16 @@
 
 ### Критерии завершения
 
-- [ ] бот не использует SessionStore в RAM
-- [ ] запросы к LLM идут через backend
-- [ ] история сохраняется между перезапусками
+- [x] бот не использует SessionStore в RAM (prod-путь)
+- [x] запросы к LLM идут через backend
+- [x] история сохраняется между перезапусками бота (PostgreSQL)
 
 ### Артефакты
 
-- `bot/` или обновлённый `src/diaai/` — тонкий клиент
-- интеграция с backend API
+- `src/diaai/backend_client.py` — httpx-клиент backend API
+- обновлённые `handlers.py`, `main.py`, `bot.py`, `config.py`
 
 ### Документы
 
-- 📋 [План](impl/bot/iteration-2-backend-client/plan.md)
-- 📝 [Summary](impl/bot/iteration-2-backend-client/summary.md)
+- 📋 [План backend task-07](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md)
+- 📝 [Summary backend task-07](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md)

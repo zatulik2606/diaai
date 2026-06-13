@@ -157,8 +157,9 @@ flowchart TB
 
 | Этап | Состояние |
 |------|-----------|
-| **MVP (сейчас)** | Telegram-бот как автономный клиент; история в RAM; прямой вызов LLM |
-| **Целевая архитектура** | bot и web → backend → БД; единый контекст пользователя, аналитика, консультации |
+| **MVP (было)** | Telegram-бот автономно; история в RAM; прямой LLM |
+| **Сейчас (task-07)** | bot → backend REST; история в PostgreSQL; LLM на backend |
+| **Целевая архитектура** | bot и web → backend → БД; единый контекст, аналитика, консультации |
 
 MVP — первый шаг: проверка сценариев и ценности. Дальше — перенос логики в backend без смены продуктовой модели.
 
@@ -237,7 +238,7 @@ diaai/
 └── README.md
 ```
 
-**Текущее состояние:** MVP-бот в `src/diaai/` (LLM напрямую, RAM). `backend/` — FastAPI-каркас (task-03) и contract tests (task-04); endpoint'ы A/B и PostgreSQL — task-05. Затем `bot/` станет тонким клиентом API.
+**Текущее состояние:** MVP-бот в `src/diaai/` — клиент backend API (task-07). `backend/` — FastAPI, PostgreSQL, OpenRouter, сценарии A/B.
 
 ---
 
@@ -309,15 +310,16 @@ diaai/
 
 ---
 
-## Конфигурация (MVP бота)
+## Конфигурация (бот)
 
 | Переменная | Назначение |
 |------------|------------|
 | `TELEGRAM_BOT_TOKEN` | токен бота |
-| `OPENROUTER_API_KEY` / `LLM_API_KEY` | ключ OpenRouter |
-| `LLM_MODEL` | модель (vision для фото) |
-| `LLM_MAX_HISTORY` | пар сообщений в контексте |
+| `BACKEND_URL` | URL backend (default `http://127.0.0.1:8000`) |
+| `BACKEND_SERVICE_TOKEN` | Bearer bot → backend |
 | `LOG_LEVEL` | уровень логирования |
+
+OpenRouter и LLM — на стороне backend (см. [backend/README.md](../backend/README.md)).
 
 `.env` в `.gitignore`. Секреты не коммитить.
 

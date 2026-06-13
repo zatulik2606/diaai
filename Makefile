@@ -6,10 +6,13 @@ run:
 	uv run python -m diaai.main
 
 lint:
-	uv run ruff check src backend
+	uv run ruff check src backend tests
 
 format:
-	uv run ruff format src backend
+	uv run ruff format src backend tests
+
+test:
+	uv run pytest backend/tests tests
 
 backend-install:
 	uv sync

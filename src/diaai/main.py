@@ -2,13 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from pathlib import Path
 
+from diaai.backend_client import BackendClient
 from diaai.bot import TelegramBot
 from diaai.config import Config
-from diaai.llm_client import LlmClient
-from diaai.prompt import Prompt
-from diaai.session_store import SessionStore
 
 
 def setup_logging(level: str) -> None:
@@ -24,17 +21,18 @@ async def run() -> None:
     logger = logging.getLogger(__name__)
     logger.info("Starting bot")
 
-    system_prompt = Prompt(Path("prompts/system.txt")).load_system_prompt()
-    session_store = SessionStore(max_history_pairs=config.llm_max_history)
-    llm_client = LlmClient(api_key=config.openrouter_api_key, model=config.llm_model)
-
-    bot = TelegramBot(
-        bot_token=config.telegram_bot_token,
-        llm_client=llm_client,
-        session_store=session_store,
-        system_prompt=system_prompt,
+    backend_client = BackendClient(
+        base_url=config.backend_url,
+        service_token=config.backend_service_token,
     )
-    await bot.run_polling()
+    try:
+        bot = TelegramBot(
+            bot_token=config.telegram_bot_token,
+            backend_client=backend_client,
+        )
+        await bot.run_polling()
+    finally:
+        await backend_client.aclose()
 
 
 def main() -> None:

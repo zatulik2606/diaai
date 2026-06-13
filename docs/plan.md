@@ -36,7 +36,7 @@
 flowchart LR
     E1["1. MVP бота\n✅ Done"]
     E2["2. Backend + БД\n✅ Done"]
-    E3["3. Bot → Backend\n🚧 In Progress"]
+    E3["3. Bot → Backend\n✅ Done"]
     E4["4. Аналитика\n📋 Planned"]
     E5["5. Веб-интерфейс\n📋 Planned"]
 
@@ -47,7 +47,7 @@ flowchart LR
 |----------|----------|------|--------|----------|
 | 1 | MVP Telegram-бота | Запустить первый клиент с диалогом и анализом фото | ✅ Done | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
 | 2 | Backend-ядро и БД | Вынести данные и логику сопровождения в единый backend | ✅ Done | [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) |
-| 3 | Миграция бота на backend | Сделать бота тонким клиентом без локального состояния | 🚧 In Progress | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
+| 3 | Миграция бота на backend | Сделать бота тонким клиентом без локального состояния | ✅ Done | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
 | 4 | Аналитика и динамика состояния | Добавить прогресс, тренды и сигналы изменений | 📋 Planned | [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) |
 | 5 | Веб-интерфейс (диабетик/доктор) | Дать единый web-доступ к данным и консультациям | 📋 Planned | [docs/tasks/tasklist-web.md](tasks/tasklist-web.md) |
 
@@ -97,22 +97,23 @@ flowchart LR
 
 ---
 
-### Итерация 3 — Миграция бота на backend `🚧 In Progress`
+### Итерация 3 — Миграция бота на backend `✅ Done`
+
+**Прогресс:** backend task-07 ✅ — bot → API, история в PostgreSQL.
 
 **Ценность:** бот становится тонким клиентом; единый контекст для всех будущих интерфейсов.
 
-**Что включает:**
-- бот переключается с RAM-хранилища на обращения к backend API
-- LLM-запросы уходят из бота в backend
-- SessionStore заменяется на вызов backend
-- единая история диалога через БД
+**Что сделано:**
+- `src/diaai/backend_client.py` — httpx → `POST /api/v1/assistant/messages`
+- prod-путь без `LlmClient` / `SessionStore`
+- env: `BACKEND_URL`, `BACKEND_SERVICE_TOKEN`
 
 **Критерии завершения:**
-- бот не хранит состояние локально
-- история диалога персистентна между запусками бота
-- поведение для пользователя не изменилось
+- бот не хранит состояние локально ✅
+- история диалога персистентна между запусками бота ✅
+- поведение для пользователя не изменилось ✅
 
-**Tasklist:** [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) · backend [task-07](tasks/impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) в [iteration-3-delivery](tasks/impl/backend/iteration-3-delivery/plan.md)
+**Tasklist:** [tasklist-bot.md](tasks/tasklist-bot.md) · [task-07 summary](tasks/impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md)
 
 ---
 

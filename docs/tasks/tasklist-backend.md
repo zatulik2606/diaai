@@ -4,9 +4,9 @@
 
 ## Обзор
 
-Рабочий план backend: итерации **1–2** ✅ (01–05), **итерация 3** 🚧 (06 ✅, 07–08). Ядро API + PostgreSQL + docs готовы; бот → API — task-07.
+Рабочий план backend: итерации **1–2** ✅ (01–05), **итерация 3** 🚧 (06–07 ✅, 08). Бот — клиент backend API; unit-тесты bot в `tests/`; осталось **task-08** (quality).
 
-**Прогресс:** **6 / 8** задач ✅ · **итерация 3:** 1 / 3 · **текущая:** task-07 (бот → API) · онбординг: [`backend/README.md`](../../backend/README.md) · PG: `localhost:5433`
+**Прогресс:** **7 / 8** задач ✅ · **итерация 3:** 2 / 3 · **текущая:** task-08 · **`make test`** — 36 (21 backend + 15 bot) · [`backend/README.md`](../../backend/README.md)
 
 > **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); **03** — `fastapi-templates`; искать через `/find-skills`.
 
@@ -18,14 +18,14 @@
 |---|----------|--------|--------|-----------|
 | 1 | Основание | 01–02 | ✅ Done | [plan](impl/backend/iteration-1-foundation/plan.md) · [summary](impl/backend/iteration-1-foundation/summary.md) |
 | 2 | Реализация ядра | 03–05 | ✅ Done | [plan](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md) |
-| 3 | Поставка | 06–08 | 🚧 In Progress (06 ✅) | [plan](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md) |
+| 3 | Поставка | 06–08 | 🚧 In Progress (06–07 ✅) | [plan](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md) |
 
 ## Связь с plan.md
 
 | plan.md | Tasklist | Зависимости |
 |---------|----------|-------------|
 | [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | backend итерации 1–2 ✅ (01–05) | [iteration-2 summary](impl/backend/iteration-2-core/summary.md) ✅ |
-| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-06 ✅, task-07–08 🚧 + [tasklist-bot.md](tasklist-bot.md) | iteration-2 ✅ |
+| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-06–07 ✅, task-08 🚧 + [tasklist-bot.md](tasklist-bot.md) ✅ | [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) |
 | [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | после закрытия backend 01–08 | итерация 3 |
 
 ## Легенда статусов
@@ -44,8 +44,8 @@
 | 04 | API-тесты сценариев бота | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-04-api-tests/summary.md) |
 | 05 | Endpoint'ы и серверная логика | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md) |
 | 06 | Документирование backend | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md) |
-| 07 | Рефакторинг бота → API | 🚧 Next | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
-| 08 | Качество и инженерные практики | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
+| 07 | Рефакторинг бота → API | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
+| 08 | Качество и инженерные практики | 🚧 Next | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
 
 Задачи выполняются **последовательно** (01 → 08).
 
@@ -265,7 +265,7 @@
 
 → [iteration-3-delivery/plan.md](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md)
 
-**Прогресс блока:** 1 / 3 (task-06 ✅)
+**Прогресс блока:** 2 / 3 (task-06–07 ✅)
 
 ---
 
@@ -305,7 +305,7 @@
 
 ---
 
-## Задача 07: Рефакторинг бота → API 🚧 Next
+## Задача 07: Рефакторинг бота → API ✅
 
 ### Цель
 
@@ -313,29 +313,34 @@
 
 ### Состав работ
 
-- [ ] Backend-client в `src/diaai/`; handlers вызывают API
-- [ ] Удалить/обойти прямой OpenRouter и RAM-сессии
-- [ ] Актуализировать [vision.md](../vision.md), [README.md](../../README.md), `.env.example`
-- [ ] Согласовать с [tasklist-bot.md](tasklist-bot.md), итерация 3
+- [x] Backend-client в `src/diaai/backend_client.py`; handlers вызывают API
+- [x] Prod-путь без `LlmClient` и `SessionStore`
+- [x] Unit-тесты: `tests/test_backend_client.py`, `tests/test_config.py`; `make test` (36)
+- [x] Актуализировать [vision.md](../vision.md), [README.md](../../README.md), `.env.example`
+- [x] Согласовать с [tasklist-bot.md](tasklist-bot.md), итерация 3 ✅
 
 ### Артефакты
 
-- обновлённый `src/diaai/`, backend-client
+- `src/diaai/backend_client.py`, handlers/main/bot/config, `tests/`, `make test`
 
 ### Definition of Done
 
-**Агент:** бот не импортирует `llm_client` для prod-пути; история в БД через backend.
+**Агент:** ✅ prod-путь без `llm_client`; `make lint`, `make test` (36), `make backend-test` (21).
 
-**Пользователь:** `make run` — бот отвечает на текст и фото как раньше; после перезапуска история сохраняется.
+**Пользователь:** ✅ `make run` + backend — текст/фото в Telegram; история в PG после перезапуска бота.
 
 ### Документы
 
 - 📋 [План](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md)
 - 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md)
 
+**Проверка блока 3 (после 07):**  
+Агент: `make lint` ✅ · `make test` (36) ✅  
+Пользователь: backend + bot up; Telegram text/photo; история после restart бота
+
 ---
 
-## Задача 08: Качество и инженерные практики 📋
+## Задача 08: Качество и инженерные практики 🚧 Next
 
 ### Цель
 
@@ -343,7 +348,7 @@
 
 ### Состав работ
 
-- [ ] ruff + `make backend-lint` / `make backend-format` *(каркас task-03 ✅)*
+- [x] ruff + `make lint` / `make test` *(backend + bot + tests/)*
 - [ ] Structured logging (request id, status); без промптов и ПДн
 - [ ] Правила изменения контрактов в `docs/api/`
 - [ ] Финальная актуализация: [vision.md](../vision.md), [plan.md](../plan.md)
@@ -356,7 +361,7 @@
 
 **Агент:** lint/test/run проходят; логи без секретов; breaking changes только с bump версии API.
 
-**Пользователь:** `make backend-lint && make backend-test`; просмотреть лог одного запроса — нет токенов и текстов сообщений.
+**Пользователь:** `make lint && make test`; просмотреть лог одного запроса — нет токенов и текстов сообщений.
 
 ### Документы
 
@@ -364,8 +369,8 @@
 - 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md)
 
 **Проверка блока 3 (после 08):**  
-Агент: полный прогон `make backend-lint`, `make backend-test`, `make backend-run` + `make run`.  
-Пользователь: сценарии A и B в Telegram; README — инструкция актуальна.
+Агент: `make lint`, `make test`, `make backend-run` + `make run`; логи без секретов.  
+Пользователь: сценарий A в Telegram; README актуален; закрыть [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md).
 
 ---
 

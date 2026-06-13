@@ -24,8 +24,7 @@ flowchart TB
     end
 
     Bot <-->|HTTPS polling| TG
-    Bot -->|HTTPS REST| OR
-    Bot -.->|HTTPS REST v1| Backend
+    Bot -->|HTTPS REST v1| Backend
     Backend -->|HTTPS REST| OR
     Backend -->|SQL| PG
     Backend -.->|HTTPS| S3
@@ -47,7 +46,7 @@ flowchart TB
 | **Протокол** | HTTPS; long polling (MVP), webhook (возможно позже) |
 | **Критичность** | **MVP** |
 
-Компонент: `bot` (сейчас — OpenRouter напрямую; целевое — клиент backend API).
+Компонент: `bot` — клиент backend API (task-07 ✅).
 
 ---
 
@@ -77,7 +76,7 @@ flowchart TB
 | **Протокол** | HTTPS REST, OpenAI-compatible API (`/v1/chat/completions`) |
 | **Критичность** | **MVP** |
 
-Компонент: `bot` (сейчас); **целевое — только `backend`** (сценарий A).
+Компонент: **`backend`** (сценарий A). Бот не вызывает OpenRouter напрямую.
 
 Инструкция по ключам: [how-to-get-tokens.md](how-to-get-tokens.md).
 

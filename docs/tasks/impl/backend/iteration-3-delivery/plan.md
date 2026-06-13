@@ -2,7 +2,7 @@
 
 Опирается на [tasklist-backend.md](../../../tasklist-backend.md) · [iteration-2-core](../iteration-2-core/plan.md) · [plan.md](../../../../../plan.md#итерация-3--миграция-бота-на-backend) · [ADR-002](../../../../../adr/adr-002-backend-stack.md)
 
-Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) — docker, OpenAPI, httpx AsyncClient, logging
+Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) · [python-testing-patterns](.agents/skills/python-testing-patterns/SKILL.md)
 
 ## Цель
 
@@ -10,13 +10,13 @@ Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) — docke
 
 ## Статус
 
-🚧 In Progress — task-06 ✅; **task-07** next.
+🚧 In Progress — **task-08** next (task-06–07 ✅).
 
 ## Ценность
 
 - Новый разработчик поднимает stack по [backend/README.md](../../../../../backend/README.md) и `.env.example`
-- Бот — тонкий клиент без RAM и прямого OpenRouter
-- Логи и lint без утечки секретов и промптов
+- Бот — тонкий клиент без RAM и прямого OpenRouter; история в PostgreSQL
+- Логи и lint без утечки секретов и промптов (task-08)
 
 ## Предусловия
 
@@ -28,7 +28,7 @@ Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) — docke
 | plan.md | Backend tasklist |
 |---------|------------------|
 | [Итерация 2 — Backend-ядро и БД](../../../../../plan.md#итерация-2--backend-ядро-и-бд) | iteration-1–2 ✅, task-06 docs ✅ |
-| [Итерация 3 — Миграция бота](../../../../../plan.md#итерация-3--миграция-бота-на-backend) | task-07 + [tasklist-bot.md](../../../tasklist-bot.md) |
+| [Итерация 3 — Миграция бота](../../../../../plan.md#итерация-3--миграция-бота-на-backend) | task-07 ✅ + [tasklist-bot.md](../../../tasklist-bot.md) |
 | [Итерация 4 — Аналитика](../../../../../plan.md#итерация-4--аналитика-и-динамика-состояния) | после закрытия 01–08 |
 
 ## Архитектура
@@ -43,88 +43,91 @@ flowchart TB
         Backend --> OR
     end
     subgraph iter3 [iteration-3]
-        Docs["06 docs/docker ✅"]
-        BotClient["07 bot httpx client"]
+        Docs["06 docs ✅"]
+        BotClient["07 bot client ✅"]
         Quality["08 logging/lint"]
     end
     Bot["src/diaai bot"] -->|Bearer REST v1| Backend
     Docs -.-> Backend
     Quality -.-> Backend
-    BotClient --> Bot
 ```
 
-**Dev-стек (task-06):** PostgreSQL в Docker; backend локально `make backend-run` (hot reload). Backend **не** в compose — KISS.
+**Dev-стек:** PostgreSQL в Docker (`:5433`); backend `make backend-run`; бот `make run` — оба процесса.
 
-**Целевой поток (task-07):** Telegram → bot → `POST /api/v1/assistant/messages` → PG + OpenRouter → ответ пользователю.
+**Поток (task-07):** Telegram → `backend_client.py` → `POST /api/v1/assistant/messages` → PG + OpenRouter → ответ.
 
 ## Задачи итерации
 
 | # | Задача | Статус | Документы |
 |---|--------|--------|-----------|
 | 06 | Документирование backend | ✅ Done | [plan](tasks/task-06-backend-docs/plan.md) · [summary](tasks/task-06-backend-docs/summary.md) |
-| 07 | Рефакторинг бота → API | 🚧 Next | [plan](tasks/task-07-bot-refactor/plan.md) · [summary](tasks/task-07-bot-refactor/summary.md) |
-| 08 | Качество и инженерные практики | 📋 Planned | [plan](tasks/task-08-quality/plan.md) · [summary](tasks/task-08-quality/summary.md) |
+| 07 | Рефакторинг бота → API | ✅ Done | [plan](tasks/task-07-bot-refactor/plan.md) · [summary](tasks/task-07-bot-refactor/summary.md) |
+| 08 | Качество и инженерные практики | 🚧 Next | [plan](tasks/task-08-quality/plan.md) · [summary](tasks/task-08-quality/summary.md) |
 
-### Task-06 (кратко) ✅
+### Task-06 ✅
 
 | Артефакт | Содержание |
 |----------|------------|
 | [`backend/README.md`](../../../../../backend/README.md) | quick start, env, curl, troubleshooting |
 | `docker-compose.yml` | healthcheck PG, порт 5433 |
-| `.env.example`, `Makefile` | комментарии, `backend-openapi-export` |
-| `docs/plan.md`, корневой README | статус итераций |
+| `.env.example`, `Makefile` | `backend-openapi-export` |
 
-### Task-07 (кратко)
+### Task-07 ✅
 
 | Слой | Артефакты |
 |------|-----------|
 | Client | `src/diaai/backend_client.py` — httpx, Bearer, `X-Request-Id` |
-| Handlers | `handlers.py` → POST assistant; без `LlmClient`/`SessionStore` в prod |
-| Config | `BACKEND_URL`, `BACKEND_SERVICE_TOKEN` в `.env.example` |
-| Docs | `vision.md`, `integrations.md`, tasklist-bot |
+| Handlers | `handlers.py`, `main.py`, `bot.py`, `config.py` — без `LlmClient`/`SessionStore` в prod |
+| Tests | `tests/test_backend_client.py`, `tests/test_config.py`; `make test` (36) |
+| Docs | `vision.md`, `integrations.md`, `tasklist-bot.md`, `.env.example` |
 
-Сценарий B (events) из бота — вне scope task-07.
+Сценарий B из бота и `DELETE` диалога для `/start` — вне scope.
 
 ### Task-08 (кратко)
 
 | Тема | Артефакты |
 |------|-----------|
-| Logging | middleware: request_id, method, path, status; без секретов/body |
-| Lint | ruff backend + bot scope |
+| Logging | middleware без секретов/body |
+| Lint | ruff, `make lint` / `make test` |
 | Health | optional version в `/health` |
-| Контракты | conventions, финальная синхронизация vision/plan |
+| Docs | финальная синхронизация vision/plan |
 
 ## Критерии завершения итерации
 
-- [x] README + docker-compose: backend + PostgreSQL с нуля ([backend/README.md](../../../../../backend/README.md))
-- [ ] `make run` — бот через backend; история после перезапуска (task-07)
-- [ ] `make backend-lint && make backend-test`; логи без токенов (task-08)
+- [x] README + docker-compose: backend + PG с нуля
 - [x] OpenAPI совпадает с реализацией
+- [x] бот через backend; история в PG (task-07)
+- [x] unit-тесты bot client (`tests/`, 15 тестов)
+- [ ] structured logging без токенов/промптов (task-08)
+- [ ] закрыть iteration-3 summary ✅
 
 ## Dev quick start
-
-Полная инструкция — [backend/README.md](../../../../../backend/README.md):
 
 ```bash
 cp .env.example .env
 make backend-install
-docker compose up -d
-make backend-migrate
-make backend-run   # http://127.0.0.1:8000/docs
-make backend-test  # 21 passed
+docker compose up -d && make backend-migrate
+
+# терминал 1
+make backend-run
+
+# терминал 2
+make run
+
+make test   # 36 passed (21 backend + 15 bot)
 ```
 
 ## Definition of Done
 
-**Агент:** task-06/07/08 summary закрыты; полный прогон lint/test/run.
+**Агент:** task-08 summary; `make lint && make test && make backend-run` + `make run`.
 
-**Пользователь:** сценарии A и B в Telegram (A — task-07); README актуален.
+**Пользователь:** сценарий A в Telegram; README актуален; лог запроса без секретов.
 
 ## Следующий этап
 
-После закрытия итерации — [Итерация 4 — Аналитика](../../../../../plan.md#итерация-4--аналитика-и-динамика-состояния).
+[task-08](tasks/task-08-quality/plan.md) → закрытие итерации → [Итерация 4 — Аналитика](../../../../../plan.md#итерация-4--аналитика-и-динамика-состояния).
 
 ## Документы
 
 - 📋 [План области](../plan.md)
-- 📝 [Summary](summary.md) — 🚧 in progress (task-06 ✅)
+- 📝 [Summary](summary.md) — 🚧 in progress (06–07 ✅, task-08 next)
