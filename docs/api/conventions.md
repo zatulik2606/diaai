@@ -48,7 +48,7 @@ Web-auth и роли доктора — позже.
 | Pagination | `GET /events/food` — голый array | [api-contracts.md](../tech/api-contracts.md#mvp-ограничения-и-backlog) |
 | Rate limiting | не реализовано | 429 зарезервирован |
 | Idempotency keys | нет для POST events | риск дублей при retry |
-| Единый формат 422 | dual format | цель — handler в task-05 |
+| Единый формат 422 | dual format | deferred post-MVP (task-08) |
 
 ## Формат успешного ответа
 

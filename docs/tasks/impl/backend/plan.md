@@ -18,17 +18,17 @@
 |---|----------|--------|--------|------|
 | 1 | Основание | 01–02 | ✅ Done | [iteration-1-foundation/plan.md](iteration-1-foundation/plan.md) · [summary](iteration-1-foundation/summary.md) |
 | 2 | Сборка ядра | 03–05 | ✅ Done | [iteration-2-core/plan.md](iteration-2-core/plan.md) · [summary](iteration-2-core/summary.md) |
-| 3 | Поставка | 06–08 | 🚧 In Progress (06–07 ✅) | [iteration-3-delivery/plan.md](iteration-3-delivery/plan.md) · [summary](iteration-3-delivery/summary.md) |
+| 3 | Поставка | 06–08 | ✅ Done | [iteration-3-delivery/plan.md](iteration-3-delivery/plan.md) · [summary](iteration-3-delivery/summary.md) |
 
-**Прогресс:** 7 / 8 задач · **фокус:** task-08 (quality) · **тесты:** `make test` — 36 passed
+**Прогресс:** 8 / 8 задач ✅ · **следующий этап:** итерация 4 (аналитика) · **тесты:** `make test` — 36 passed
 
 ## Связь с plan.md (продукт)
 
 | plan.md | Backend |
 |---------|---------|
 | [Итерация 2 — Backend-ядро и БД](../../../plan.md#итерация-2--backend-ядро-и-бд) | итерации 1–2 ✅, task-06 ✅ |
-| [Итерация 3 — Миграция бота](../../../plan.md#итерация-3--миграция-бота-на-backend) | task-07 ✅; task-08 🚧 |
-| [Итерация 4 — Аналитика](../../../plan.md#итерация-4--аналитика-и-динамика-состояния) | после 01–08 |
+| [Итерация 3 — Миграция бота](../../../plan.md#итерация-3--миграция-бота-на-backend) | task-06–08 ✅ |
+| [Итерация 4 — Аналитика](../../../plan.md#итерация-4--аналитика-и-динамика-состояния) | next |
 
 ## Архитектура (текущая)
 
@@ -57,7 +57,7 @@ flowchart LR
 | 05 | Endpoint'ы + БД | ✅ |
 | 06 | Документирование | ✅ |
 | 07 | Рефакторинг бота | ✅ |
-| 08 | Качество | 🚧 Next |
+| 08 | Качество | ✅ |
 
 ## Критерии завершения области (01–08)
 
@@ -67,7 +67,7 @@ flowchart LR
 - [x] Impl A/B в PostgreSQL + OpenRouter
 - [x] README, docker-compose docs *(task-06)*
 - [x] Bot → API, история в PG, unit-тесты bot *(task-07, `tests/` 15)*
-- [ ] lint/test/run, логи без секретов *(task-08)*
+- [x] lint/test/run, логи без секретов *(task-08)*
 
 ## Иерархия планов
 

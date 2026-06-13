@@ -5,13 +5,14 @@ from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import Response
 
 from backend.api.v1.router import api_router
-from backend.config import get_settings
+from backend.config import get_settings, validate_service_token
 from backend.database import dispose_db, init_db
 from backend.exceptions import AppError
 from backend.schemas.errors import ErrorBody, ErrorDetail
@@ -22,6 +23,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
+    validate_service_token(settings)
     if settings.database_url:
         init_db(settings.database_url)
         logger.info("Backend startup (database configured)")
@@ -68,17 +70,31 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestIdMiddleware)
 
     @app.exception_handler(AppError)
-    async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
+    async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
+        request_id = getattr(request.state, "request_id", None)
+        if exc.status_code >= 500:
+            logger.warning(
+                "request_id=%s error_code=%s status=%s",
+                request_id,
+                exc.code,
+                exc.status_code,
+            )
         return _error_response(exc)
 
     @app.exception_handler(RequestValidationError)
     async def validation_error_handler(
         _request: Request, exc: RequestValidationError
     ) -> JSONResponse:
-        return JSONResponse(status_code=422, content={"detail": exc.errors()})
+        return JSONResponse(status_code=422, content={"detail": jsonable_encoder(exc.errors())})
 
     @app.exception_handler(Exception)
-    async def unhandled_error_handler(_request: Request, _exc: Exception) -> JSONResponse:
+    async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
+        request_id = getattr(request.state, "request_id", None)
+        logger.warning(
+            "request_id=%s unhandled_error=%s",
+            request_id,
+            exc.__class__.__name__,
+        )
         return _error_response(
             AppError(
                 code="INTERNAL_ERROR",
@@ -89,7 +105,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health", tags=["system"])
     async def health() -> dict[str, str]:
-        return {"status": "ok"}
+        return {"status": "ok", "version": app.version}
 
     app.include_router(api_router, prefix="/api/v1")
     return app

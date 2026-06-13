@@ -51,7 +51,7 @@ class LlmService:
                 messages=messages,
             )
         except Exception as exc:  # noqa: BLE001
-            logger.exception("LLM request failed: %s", exc.__class__.__name__)
+            logger.warning("LLM request failed: %s", exc.__class__.__name__)
             raise AppError(
                 code="LLM_UNAVAILABLE",
                 message="LLM service temporarily unavailable",

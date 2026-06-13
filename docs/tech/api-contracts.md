@@ -81,7 +81,7 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 | Idempotency keys | нет | `Idempotency-Key` для POST events |
 | `telegram_id` в query (GET) | допустимо на MVP | header или nested resource в v2 |
 | `POST /assistant/messages` → 200 | осознанно (см. Design review) | 201 + `Location` post-MVP |
-| Единый формат 422 | dual format (FastAPI + ErrorBody) | единый handler в task-05 |
+| Единый формат 422 | dual format (FastAPI `detail`) | deferred post-MVP; см. conventions |
 
 ## Design review (api-design-principles)
 
@@ -98,8 +98,8 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 | Единый формат ошибок | `ErrorBody` в OpenAPI + conventions |
 | Auth | Bearer token; 401 vs 403 разведены |
 | Документация | scenarios + OpenAPI 3.1 + примеры JSON |
-| Health | `GET /health` без auth |
-| Безопасность (базово) | запрет логировать промпты/токены |
+| Health | `GET /health` без auth; `status` + `version` |
+| Structured request logging | middleware key=value; без body/tokens |
 
 ### Warn (зафиксировано, не блокирует MVP)
 
@@ -107,7 +107,7 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 |----------|------------|------------|
 | POST `/assistant/messages` → 200 | создаётся `Request`, не новый ресурс top-level | 200 — ответ диалога; post-MVP: 201 + `Location` |
 | 401 за отсутствие `telegram_id` | по REST чаще 422 | MVP: bot всегда передаёт id; пересмотр в v2 |
-| 422 dual format | FastAPI `detail` vs `ErrorBody` | tech debt; единый handler в task-05 |
+| 422 dual format | FastAPI `detail` vs `ErrorBody` | deferred post-MVP (task-08) |
 | GET list без pagination | массив без metadata | optional MVP; pagination в backlog |
 | `telegram_id` в query | риск access-логов | backlog v2 |
 | `image_base64` | лимит в conventions (5 MB рекомендация) | 413 зарезервирован |
@@ -123,18 +123,17 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 | 422 для GET food (invalid `from`/`to`) | добавлен в scenario + OpenAPI |
 | Лимит `image_base64` не описан | добавлен в conventions |
 
-## Contract tests (task-04 ✅)
+## Contract tests (task-04–08 ✅)
 
-Реализация: `backend/tests/` — 17 тестов, `make backend-test`.
+Реализация: `backend/tests/` + `tests/` — **36** тестов, `make test`.
 
 | Группа | Файл | Коды |
 |--------|------|------|
-| Auth | `test_auth.py` | 401, health 200 |
+| Auth | `test_auth.py` | 401, health 200 + version |
 | Validation | `test_validation.py` | 422 |
-| Сценарий A | `test_assistant.py` | 400, 501, headers |
-| Сценарий B | `test_events.py` | 501 |
-
-Happy-path assert **501** до task-05; после impl — 200/201 + body. 403/404 — task-05.
+| Сценарий A | `test_assistant.py` | 200, 400, headers |
+| Сценарий B | `test_events.py`, `test_events_domain.py` | 201/200, 403/404 |
+| Bot client | `tests/test_backend_client.py` | httpx mock |
 
 ## Связанные документы
 
@@ -143,5 +142,5 @@ Happy-path assert **501** до task-05; после impl — 200/201 + body. 403/
 | [docs/api/README.md](../api/README.md) | индекс API |
 | [conventions.md](../api/conventions.md) | коды ошибок, auth, правила изменений |
 | [openapi.yaml](../api/openapi.yaml) | OpenAPI 3.1 |
-| [tasklist-backend.md](../tasks/tasklist-backend.md) | task-02, task-04, task-05 |
+| [tasklist-backend.md](../tasks/tasklist-backend.md) | task-02 … task-08 ✅ |
 | [backend-structure.md](backend-structure.md) | структура FastAPI backend, design review |

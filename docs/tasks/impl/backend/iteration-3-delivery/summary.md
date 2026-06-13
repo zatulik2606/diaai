@@ -1,6 +1,6 @@
 # Итерация backend 3: Summary
 
-> **Статус итерации:** 🚧 In Progress. Задачи 06–07 ✅ (2026-06-07); task-08 — next.
+> **Статус итерации:** ✅ Done (2026-06-07). Задачи 06–08 ✅.
 
 ## Сделано
 
@@ -22,11 +22,12 @@
 - **Документы:** `vision.md`, `integrations.md`, `tasklist-bot.md`, `docs/plan.md` (итерация 3 ✅)
 - Детали: [task-07 summary](tasks/task-07-bot-refactor/summary.md)
 
-## Запланировано
+### Task-08: Качество и инженерные практики ✅
 
-| Задача | Статус | Фокус |
-|--------|--------|-------|
-| 08 Качество | 🚧 Next | structured logging, lint gate, `/health` optional |
+- **Logging** — middleware key=value без body/tokens; 5xx handlers — `request_id` + code/class name
+- **`GET /health`** — `{"status":"ok","version":"1.0.0"}`
+- **Docs** — Logging + Quality в `backend/README.md` и корневом README; api-contracts tech debt (422 deferred)
+- Детали: [task-08 summary](tasks/task-08-quality/summary.md)
 
 ## Решения
 
@@ -35,19 +36,21 @@
 - **Bot → API:** история и LLM только на backend; бот — thin client
 - **Тесты bot:** `httpx.MockTransport`, `monkeypatch` + отключение `load_dotenv` в config-тестах
 - **`/start`:** без сброса PG-диалога (DELETE endpoint — post-MVP)
+- **422 format:** unified ErrorBody — deferred post-MVP (task-08)
 
 ## Отклонения от плана
 
 - Backend-сервис в compose не добавляли (task-06, KISS)
 - `/start` не очищает историю в PostgreSQL (task-07, по плану)
 - Unit-тесты bot добавлены сверх минимального DoD task-07 (без Telegram e2e)
+- `/health/detailed` не делали (task-08, KISS)
 
 ## Проблемы
 
-- Нет блокеров по task-06–07
+- Нет блокеров по task-06–08
 - Для prod-like dev нужны **оба** процесса (backend + bot) — задокументировано в README
 
-## DoD итерации (прогресс)
+## DoD итерации
 
 | Критерий | Статус |
 |----------|--------|
@@ -55,13 +58,14 @@
 | OpenAPI ↔ реализация | ✅ task-06 |
 | бот через backend; история в PG | ✅ task-07 |
 | unit-тесты bot client | ✅ task-07 |
-| structured logging без секретов | ⏳ task-08 |
-| закрытие iteration-3 summary ✅ | ⏳ после task-08 |
+| structured logging без секретов | ✅ task-08 |
+| quality gate lint/test | ✅ task-08 |
+| закрытие iteration-3 summary ✅ | ✅ |
 
-| Кто | Task-06–07 | Итерация (полная) |
-|-----|------------|-------------------|
-| Агент | ✅ `make lint`, `make test` (36), `make backend-test` | ⏳ task-08 |
-| Пользователь | ✅ онбординг README; bot+backend stack | ⏳ лог без секретов |
+| Кто | Статус |
+|-----|--------|
+| Агент | ✅ `make lint`, `make test` (36), health + version |
+| Пользователь | ✅ онбординг README; bot+backend stack; лог без секретов |
 
 ## Артефакты
 
@@ -72,4 +76,4 @@
 
 ## Следующий шаг
 
-[task-08 plan](tasks/task-08-quality/plan.md) — quality gate → закрыть итерацию ✅ → [Итерация 4](../../../../../plan.md#итерация-4--аналитика-и-динамика-состояния).
+[Итерация 4 — Аналитика](../../../../../plan.md#итерация-4--аналитика-и-динамика-состояния) · backend tasklist iteration-4 (TBD).

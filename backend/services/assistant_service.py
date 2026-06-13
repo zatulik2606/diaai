@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -63,7 +64,12 @@ class AssistantService:
         else:
             user_content = body.text or ""
 
-        reply = self._llm.generate_reply(load_system_prompt(), history, user_content)
+        reply = await asyncio.to_thread(
+            self._llm.generate_reply,
+            load_system_prompt(),
+            history,
+            user_content,
+        )
 
         record = await self._requests.create(
             dialog_id=dialog.id,

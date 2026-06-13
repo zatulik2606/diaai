@@ -4,9 +4,9 @@
 
 ## Обзор
 
-Рабочий план backend: итерации **1–2** ✅ (01–05), **итерация 3** 🚧 (06–07 ✅, 08). Бот — клиент backend API; unit-тесты bot в `tests/`; осталось **task-08** (quality).
+Рабочий план backend: итерации **1–3** ✅ (01–08). Бот — клиент backend API; unit-тесты bot в `tests/`. **Backend delivery complete** — следующий этап: итерация 4 (аналитика).
 
-**Прогресс:** **7 / 8** задач ✅ · **итерация 3:** 2 / 3 · **текущая:** task-08 · **`make test`** — 36 (21 backend + 15 bot) · [`backend/README.md`](../../backend/README.md)
+**Прогресс:** **8 / 8** задач ✅ · **`make test`** — 36 (21 backend + 15 bot) · [`backend/README.md`](../../backend/README.md)
 
 > **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); **03** — `fastapi-templates`; искать через `/find-skills`.
 
@@ -18,15 +18,15 @@
 |---|----------|--------|--------|-----------|
 | 1 | Основание | 01–02 | ✅ Done | [plan](impl/backend/iteration-1-foundation/plan.md) · [summary](impl/backend/iteration-1-foundation/summary.md) |
 | 2 | Реализация ядра | 03–05 | ✅ Done | [plan](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md) |
-| 3 | Поставка | 06–08 | 🚧 In Progress (06–07 ✅) | [plan](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md) |
+| 3 | Поставка | 06–08 | ✅ Done | [plan](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md) |
 
 ## Связь с plan.md
 
 | plan.md | Tasklist | Зависимости |
 |---------|----------|-------------|
 | [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | backend итерации 1–2 ✅ (01–05) | [iteration-2 summary](impl/backend/iteration-2-core/summary.md) ✅ |
-| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-06–07 ✅, task-08 🚧 + [tasklist-bot.md](tasklist-bot.md) ✅ | [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) |
-| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | после закрытия backend 01–08 | итерация 3 |
+| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-06–08 ✅ + [tasklist-bot.md](tasklist-bot.md) ✅ | [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) ✅ |
+| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | next | итерация 3 ✅ |
 
 ## Легенда статусов
 
@@ -45,7 +45,7 @@
 | 05 | Endpoint'ы и серверная логика | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md) |
 | 06 | Документирование backend | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md) |
 | 07 | Рефакторинг бота → API | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
-| 08 | Качество и инженерные практики | 🚧 Next | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
+| 08 | Качество и инженерные практики | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
 
 Задачи выполняются **последовательно** (01 → 08).
 
@@ -261,11 +261,11 @@
 
 ---
 
-## Блок 3: Поставка (задачи 06–08) 🚧
+## Блок 3: Поставка (задачи 06–08) ✅
 
 → [iteration-3-delivery/plan.md](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md)
 
-**Прогресс блока:** 2 / 3 (task-06–07 ✅)
+**Прогресс блока:** 3 / 3 ✅
 
 ---
 
@@ -340,7 +340,7 @@
 
 ---
 
-## Задача 08: Качество и инженерные практики 🚧 Next
+## Задача 08: Качество и инженерные практики ✅
 
 ### Цель
 
@@ -349,9 +349,9 @@
 ### Состав работ
 
 - [x] ruff + `make lint` / `make test` *(backend + bot + tests/)*
-- [ ] Structured logging (request id, status); без промптов и ПДн
-- [ ] Правила изменения контрактов в `docs/api/`
-- [ ] Финальная актуализация: [vision.md](../vision.md), [plan.md](../plan.md)
+- [x] Structured logging (request id, status); без промптов и ПДн
+- [x] Правила изменения контрактов в `docs/api/`
+- [x] Финальная актуализация: README, api-contracts, `/health` + version
 
 ### Артефакты
 

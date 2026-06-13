@@ -2,6 +2,8 @@ from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_INSECURE_SERVICE_TOKENS = frozenset({"", "change-me"})
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
@@ -15,6 +17,12 @@ class Settings(BaseSettings):
     llm_model: str = "openrouter/auto"
     llm_max_history: int = 10
     llm_timeout_seconds: float = 30.0
+
+
+def validate_service_token(settings: Settings) -> None:
+    if settings.backend_service_token in _INSECURE_SERVICE_TOKENS:
+        msg = "Set BACKEND_SERVICE_TOKEN to a secure value in .env (not 'change-me')"
+        raise RuntimeError(msg)
 
 
 @lru_cache

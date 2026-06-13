@@ -56,3 +56,10 @@ MVP-бот — тонкий клиент backend API (история в PostgreS
 
 1. Backend: [backend/README.md](backend/README.md) — `docker compose up -d` → `make backend-migrate` → `make backend-run`
 2. Бот: `make install && make run` (в отдельном терминале)
+
+## Quality
+
+```bash
+make lint    # ruff: src, backend, tests
+make test    # 36 tests (21 backend + 15 bot)
+```

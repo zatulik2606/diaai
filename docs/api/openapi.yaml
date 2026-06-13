@@ -30,6 +30,9 @@ paths:
                   status:
                     type: string
                     example: ok
+                  version:
+                    type: string
+                    example: "1.0.0"
 
   /api/v1/assistant/messages:
     post:
@@ -186,6 +189,7 @@ components:
           minLength: 1
         image_base64:
           type: string
+          description: Base64 image; decoded size must not exceed 5 MB
         image_media_type:
           type: string
           default: image/jpeg

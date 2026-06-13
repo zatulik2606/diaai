@@ -29,7 +29,7 @@ def build_handlers(backend_client: BackendClient) -> Router:
             return
 
         chat_id = message.chat.id
-        logger.info("Incoming message chat_id=%s", chat_id)
+        logger.info("Incoming message chat_id=%s text_len=%s", chat_id, len(user_text))
 
         try:
             reply = await backend_client.send_assistant_message(chat_id, text=user_text)
@@ -42,7 +42,6 @@ def build_handlers(backend_client: BackendClient) -> Router:
     @router.message(F.photo)
     async def photo_handler(message: Message) -> None:
         chat_id = message.chat.id
-        logger.info("Incoming photo chat_id=%s", chat_id)
 
         if not message.photo:
             await message.answer("Не удалось прочитать фото. Попробуйте отправить снова.")
@@ -51,7 +50,9 @@ def build_handlers(backend_client: BackendClient) -> Router:
         photo = message.photo[-1]
         file_info = await message.bot.get_file(photo.file_id)
         file_bytes = await message.bot.download_file(file_info.file_path)
-        image_base64 = base64.b64encode(file_bytes.read()).decode("utf-8")
+        raw = file_bytes.read()
+        image_base64 = base64.b64encode(raw).decode("utf-8")
+        logger.info("Incoming photo chat_id=%s image_bytes=%s", chat_id, len(raw))
 
         caption = (message.caption or "").strip()
         text_part = caption or "Оцени состав и ориентировочные ХЕ по фото."

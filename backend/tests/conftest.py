@@ -1,3 +1,5 @@
+import base64
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
@@ -79,7 +81,7 @@ def assistant_photo_payload() -> dict:
     return {
         "telegram_id": 123456789,
         "text": "Оцени фото",
-        "image_base64": "abc123",
+        "image_base64": base64.b64encode(b"fake-image-bytes").decode(),
     }
 
 

@@ -93,27 +93,29 @@ flowchart LR
 - события питания и инсулина сохраняются в PostgreSQL ✅
 - данные не теряются при перезапуске ✅
 
-**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [iteration-2 ✅](tasks/impl/backend/iteration-2-core/summary.md), [iteration-3 🚧](tasks/impl/backend/iteration-3-delivery/plan.md) (07–08)
+**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [iteration-2 ✅](tasks/impl/backend/iteration-2-core/summary.md), [iteration-3 ✅](tasks/impl/backend/iteration-3-delivery/summary.md)
 
 ---
 
 ### Итерация 3 — Миграция бота на backend `✅ Done`
 
-**Прогресс:** backend task-07 ✅ — bot → API, история в PostgreSQL.
+**Прогресс:** backend task-06–08 ✅ — bot → API, quality gate, история в PostgreSQL.
 
 **Ценность:** бот становится тонким клиентом; единый контекст для всех будущих интерфейсов.
 
 **Что сделано:**
-- `src/diaai/backend_client.py` — httpx → `POST /api/v1/assistant/messages`
+- `src/diaai/backend_client.py` — httpx → backend API v1
 - prod-путь без `LlmClient` / `SessionStore`
 - env: `BACKEND_URL`, `BACKEND_SERVICE_TOKEN`
+- structured logging, `/health` + version, quality docs (task-08)
 
 **Критерии завершения:**
 - бот не хранит состояние локально ✅
 - история диалога персистентна между запусками бота ✅
 - поведение для пользователя не изменилось ✅
+- lint/test без утечки секретов в логах ✅
 
-**Tasklist:** [tasklist-bot.md](tasks/tasklist-bot.md) · [task-07 summary](tasks/impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md)
+**Tasklist:** [tasklist-bot.md](tasks/tasklist-bot.md) · [tasklist-backend.md](tasks/tasklist-backend.md) · [iteration-3 summary](tasks/impl/backend/iteration-3-delivery/summary.md)
 
 ---
 

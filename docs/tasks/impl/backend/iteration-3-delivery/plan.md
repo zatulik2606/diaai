@@ -10,7 +10,7 @@ Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) · [pytho
 
 ## Статус
 
-🚧 In Progress — **task-08** next (task-06–07 ✅).
+✅ Done — задачи 06–08 (2026-06-07).
 
 ## Ценность
 
@@ -62,7 +62,7 @@ flowchart TB
 |---|--------|--------|-----------|
 | 06 | Документирование backend | ✅ Done | [plan](tasks/task-06-backend-docs/plan.md) · [summary](tasks/task-06-backend-docs/summary.md) |
 | 07 | Рефакторинг бота → API | ✅ Done | [plan](tasks/task-07-bot-refactor/plan.md) · [summary](tasks/task-07-bot-refactor/summary.md) |
-| 08 | Качество и инженерные практики | 🚧 Next | [plan](tasks/task-08-quality/plan.md) · [summary](tasks/task-08-quality/summary.md) |
+| 08 | Качество и инженерные практики | ✅ Done | [plan](tasks/task-08-quality/plan.md) · [summary](tasks/task-08-quality/summary.md) |
 
 ### Task-06 ✅
 

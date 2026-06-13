@@ -42,4 +42,4 @@ async def test_invalid_bearer_on_food_returns_401(
 async def test_health_no_auth_required(client) -> None:
     response = await client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    assert response.json() == {"status": "ok", "version": "1.0.0"}
