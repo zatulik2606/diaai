@@ -5,28 +5,37 @@ alwaysApply: true
 
 # Conventions
 
-Полная спецификация: [docs/vision.md](docs/vision.md). При неясностях — сверяйся с документом, не выдумывай.
+Полная спецификация: [docs/vision.md](docs/vision.md). ADR: [docs/adr/](docs/adr/). При неясностях — сверяйся с документами, не выдумывай.
 
 ## Стек
 
-Python 3.12+, `uv sync`, aiogram 3 (polling), OpenRouter через `openai`-клиент, `ruff`, команды через `Makefile`.
+**Общее:** Python 3.12+, `uv sync`, `ruff`, команды через `Makefile`.
+
+**Bot (MVP, `src/diaai/`):** aiogram 3 (polling), OpenRouter через `openai`-клиент. До task-07: SessionStore (RAM), прямой вызов LLM.
+
+**Backend (`backend/`, [ADR-002](docs/adr/adr-002-backend-stack.md)):** FastAPI, Uvicorn, PostgreSQL, SQLAlchemy 2, Alembic, pydantic-settings, pytest + httpx.
 
 ## Принципы кода
 
 - **KISS** — минимум слоёв и абстракций, без преждевременной оптимизации.
-- **Один класс — один файл** в `src/diaai/` (`bot.py`, `handlers.py`, `llm_client.py`, …).
-- **Тонкий бот, умная LLM** — диалоговая логика в `prompts/system.txt`, бот маршрутизирует и вызывает API.
-- **MVP без БД** — состояние только в `SessionStore` (RAM), без персистентности.
-- **Конфиг через env** — секреты и настройки в `.env`, образец в `.env.example`; не хардкодить, не коммитить.
+- **Backend as core** — бизнес-логика и LLM в backend; bot/web — тонкие клиенты (целевое состояние).
+- **Один класс — один файл** в `src/diaai/` и в `backend/` (`config.py`, `services/llm_service.py`, …).
+- **Тонкий бот, умная LLM** — диалоговая логика в `prompts/system.txt`; бот маршрутизирует, backend исполняет.
+- **Конфиг через env** — секреты в `.env`, образец в `.env.example`; не хардкодить, не коммитить.
 
 ## Что делать / чего не делать
 
 | Делай | Не делай |
 |-------|----------|
-| Добавляй код в существующую структуру `src/diaai/` | Новые фреймворки, ORM, RAG, лишние сервисы |
-| `make lint` / `make format` перед сдачей | Логировать промпты, тексты сообщений, токены |
-| Обрабатывать ошибки API понятным сообщением пользователю | Назначать дозы инсулина — только обсуждение в контексте |
+| Bot: код в `src/diaai/`; Backend: код в `backend/` | Новые фреймворки, ORM-слои ради слоёв, RAG, лишние сервices |
+| `make lint` / `make format` (и `backend-*` когда появятся) | Логировать промпты, тексты сообщений, токены |
+| API-контракты в `docs/api/`; изменения — по соглашениям task-02 | Назначать дозы инсулина — только обсуждение в контексте |
+| Миграции БД через Alembic | Хранить фото в PostgreSQL (ссылки + object storage позже) |
 
 ## Поток данных
 
-Telegram → handlers → `SessionStore` → `LlmClient` → ответ → обновление истории. Фото — через Telegram API в multimodal-запрос.
+**Целевой:** Telegram → handlers → **backend API** → PostgreSQL / OpenRouter → ответ.
+
+**MVP-бот (до task-07):** Telegram → handlers → SessionStore → LlmClient → ответ.
+
+Фото — multimodal-запрос к OpenRouter через backend (целевое) или напрямую из бота (текущее MVP).

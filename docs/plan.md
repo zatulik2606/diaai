@@ -80,7 +80,7 @@ flowchart LR
 **Ценность:** данные сохраняются между сессиями; появляется персистентный контекст пользователя.
 
 **Что включает:**
-- REST API (backend): аутентификация, эндпоинты для событий питания, инсулина, диалогов
+- REST API (FastAPI, см. [ADR-002](adr/adr-002-backend-stack.md)): аутентификация, эндпоинты для событий питания, инсулина, диалогов
 - PostgreSQL: схема и миграции для ключевых сущностей (см. [data-model.md](data-model.md))
 - Сущности: Пользователь, Диалог, Запрос, Событие питания, Событие инсулина
 - Базовый анализ фото через LLM на стороне backend
@@ -164,3 +164,4 @@ flowchart LR
 | [templates/workflow.md](templates/workflow.md) | процесс работы и структура tasklist'ов |
 | [prompts/generate-tasklist.md](prompts/generate-tasklist.md) | prompt и эталон декомпозиции tasklist'ов |
 | [tasks/tasklist-backend.md](tasks/tasklist-backend.md) | детализация итераций 2 и 4 (backend) |
+| [api/conventions.md](api/conventions.md) | коды ошибок и соглашения REST API |

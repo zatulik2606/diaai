@@ -26,7 +26,7 @@
 
 | Задача | Описание | Статус | Документы |
 |--------|----------|--------|-----------|
-| 01 | Стек, ADR, conventions | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-01-stack-adr/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-01-stack-adr/summary.md) |
+| 01 | Стек, ADR, conventions | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-01-stack-adr/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-01-stack-adr/summary.md) |
 | 02 | API-контракты (2 сценария) | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-02-api-contracts/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-02-api-contracts/summary.md) |
 | 03 | Каркас backend | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-03-scaffold/summary.md) |
 | 04 | API-тесты сценариев бота | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-04-api-tests/summary.md) |
@@ -43,7 +43,7 @@
 
 ---
 
-## Задача 01: Стек, ADR, conventions 📋
+## Задача 01: Стек, ADR, conventions ✅
 
 ### Цель
 
@@ -51,10 +51,10 @@
 
 ### Состав работ
 
-- [ ] Сравнить варианты стека; оформить `docs/adr/adr-002-backend-stack.md`
-- [ ] Обновить [.cursor/rules/conventions.mdc](../../.cursor/rules/conventions.mdc) под backend
-- [ ] Актуализировать [vision.md](../vision.md), [plan.md](../plan.md) — стек и структура `backend/`
-- [ ] При необходимости: `/find-skills` для стека и ADR
+- [x] Сравнить варианты стека; оформить `docs/adr/adr-002-backend-stack.md`
+- [x] Обновить [.cursor/rules/conventions.mdc](../../.cursor/rules/conventions.mdc) под backend
+- [x] Актуализировать [vision.md](../vision.md), [plan.md](../plan.md) — стек и структура `backend/`
+- [x] Skills: `fastapi-templates`, `api-design-principles` (см. summary)
 
 ### Артефакты
 
@@ -88,7 +88,7 @@
 
 - [ ] **Сценарий A — вопрос ассистенту:** текст/фото → ответ LLM (сущности: Диалог, Запрос — [data-model.md](../data-model.md))
 - [ ] **Сценарий B — фиксация события:** сохранение питания / инсулина / результата задания (Событие питания, Событие инсулина)
-- [ ] Соглашения: форматы запросов/ответов, коды ошибок, версионирование API
+- [ ] Соглашения: форматы запросов/ответов, коды ошибок, версионирование API — [docs/api/conventions.md](../api/conventions.md) ✅
 - [ ] Актуализировать [data-model.md](../data-model.md), [integrations.md](../integrations.md) под контракты
 - [ ] При необходимости: `/find-skills` для OpenAPI / API design
 

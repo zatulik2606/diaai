@@ -259,6 +259,7 @@ diaai/
 | ADR | Решение | Статус |
 |-----|---------|--------|
 | [adr-001-database.md](adr/adr-001-database.md) | **PostgreSQL** — основная СУБД | Принято |
+| [adr-002-backend-stack.md](adr/adr-002-backend-stack.md) | **FastAPI** — стек backend | Принято |
 
 **Кратко (ADR-001):** PostgreSQL выбран как единая реляционная БД для backend: пользователи, события, консультации, аналитика. JSONB — для ответов LLM и метаданных; фото — в object storage; при росте временных рядов — TimescaleDB или read-replica без смены СУБД.
 
@@ -268,7 +269,25 @@ diaai/
 
 ---
 
-## Технологии (текущий MVP бота)
+## Технологии (backend)
+
+| Компонент | Выбор |
+|-----------|--------|
+| Язык | Python 3.12+ |
+| HTTP API | FastAPI, Uvicorn |
+| СУБД | PostgreSQL ([ADR-001](adr/adr-001-database.md)) |
+| ORM / миграции | SQLAlchemy 2, Alembic |
+| Конфиг | pydantic-settings, env |
+| LLM | openai-клиент → OpenRouter |
+| Тесты | pytest, httpx |
+| Линт / формат | ruff |
+| Структура | `backend/` — см. [ADR-002](adr/adr-002-backend-stack.md) |
+
+Стек web — на этапе реализации.
+
+---
+
+## Технологии (MVP бота)
 
 | Компонент | Выбор |
 |-----------|--------|
@@ -278,8 +297,6 @@ diaai/
 | LLM | OpenAI-compatible клиент, **OpenRouter** |
 | Линт / формат | ruff |
 | Автоматизация | Makefile: `install`, `run`, `lint`, `format` |
-
-Стек backend и web — определяется на этапе их реализации; не фиксируется в MVP.
 
 ---
 
