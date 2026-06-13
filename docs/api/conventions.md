@@ -8,6 +8,48 @@
 - Breaking changes — только в `/api/v2/`; v1 поддерживается до миграции клиентов (bot, web).
 - Non-breaking: новые optional-поля, новые endpoint'ы в v1.
 
+## Аутентификация (MVP)
+
+| Механизм | Описание |
+|----------|----------|
+| `Authorization: Bearer <token>` | Service token bot → backend; env: `BACKEND_SERVICE_TOKEN` (task-06 в `.env.example`) |
+| `telegram_id` в теле/query | Идентификация пользователя-диабетика; маппинг на Telegram `chat.id` |
+
+Web-auth и роли доктора — позже.
+
+## Заголовки
+
+| Заголовок | Обязательный | Описание |
+|-----------|--------------|----------|
+| `Authorization` | да (кроме `/health`) | Bearer service token |
+| `X-Request-Id` | нет | UUID трассировки; backend echo в логах |
+| `Content-Type` | да для POST | `application/json` |
+
+## Именование JSON
+
+- Поля: `snake_case`
+- UUID: строки RFC 4122
+- Время: ISO 8601 UTC (`…Z`)
+- Доменные сокращения в API: `xe` (ХЕ), `bje` (БЖЕ) — см. [data-model.md](../data-model.md#api-поля-v1)
+
+## Лимиты тела запроса (MVP)
+
+| Поле / ресурс | Рекомендация | Превышение |
+|---------------|--------------|------------|
+| `image_base64` (сценарий A) | ≤ 5 MB после декодирования | **413** `PAYLOAD_TOO_LARGE` (post-MVP) |
+| JSON body (прочее) | разумный размер для bot-клиента | **413** (post-MVP) |
+
+На MVP backend может отклонять слишком большие payload до введения формального 413 — логировать на сервере.
+
+## MVP deferrals (post-MVP)
+
+| Тема | Статус v1 | Сводка |
+|------|-----------|--------|
+| Pagination | `GET /events/food` — голый array | [api-contracts.md](../tech/api-contracts.md#mvp-ограничения-и-backlog) |
+| Rate limiting | не реализовано | 429 зарезервирован |
+| Idempotency keys | нет для POST events | риск дублей при retry |
+| Единый формат 422 | dual format | цель — handler в task-05 |
+
 ## Формат успешного ответа
 
 JSON. Структура — в контрактах сценариев (`docs/api/scenarios/`).
@@ -94,9 +136,10 @@ JSON. Структура — в контрактах сценариев (`docs/a
 | Ситуация | HTTP |
 |----------|------|
 | Нет `telegram_id` | 401 |
-| Событие другого пользователя | 403 |
-| Событие/диалог не найден | 404 |
-| Невалидные ХЕ/тип события | 422 |
+| `request_id` / `food_event_id` другого пользователя | 403 |
+| `request_id` / `food_event_id` не найден | 404 |
+| Невалидные ХЕ/тип события, `dose` ≤ 0 | 422 |
+| Невалидный `from`/`to` (GET food) | 422 |
 | БД недоступна | 503 |
 
 ---
@@ -117,5 +160,6 @@ JSON. Структура — в контрактах сценариев (`docs/a
 
 ## Связанные документы
 
+- [api-contracts.md](../tech/api-contracts.md) — сводка и design review
 - [tasklist-backend.md](../tasks/tasklist-backend.md) — task-02, task-04, task-05
 - [integrations.md](../integrations.md) — OpenRouter, PostgreSQL

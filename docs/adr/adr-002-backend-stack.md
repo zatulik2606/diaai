@@ -94,6 +94,8 @@ backend/
 
 Промпты LLM — в корневом `prompts/` (общие для bot и backend на переходный период).
 
+Структура и design review: [backend-structure.md](../tech/backend-structure.md) (fastapi-templates).
+
 ```mermaid
 flowchart LR
     Bot["bot src/diaai"]

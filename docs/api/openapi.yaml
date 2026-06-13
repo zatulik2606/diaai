@@ -1,0 +1,345 @@
+openapi: 3.1.0
+info:
+  title: diaai Backend API
+  version: 1.0.0
+  description: |
+    MVP backend для diaai. Сценарии: [assistant-question.md](scenarios/assistant-question.md),
+    [event-record.md](scenarios/event-record.md). Соглашения: [conventions.md](conventions.md).
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      security: []
+      tags: [system]
+      responses:
+        "200":
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /api/v1/assistant/messages:
+    post:
+      summary: Scenario A — question to assistant
+      tags: [assistant]
+      parameters:
+        - $ref: "#/components/parameters/XRequestId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssistantMessageRequest"
+      responses:
+        "200":
+          description: Assistant reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssistantMessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "502":
+          $ref: "#/components/responses/LlmUnavailable"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/events/food:
+    post:
+      summary: Scenario B — record food event
+      tags: [events]
+      parameters:
+        - $ref: "#/components/parameters/XRequestId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FoodEventCreate"
+      responses:
+        "201":
+          description: Food event created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventCreated"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+    get:
+      summary: List food events (optional MVP)
+      tags: [events]
+      parameters:
+        - name: telegram_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Food events list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FoodEvent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/events/insulin:
+    post:
+      summary: Scenario B — record insulin event
+      tags: [events]
+      parameters:
+        - $ref: "#/components/parameters/XRequestId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InsulinEventCreate"
+      responses:
+        "201":
+          description: Insulin event created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventCreated"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: BACKEND_SERVICE_TOKEN for bot → backend calls
+
+  parameters:
+    XRequestId:
+      name: X-Request-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    AssistantMessageRequest:
+      type: object
+      required: [telegram_id]
+      properties:
+        telegram_id:
+          type: integer
+          format: int64
+        text:
+          type: string
+          minLength: 1
+        image_base64:
+          type: string
+        image_media_type:
+          type: string
+          default: image/jpeg
+
+    AssistantMessageResponse:
+      type: object
+      required: [dialog_id, request_id, reply]
+      properties:
+        dialog_id:
+          type: string
+          format: uuid
+        request_id:
+          type: string
+          format: uuid
+        reply:
+          type: string
+
+    FoodEventCreate:
+      type: object
+      required: [telegram_id, description, xe, bje, source]
+      properties:
+        telegram_id:
+          type: integer
+          format: int64
+        description:
+          type: string
+          minLength: 1
+        xe:
+          type: number
+          minimum: 0
+        bje:
+          type: number
+          minimum: 0
+        proteins:
+          type: number
+          nullable: true
+        fats:
+          type: number
+          nullable: true
+        carbs:
+          type: number
+          nullable: true
+        source:
+          type: string
+          enum: [text, photo_dish, photo_product]
+        request_id:
+          type: string
+          format: uuid
+        comment:
+          type: string
+
+    InsulinEventCreate:
+      type: object
+      required: [telegram_id, dose]
+      properties:
+        telegram_id:
+          type: integer
+          format: int64
+        dose:
+          type: number
+          exclusiveMinimum: 0
+        food_event_id:
+          type: string
+          format: uuid
+        injected_at:
+          type: string
+          format: date-time
+        comment:
+          type: string
+
+    EventCreated:
+      type: object
+      required: [id, recorded_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        recorded_at:
+          type: string
+          format: date-time
+
+    FoodEvent:
+      allOf:
+        - $ref: "#/components/schemas/FoodEventCreate"
+        - type: object
+          required: [id, recorded_at]
+          properties:
+            id:
+              type: string
+              format: uuid
+            recorded_at:
+              type: string
+              format: date-time
+
+    ErrorBody:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: array
+                items:
+                  type: object
+    LlmUnavailable:
+      description: LLM provider unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+    ServiceUnavailable:
+      description: Service unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"

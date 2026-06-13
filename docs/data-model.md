@@ -14,6 +14,24 @@
 | Динамика и тренды | Снимок прогресса |
 | Рекомендации и прогноз | Рекомендация |
 | Запись к доктору | Консультация, Пользователь (доктор) |
+| Вопрос ассистенту (API) | Диалог, Запрос — [assistant-question.md](api/scenarios/assistant-question.md) |
+| Фиксация питания / инсулина (API) | Событие питания, Событие инсулина — [event-record.md](api/scenarios/event-record.md) |
+
+---
+
+## API-поля (v1)
+
+Маппинг домен → JSON REST API ([openapi.yaml](api/openapi.yaml)):
+
+| Домен | API JSON | Примечание |
+|-------|----------|------------|
+| хе | `xe` | number, ≥ 0 |
+| бже | `bje` | number, ≥ 0 |
+| белки / жиры / углеводы | `proteins`, `fats`, `carbs` | nullable |
+| Telegram chat.id | `telegram_id` | integer в теле/query |
+| доза инсулина | `dose` | фиксация факта, не назначение |
+| источник события питания | `source` | `text`, `photo_dish`, `photo_product` |
+| время события | `recorded_at`, `injected_at` | ISO 8601 UTC |
 
 ---
 
@@ -230,6 +248,6 @@ erDiagram
 
 ## Что вне scope этого документа
 
-- SQL-схемы, индексы, миграции
-- API контракты
+- SQL-схемы, индексы, миграции — task-05 backend
+- Детали endpoint'ов — [docs/api/](api/)
 - детали интеграций — см. [integrations.md](integrations.md)

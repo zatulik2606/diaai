@@ -8,13 +8,23 @@
 
 > **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); искать через `/find-skills`.
 
+## Итерации backend
+
+Сводный план: [impl/backend/plan.md](impl/backend/plan.md)
+
+| # | Название | Задачи | Статус | Документы |
+|---|----------|--------|--------|-----------|
+| 1 | Основание | 01–02 | ✅ Done | [plan](impl/backend/iteration-1-foundation/plan.md) · [summary](impl/backend/iteration-1-foundation/summary.md) |
+| 2 | Реализация ядра | 03–05 | 🚧 In Progress | [plan](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md) |
+| 3 | Поставка | 06–08 | 📋 Planned | [plan](impl/backend/iteration-3-delivery/plan.md) |
+
 ## Связь с plan.md
 
 | plan.md | Tasklist | Зависимости |
 |---------|----------|-------------|
-| [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | задачи 01–08 | итерация 1 ✅ |
-| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | задача 07 + [tasklist-bot.md](tasklist-bot.md) | задачи 05–06 |
-| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | после закрытия блока 2 | итерации 2–3 |
+| [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | backend итерации 1–3 (задачи 01–08) | итерация 1 plan.md ✅ |
+| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-07 + [tasklist-bot.md](tasklist-bot.md) | iteration-2 task-05, iteration-3 task-06 |
+| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | после закрытия backend итерации 2 | итерации 2–3 |
 
 ## Легенда статусов
 
@@ -26,20 +36,22 @@
 
 | Задача | Описание | Статус | Документы |
 |--------|----------|--------|-----------|
-| 01 | Стек, ADR, conventions | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-01-stack-adr/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-01-stack-adr/summary.md) |
-| 02 | API-контракты (2 сценария) | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-02-api-contracts/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-02-api-contracts/summary.md) |
-| 03 | Каркас backend | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-03-scaffold/summary.md) |
+| 01 | Стек, ADR, conventions | ✅ Done | [план](impl/backend/iteration-1-foundation/tasks/task-01-stack-adr/plan.md) · [summary](impl/backend/iteration-1-foundation/tasks/task-01-stack-adr/summary.md) |
+| 02 | API-контракты (2 сценария) | ✅ Done | [план](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/plan.md) · [summary](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/summary.md) |
+| 03 | Каркас backend | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-03-scaffold/summary.md) |
 | 04 | API-тесты сценариев бота | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-04-api-tests/summary.md) |
 | 05 | Endpoint'ы и серверная логика | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md) |
-| 06 | Документирование backend | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-06-backend-docs/summary.md) |
-| 07 | Рефакторинг бота → API | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-07-bot-refactor/summary.md) |
-| 08 | Качество и инженерные практики | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-08-quality/summary.md) |
+| 06 | Документирование backend | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md) |
+| 07 | Рефакторинг бота → API | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
+| 08 | Качество и инженерные практики | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
 
 Задачи выполняются **последовательно** (01 → 08).
 
 ---
 
-## Блок 1: Основание (задачи 01–02)
+## Блок 1: Основание (задачи 01–02) ✅
+
+→ [iteration-1-foundation](impl/backend/iteration-1-foundation/plan.md)
 
 ---
 
@@ -69,8 +81,8 @@
 
 ### Документы
 
-- 📋 [План](impl/backend/iteration-2-core/tasks/task-01-stack-adr/plan.md)
-- 📝 [Summary](impl/backend/iteration-2-core/tasks/task-01-stack-adr/summary.md)
+- 📋 [План](impl/backend/iteration-1-foundation/tasks/task-01-stack-adr/plan.md)
+- 📝 [Summary](impl/backend/iteration-1-foundation/tasks/task-01-stack-adr/summary.md)
 
 **Проверка блока 1 (после 01):**  
 Агент: `make lint` проходит для затронутых файлов.  
@@ -78,7 +90,7 @@
 
 ---
 
-## Задача 02: API-контракты (2 сценария) 📋
+## Задача 02: API-контракты (2 сценария) ✅
 
 ### Цель
 
@@ -86,11 +98,11 @@
 
 ### Состав работ
 
-- [ ] **Сценарий A — вопрос ассистенту:** текст/фото → ответ LLM (сущности: Диалог, Запрос — [data-model.md](../data-model.md))
-- [ ] **Сценарий B — фиксация события:** сохранение питания / инсулина / результата задания (Событие питания, Событие инсулина)
-- [ ] Соглашения: форматы запросов/ответов, коды ошибок, версионирование API — [docs/api/conventions.md](../api/conventions.md) ✅
-- [ ] Актуализировать [data-model.md](../data-model.md), [integrations.md](../integrations.md) под контракты
-- [ ] При необходимости: `/find-skills` для OpenAPI / API design
+- [x] **Сценарий A — вопрос ассистенту:** [assistant-question.md](../api/scenarios/assistant-question.md)
+- [x] **Сценарий B — фиксация события:** [event-record.md](../api/scenarios/event-record.md)
+- [x] Соглашения — [conventions.md](../api/conventions.md), [openapi.yaml](../api/openapi.yaml)
+- [x] Актуализировать [data-model.md](../data-model.md), [integrations.md](../integrations.md)
+- [x] Skills: `api-design-principles`, `fastapi-templates` (task-03+)
 
 ### Артефакты
 
@@ -104,8 +116,8 @@
 
 ### Документы
 
-- 📋 [План](impl/backend/iteration-2-core/tasks/task-02-api-contracts/plan.md)
-- 📝 [Summary](impl/backend/iteration-2-core/tasks/task-02-api-contracts/summary.md)
+- 📋 [План](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/plan.md)
+- 📝 [Summary](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/summary.md)
 
 **Проверка блока 1 (после 02):**  
 Агент: контракты покрывают handlers бота (`src/diaai/handlers.py`).  
@@ -115,34 +127,58 @@
 
 ## Блок 2: Сборка (задачи 03–05)
 
+→ [iteration-2-core](impl/backend/iteration-2-core/plan.md)
+
 ---
 
-## Задача 03: Каркас backend 📋
+## Задача 03: Каркас backend ✅
 
 ### Цель
 
-Поднять минимальный backend-сервис, готовый к реализации контрактов.
+Поднять backend-сервис с API-скелетом по [ADR-002](../adr/adr-002-backend-stack.md) и контрактам task-02 — готов к task-04 (тесты) и task-05 (impl).
+
+> Skills: [api-design-principles](.agents/skills/api-design-principles/SKILL.md) · [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md)
 
 ### Состав работ
 
-- [ ] Структура `backend/` по ADR-002; config из env
-- [ ] Health-check; `make`-команды: `backend-install`, `backend-run`, `backend-lint` (или аналог в корневом Makefile)
-- [ ] `.env.example` — переменные backend
+**Инфраструктура**
+- [ ] Структура `backend/` по ADR-002; `config.py` (pydantic-settings)
+- [ ] Запуск: `uvicorn backend.main:app`; пакет `backend` в `pyproject.toml`
+- [ ] `GET /health` (без auth); `make`: `backend-install`, `backend-run`, `backend-lint`, `backend-format`
+- [ ] `.env.example` — `BACKEND_SERVICE_TOKEN`, `BACKEND_HOST`, `BACKEND_PORT`, заготовки под БД/LLM
+- [ ] `pyproject.toml`: fastapi, uvicorn, pydantic-settings; dev: **httpx**, pytest, pytest-asyncio
+
+**API-скелет (contract-first)**
+- [ ] Роутеры `api/v1/`: `assistant`, `events` — **async** handlers; stub `501` до task-05
+- [ ] Pydantic-схемы в `schemas/` по контрактам task-02
+- [ ] Dependency `verify_service_token` — `Authorization: Bearer` (кроме `/health`)
+- [ ] Exception handlers → формат `{ "error": { "code", "message", "details" } }`
+- [ ] Lifespan в `main.py` — placeholder под БД (task-05)
+- [ ] Middleware `X-Request-Id` — async, трассировка в логах
+- [ ] OpenAPI: `/docs` согласован с [openapi.yaml](../api/openapi.yaml)
+
+**Задел под тесты (task-04)**
+- [ ] `backend/tests/conftest.py` — `AsyncClient`, fixture `app`, auth headers
 
 ### Артефакты
 
-- `backend/`, обновлённый `Makefile`, `.env.example`
+- `backend/` (`main.py`, `config.py`, `api/v1/`, `schemas/`, `tests/conftest.py`)
+- `Makefile`, `.env.example`, `pyproject.toml`
 
 ### Definition of Done
 
-**Агент:** сервис стартует, `/health` отвечает; lint/format работают.
+**Агент:** `make backend-run` → `/health` 200; `/docs` v1 paths; no token → 401; `pytest backend/tests/test_health.py` OK; lint/format OK.
 
-**Пользователь:** `make backend-run` (или эквивалент) — сервис поднимается без ошибок конфигурации.
+**Пользователь:** `make backend-run`, открыть `/docs` — endpoint'ы assistant/events на месте; `/health` отвечает.
 
 ### Документы
 
 - 📋 [План](impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md)
 - 📝 [Summary](impl/backend/iteration-2-core/tasks/task-03-scaffold/summary.md)
+
+**Проверка блока 2 (после 03):**  
+Агент: `curl /health`; `curl /api/v1/...` без Bearer → 401.  
+Пользователь: Swagger `/docs` совпадает с [openapi.yaml](../api/openapi.yaml).
 
 ---
 
@@ -150,11 +186,12 @@
 
 ### Цель
 
-Базовые тесты API для сценариев A и B до/вместе с реализацией (contract-first).
+Базовые тесты API для сценариев A и B на каркасе task-03 (routes, auth, errors).
 
 ### Состав работ
 
-- [ ] Тесты сценария A: текстовый и фото-запрос (mock LLM)
+- [ ] Тесты auth: без Bearer → 401; невалидное тело → 422
+- [ ] Тесты сценария A: текст и фото (mock LLM; stub/501 до task-05)
 - [ ] Тесты сценария B: создание события питания / инсулина
 - [ ] `make backend-test` в Makefile
 
@@ -212,6 +249,8 @@
 
 ## Блок 3: Поставка (задачи 06–08)
 
+→ [iteration-3-delivery](impl/backend/iteration-3-delivery/plan.md)
+
 ---
 
 ## Задача 06: Документирование backend 📋
@@ -240,8 +279,8 @@
 
 ### Документы
 
-- 📋 [План](impl/backend/iteration-2-core/tasks/task-06-backend-docs/plan.md)
-- 📝 [Summary](impl/backend/iteration-2-core/tasks/task-06-backend-docs/summary.md)
+- 📋 [План](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md)
+- 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md)
 
 ---
 
@@ -270,8 +309,8 @@
 
 ### Документы
 
-- 📋 [План](impl/backend/iteration-2-core/tasks/task-07-bot-refactor/plan.md)
-- 📝 [Summary](impl/backend/iteration-2-core/tasks/task-07-bot-refactor/summary.md)
+- 📋 [План](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md)
+- 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md)
 
 ---
 
@@ -300,8 +339,8 @@
 
 ### Документы
 
-- 📋 [План](impl/backend/iteration-2-core/tasks/task-08-quality/plan.md)
-- 📝 [Summary](impl/backend/iteration-2-core/tasks/task-08-quality/summary.md)
+- 📋 [План](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md)
+- 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md)
 
 **Проверка блока 3 (после 08):**  
 Агент: полный прогон `make backend-lint`, `make backend-test`, `make backend-run` + `make run`.  

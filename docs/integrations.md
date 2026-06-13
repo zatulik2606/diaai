@@ -15,18 +15,19 @@ flowchart TB
     subgraph mvp [MVP]
         TG["Telegram API"]
         OR["OpenRouter"]
+        PG["PostgreSQL"]
     end
 
     subgraph future [Future]
         S3["Object Storage"]
         Cal["Календарь / видео"]
-        PG["PostgreSQL managed"]
     end
 
     Bot <-->|HTTPS polling| TG
     Bot -->|HTTPS REST| OR
-    Backend -.->|HTTPS REST| OR
-    Backend -.->|SQL| PG
+    Bot -.->|HTTPS REST v1| Backend
+    Backend -->|HTTPS REST| OR
+    Backend -->|SQL| PG
     Backend -.->|HTTPS| S3
     Web -.->|HTTPS| Cal
     Backend -.->|HTTPS| Cal
@@ -46,7 +47,23 @@ flowchart TB
 | **Протокол** | HTTPS; long polling (MVP), webhook (возможно позже) |
 | **Критичность** | **MVP** |
 
-Компонент: `bot` (сейчас — напрямую; целевое — через backend для единого контекста).
+Компонент: `bot` (сейчас — OpenRouter напрямую; целевое — клиент backend API).
+
+---
+
+### Backend REST API
+
+| | |
+|---|---|
+| **Сервис** | diaai backend (FastAPI) · [docs/api/](../api/) |
+| **Назначение** | ядро: сценарий A (вопрос ассистенту), сценарий B (фиксация питания/инсулина) |
+| **Направление** | bidirectional |
+| **Протокол** | HTTPS REST `/api/v1` · [openapi.yaml](../api/openapi.yaml) |
+| **Критичность** | **MVP backend** (итерация 2) |
+
+Компонент: `backend`. Клиенты: `bot` (task-07), `web` (позже). Auth: `Authorization: Bearer`, `telegram_id` в теле.
+
+Контракты: [assistant-question.md](../api/scenarios/assistant-question.md), [event-record.md](../api/scenarios/event-record.md).
 
 ---
 
@@ -60,7 +77,7 @@ flowchart TB
 | **Протокол** | HTTPS REST, OpenAI-compatible API (`/v1/chat/completions`) |
 | **Критичность** | **MVP** |
 
-Компонент: `bot` (сейчас); целевое — вызовы только из `backend`.
+Компонент: `bot` (сейчас); **целевое — только `backend`** (сценарий A).
 
 Инструкция по ключам: [how-to-get-tokens.md](how-to-get-tokens.md).
 
@@ -74,9 +91,9 @@ flowchart TB
 | **Назначение** | персистентное хранение пользователей, событий, аналитики, консультаций |
 | **Направление** | bidirectional |
 | **Протокол** | SQL по TCP/TLS |
-| **Критичность** | **Future** (с первым backend; см. [adr-001-database.md](adr/adr-001-database.md)) |
+| **Критичность** | **MVP backend** (сценарий B; см. [adr-001-database.md](adr/adr-001-database.md)) |
 
-Компонент: `backend`. MVP-бот работает без БД (RAM).
+Компонент: `backend`. MVP-бот без БД (RAM) до task-07.
 
 ---
 
@@ -117,7 +134,7 @@ flowchart LR
         OR2["OpenRouter"]
     end
 
-    subgraph later [С появлением backend]
+    subgraph later [С backend MVP]
         PG2["PostgreSQL"]
         S32["Object Storage"]
     end
@@ -133,7 +150,7 @@ flowchart LR
 |------------|-------------|------|-----------|
 | **Telegram** | MVP, блокирующая | недоступность API, блокировки | понятное сообщение пользователю; мониторинг polling |
 | **OpenRouter** | MVP, блокирующая | лимиты, таймауты, смена моделей | fallback-сообщение; таймауты; `LLM_MODEL` через env |
-| **PostgreSQL** | Future | недоступность БД | retry, бэкапы; managed SLA |
+| **PostgreSQL** | MVP backend | недоступность БД | retry; события не сохраняются → 503 |
 | **Object Storage** | Future | потеря медиа | CDN/репликация; не хранить бинарники в БД |
 | **Календарь / видео** | Future | не выбран провайдер | отложено до сценария консультаций |
 
@@ -147,8 +164,7 @@ flowchart LR
 
 ## Что вне scope
 
-- Конкретные SDK и библиотеки
-- Эндпоинты и форматы payload
-- SLA и тарифы провайдеров
+- SDK и реализация клиентов
+- SLA провайдеров
 
-Детали реализации — в tasklist backend / bot.
+Эндпоинты и payload — [docs/api/](../api/).
