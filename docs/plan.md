@@ -90,7 +90,7 @@ flowchart LR
 - события питания и инсулина сохраняются в PostgreSQL
 - данные не теряются при перезапуске
 
-**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [под-итерации 2.1–2.9](tasks/tasklist-backend.md#итерации)
+**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [задачи 01–08](tasks/tasklist-backend.md#список-задач)
 
 ---
 

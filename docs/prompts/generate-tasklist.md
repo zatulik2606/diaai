@@ -27,9 +27,10 @@
 - высокий уровень: без мелких технических подзадач
 
 Для backend (docs/tasks/tasklist-backend.md) обязательно:
-- plan.md итерация 2 → под-итерации 2.1–2.9 (8 шагов ориентира + рефакторинг бота); каждая — отдельная итерация с задачами
-- секция «Качество и инженерные практики» в конце документа
-- plan.md итерация 4 → итерация 4 в tasklist (аналитика)
+- plan.md итерация 2 → задачи 01–08 (стек → контракты 2 сценария → каркас → тесты → impl → docs → bot refactor → quality)
+- DoD в двух вариантах (агент / пользователь) в каждой задаче
+- skills: рекомендовать на этапах 01–02; искать через `/find-skills`
+- plan.md итерация 4 → отдельный блок после 01–08
 ```
 
 ## Ориентир последовательности (backend)
@@ -52,7 +53,7 @@
 
 ### Backend
 
-**Итерация 2 (Planned):** под-итерации 2.1 stack-adr → 2.2 scaffold → 2.3 api-contracts → 2.4 api-impl → 2.5 storage → 2.6 entry-point → 2.7 docs-sync → 2.8 local-run → 2.9 bot-refactor
+**Итерация 2 (Planned):** task-01 stack-adr → task-02 api-contracts → task-03 scaffold → task-04 api-tests → task-05 api-impl → task-06 backend-docs → task-07 bot-refactor → task-08 quality
 
 **Итерация 4 (Planned):** task-01 analytics-contracts, task-02 progress-snapshots, task-03 recommendations, task-04 docs-and-run
 
