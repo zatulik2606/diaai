@@ -1,25 +1,25 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.api.deps import verify_service_token
+from backend.config import Settings, get_settings
+from backend.database import get_db
 from backend.exceptions import AppError
-from backend.schemas.assistant import AssistantMessageRequest
+from backend.schemas.assistant import AssistantMessageRequest, AssistantMessageResponse
+from backend.services.assistant_service import AssistantService
+from backend.services.llm_service import LlmService, get_llm_service
 
 router = APIRouter(prefix="/assistant", tags=["assistant"])
 
 
-def _not_implemented() -> None:
-    raise AppError(
-        code="NOT_IMPLEMENTED",
-        message="Endpoint not implemented yet",
-        status_code=501,
-    )
-
-
-@router.post("/messages")
+@router.post("/messages", response_model=AssistantMessageResponse)
 async def post_assistant_message(
     body: AssistantMessageRequest,
     _: None = Depends(verify_service_token),
-) -> None:
+    db: AsyncSession = Depends(get_db),
+    llm: LlmService = Depends(get_llm_service),
+    settings: Settings = Depends(get_settings),
+) -> AssistantMessageResponse:
     has_text = body.text is not None and body.text.strip() != ""
     has_image = body.image_base64 is not None and body.image_base64.strip() != ""
     if not has_text and not has_image:
@@ -28,4 +28,5 @@ async def post_assistant_message(
             message="Either text or image_base64 is required",
             status_code=400,
         )
-    _not_implemented()
+    service = AssistantService(db, llm, settings)
+    return await service.handle_message(body)

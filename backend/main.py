@@ -12,6 +12,7 @@ from starlette.responses import Response
 
 from backend.api.v1.router import api_router
 from backend.config import get_settings
+from backend.database import dispose_db, init_db
 from backend.exceptions import AppError
 from backend.schemas.errors import ErrorBody, ErrorDetail
 
@@ -20,8 +21,14 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    logger.info("Backend startup")
+    settings = get_settings()
+    if settings.database_url:
+        init_db(settings.database_url)
+        logger.info("Backend startup (database configured)")
+    else:
+        logger.warning("Backend startup without DATABASE_URL")
     yield
+    await dispose_db()
     logger.info("Backend shutdown")
 
 
@@ -45,9 +52,7 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
 
 
 def _error_response(exc: AppError) -> JSONResponse:
-    body = ErrorBody(
-        error=ErrorDetail(code=exc.code, message=exc.message, details=exc.details)
-    )
+    body = ErrorBody(error=ErrorDetail(code=exc.code, message=exc.message, details=exc.details))
     return JSONResponse(status_code=exc.status_code, content=body.model_dump(exclude_none=True))
 
 

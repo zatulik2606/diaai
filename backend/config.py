@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     backend_host: str = "127.0.0.1"
     backend_port: int = 8000
     log_level: str = "INFO"
+    database_url: str = "postgresql+asyncpg://diaai:diaai@localhost:5433/diaai"
+    openrouter_api_key: str = ""
+    llm_model: str = "openrouter/auto"
+    llm_max_history: int = 10
+    llm_timeout_seconds: float = 30.0
 
 
 @lru_cache

@@ -248,6 +248,21 @@ erDiagram
 
 ## Что вне scope этого документа
 
-- SQL-схемы, индексы, миграции — task-05 backend
 - Детали endpoint'ов — [docs/api/](api/)
 - детали интеграций — см. [integrations.md](integrations.md)
+
+---
+
+## SQL-схема MVP (task-05)
+
+Миграция: [`alembic/versions/001_initial_schema.py`](../alembic/versions/001_initial_schema.py)
+
+| Таблица | Назначение | Ключевые FK |
+|---------|------------|-------------|
+| `users` | пользователь по `telegram_id` | — |
+| `dialogs` | сессия (channel=`telegram`) | `user_id` → users |
+| `dialog_requests` | запрос + reply LLM | `dialog_id`, `user_id` |
+| `food_events` | событие питания | `user_id`, optional `request_id` |
+| `insulin_events` | событие инсулина | `user_id`, optional `food_event_id` |
+
+PhotoAnalysis, Recommendation, ProgressSnapshot — post-MVP (iteration 4+).

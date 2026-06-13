@@ -1,15 +1,28 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from backend.config import get_settings
+from backend.database import Base, get_db
 from backend.main import create_app
+from backend.services.llm_service import LlmService, get_llm_service
 
-# Task-05: override get_db here (sqlite memory or test container)
+TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
+
+class MockLlmService(LlmService):
+    def __init__(self) -> None:
+        self._model = "mock"
+        self._client = None
+
+    def generate_reply(self, system_prompt, history, user_content) -> str:
+        return "Тестовый ответ ассистента."
 
 
 @pytest.fixture(autouse=True)
 def _settings(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("BACKEND_SERVICE_TOKEN", "test-token")
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     get_settings.cache_clear()
 
 
@@ -20,9 +33,30 @@ def app():
 
 @pytest.fixture
 async def client(app):
+    engine = create_async_engine(TEST_DATABASE_URL)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    session_factory = async_sessionmaker(engine, expire_on_commit=False)
+
+    async def override_get_db():
+        async with session_factory() as session:
+            try:
+                yield session
+                await session.commit()
+            except Exception:
+                await session.rollback()
+                raise
+
+    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_llm_service] = MockLlmService
+
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
+
+    app.dependency_overrides.clear()
+    await engine.dispose()
 
 
 @pytest.fixture

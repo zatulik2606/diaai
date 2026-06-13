@@ -4,7 +4,9 @@
 
 **Сводка:** [docs/tech/api-contracts.md](../tech/api-contracts.md) — endpoint'ы, cross-cutting, design review, contract tests.
 
-**Реализация:** каркас [`backend/`](../../backend/) (task-03 ✅); 17 contract tests (task-04 ✅); impl — task-05.
+**Реализация:** [`backend/`](../../backend/) ✅ (task-05); **21** contract/impl test (`make backend-test`).
+
+**Runtime docs:** после `make backend-run` — [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) (Swagger), `/openapi.json`. Контракт в репо: [openapi.yaml](openapi.yaml). Сверка: `make backend-openapi-export` → diff с yaml.
 
 | Документ | Содержание |
 |----------|------------|

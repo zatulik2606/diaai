@@ -4,9 +4,9 @@
 
 ## Обзор
 
-Рабочий план реализации backend на [итерации 2 plan.md](../plan.md#итерация-2--backend-ядро-и-бд): вынести логику из MVP-бота в API, два базовых сценария (вопрос ассистенту, фиксация события), затем тонкий клиент.
+Рабочий план backend: итерации **1–2** ✅ (01–05), **итерация 3** 🚧 (06 ✅, 07–08). Ядро API + PostgreSQL + docs готовы; бот → API — task-07.
 
-**Прогресс:** 4 / 8 задач ✅ · **текущая:** task-05 (endpoint impl) · код: [`backend/`](../../backend/)
+**Прогресс:** **6 / 8** задач ✅ · **итерация 3:** 1 / 3 · **текущая:** task-07 (бот → API) · онбординг: [`backend/README.md`](../../backend/README.md) · PG: `localhost:5433`
 
 > **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); **03** — `fastapi-templates`; искать через `/find-skills`.
 
@@ -17,16 +17,16 @@
 | # | Название | Задачи | Статус | Документы |
 |---|----------|--------|--------|-----------|
 | 1 | Основание | 01–02 | ✅ Done | [plan](impl/backend/iteration-1-foundation/plan.md) · [summary](impl/backend/iteration-1-foundation/summary.md) |
-| 2 | Реализация ядра | 03–05 | 🚧 In Progress | [plan](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md) |
-| 3 | Поставка | 06–08 | 📋 Planned | [plan](impl/backend/iteration-3-delivery/plan.md) |
+| 2 | Реализация ядра | 03–05 | ✅ Done | [plan](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md) |
+| 3 | Поставка | 06–08 | 🚧 In Progress (06 ✅) | [plan](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md) |
 
 ## Связь с plan.md
 
 | plan.md | Tasklist | Зависимости |
 |---------|----------|-------------|
-| [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | backend итерации 1–3 (задачи 01–08) | итерация 1 plan.md ✅ |
-| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-07 + [tasklist-bot.md](tasklist-bot.md) | iteration-2 task-05, iteration-3 task-06 |
-| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | после закрытия backend итерации 2 | итерации 2–3 |
+| [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | backend итерации 1–2 ✅ (01–05) | [iteration-2 summary](impl/backend/iteration-2-core/summary.md) ✅ |
+| [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-06 ✅, task-07–08 🚧 + [tasklist-bot.md](tasklist-bot.md) | iteration-2 ✅ |
+| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | после закрытия backend 01–08 | итерация 3 |
 
 ## Легенда статусов
 
@@ -42,9 +42,9 @@
 | 02 | API-контракты (2 сценария) | ✅ Done | [план](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/plan.md) · [summary](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/summary.md) |
 | 03 | Каркас backend | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-03-scaffold/summary.md) |
 | 04 | API-тесты сценариев бота | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-04-api-tests/summary.md) |
-| 05 | Endpoint'ы и серверная логика | 🚧 Next | [план](impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md) |
-| 06 | Документирование backend | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md) |
-| 07 | Рефакторинг бота → API | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
+| 05 | Endpoint'ы и серверная логика | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md) |
+| 06 | Документирование backend | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md) |
+| 07 | Рефакторинг бота → API | 🚧 Next | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
 | 08 | Качество и инженерные практики | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
 
 Задачи выполняются **последовательно** (01 → 08).
@@ -128,7 +128,7 @@
 
 ---
 
-## Блок 2: Сборка (задачи 03–05) 🚧
+## Блок 2: Сборка (задачи 03–05) ✅
 
 → [iteration-2-core](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md)
 
@@ -208,9 +208,9 @@
 
 ### Definition of Done
 
-**Агент:** ✅ `make backend-test` зелёный; 17 тестов; auth/422/400 финальные; happy-path assert 501 (обновить в task-05).
+**Агент:** ✅ `make backend-test` зелёный; 17 тестов; auth/422/400 финальные; happy-path 501 → обновлено в task-05.
 
-**Пользователь:** ⏳ просмотреть список тестов — понятно, что проверяется до impl.
+**Пользователь:** ✅ список тестов понятен; impl в task-05.
 
 ### Документы
 
@@ -223,7 +223,7 @@
 
 ---
 
-## Задача 05: Endpoint'ы и серверная логика 🚧 Next
+## Задача 05: Endpoint'ы и серверная логика ✅
 
 ### Цель
 
@@ -231,21 +231,24 @@
 
 ### Состав работ
 
-- [ ] Сценарий A: диалог + запрос + вызов OpenRouter через backend
-- [ ] Сценарий B: CRUD событий питания/инсулина
-- [ ] PostgreSQL: миграции, репозитории ([adr-001](../adr/adr-001-database.md))
-- [ ] Идентификация по `telegram_id`
-- [ ] Актуализировать [data-model.md](../data-model.md), [integrations.md](../integrations.md)
+- [x] Сценарий A: диалог + запрос + OpenRouter через backend
+- [x] Сценарий B: CRUD событий питания/инсулина + GET list
+- [x] PostgreSQL: Alembic, ORM, repositories
+- [x] Идентификация по `telegram_id`
+- [x] Обновлены contract tests (**21**); domain 403/404
+- [x] `docker-compose.yml` (PG :5433), `make backend-migrate`
+- [x] [data-model.md](../data-model.md) — SQL-схема MVP
 
 ### Артефакты
 
-- routes/handlers в `backend/`, миграции БД
+- `backend/` — services, repositories, models, Alembic
+- `docker-compose.yml`, `alembic/`
 
 ### Definition of Done
 
-**Агент:** `make backend-test` зелёный; endpoint'ы соответствуют `docs/api/`; данные переживают перезапуск.
+**Агент:** ✅ `make backend-test` (21); endpoint'ы по `docs/api/`.
 
-**Пользователь:** curl/HTTP-клиент — вопрос и фиксация события возвращают ожидаемые ответы.
+**Пользователь:** ✅ curl A/B; assistant 200, events 201; PG persistence.
 
 ### Документы
 
@@ -253,18 +256,20 @@
 - 📝 [Summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md)
 
 **Проверка блока 2 (после 05):**  
-Агент: `make backend-test && make backend-lint`.  
-Пользователь: ручной вызов API для сценариев A и B; проверить запись в БД.
+Агент: `docker compose up -d && make backend-migrate && make backend-test` — ✅  
+Пользователь: curl assistant/food — ✅ · [iteration-2 summary](impl/backend/iteration-2-core/summary.md)
 
 ---
 
-## Блок 3: Поставка (задачи 06–08)
+## Блок 3: Поставка (задачи 06–08) 🚧
 
-→ [iteration-3-delivery](impl/backend/iteration-3-delivery/plan.md)
+→ [iteration-3-delivery/plan.md](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md)
+
+**Прогресс блока:** 1 / 3 (task-06 ✅)
 
 ---
 
-## Задача 06: Документирование backend 📋
+## Задача 06: Документирование backend ✅
 
 ### Цель
 
@@ -272,30 +277,35 @@
 
 ### Состав работ
 
-- [ ] OpenAPI (авто или `docs/api/openapi.yaml`)
-- [ ] README: быстрый старт backend
-- [ ] Актуализировать: [README.md](../../README.md), [plan.md](../plan.md), `.env.example`
-- [ ] docker-compose (backend + PostgreSQL) — при необходимости
-- [ ] `make`-команды: install, run, test, migrate, lint — единый набор
+- [x] `backend/README.md` — quick start, env, curl, troubleshooting
+- [x] OpenAPI sync: paths совпадают; `make backend-openapi-export` для diff
+- [x] docker-compose: healthcheck PostgreSQL, комментарии (порт 5433)
+- [x] Актуализировать: [README.md](../../README.md), [plan.md](../plan.md), [docs/api/README.md](../api/README.md), `.env.example`
+- [x] docker-compose PostgreSQL
+- [x] `make backend-migrate`, `backend-run`, `backend-test`, `backend-lint`, `backend-openapi-export`
 
 ### Артефакты
 
-- OpenAPI, README, `docker-compose.yml` (если нужен)
+- [`backend/README.md`](../../backend/README.md), OpenAPI yaml, `docker-compose.yml`
 
 ### Definition of Done
 
-**Агент:** новый участник поднимает backend только по README и `.env.example`.
+**Агент:** ✅ новый участник поднимает backend только по README и `.env.example`.
 
-**Пользователь:** следовать README с нуля — backend и БД работают; OpenAPI совпадает с реализацией.
+**Пользователь:** ✅ следовать README с нуля — backend и БД работают; OpenAPI совпадает с реализацией.
 
 ### Документы
 
 - 📋 [План](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md)
 - 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md)
 
+**Проверка блока 3 (после 06):**  
+Агент: `make backend-test` (21), `make backend-lint` — ✅  
+Пользователь: онбординг по [`backend/README.md`](../../backend/README.md) — ✅
+
 ---
 
-## Задача 07: Рефакторинг бота → API 📋
+## Задача 07: Рефакторинг бота → API 🚧 Next
 
 ### Цель
 

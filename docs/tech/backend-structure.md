@@ -4,7 +4,7 @@
 
 ## Статус реализации
 
-Каталог `backend/` **создан** (task-03 ✅). Contract tests **17** (task-04 ✅). Слои `database/`, `services/`, `repositories/`, `models/` — task-05.
+Каталог `backend/` **реализован** (task-03–05 ✅). Слои `services/`, `repositories/`, `models/`, `database.py` — task-05.
 
 ## Целевое дерево (MVP)
 

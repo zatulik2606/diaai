@@ -12,7 +12,7 @@
 
 | Механизм | Описание |
 |----------|----------|
-| `Authorization: Bearer <token>` | Service token bot → backend; env: `BACKEND_SERVICE_TOKEN` (task-06 в `.env.example`) |
+| `Authorization: Bearer <token>` | Service token bot → backend; env: `BACKEND_SERVICE_TOKEN` (см. [backend/README.md](../../backend/README.md)) |
 | `telegram_id` в теле/query | Идентификация пользователя-диабетика; маппинг на Telegram `chat.id` |
 
 Web-auth и роли доктора — позже.

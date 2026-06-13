@@ -2,25 +2,31 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_assistant_text_stub_501(client, auth_headers, assistant_text_payload) -> None:
+async def test_assistant_text_returns_200(client, auth_headers, assistant_text_payload) -> None:
     response = await client.post(
         "/api/v1/assistant/messages",
         headers=auth_headers,
         json=assistant_text_payload,
     )
-    assert response.status_code == 501
-    assert response.json()["error"]["code"] == "NOT_IMPLEMENTED"
+    assert response.status_code == 200
+    body = response.json()
+    assert body["dialog_id"]
+    assert body["request_id"]
+    assert body["reply"] == "Тестовый ответ ассистента."
 
 
 @pytest.mark.asyncio
-async def test_assistant_photo_stub_501(client, auth_headers, assistant_photo_payload) -> None:
+async def test_assistant_photo_returns_200(client, auth_headers, assistant_photo_payload) -> None:
     response = await client.post(
         "/api/v1/assistant/messages",
         headers=auth_headers,
         json=assistant_photo_payload,
     )
-    assert response.status_code == 501
-    assert response.json()["error"]["code"] == "NOT_IMPLEMENTED"
+    assert response.status_code == 200
+    body = response.json()
+    assert body["dialog_id"]
+    assert body["request_id"]
+    assert body["reply"]
 
 
 @pytest.mark.asyncio

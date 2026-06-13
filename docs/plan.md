@@ -35,8 +35,8 @@
 ```mermaid
 flowchart LR
     E1["1. MVP бота\n✅ Done"]
-    E2["2. Backend + БД\n🚧 In Progress"]
-    E3["3. Bot → Backend\n📋 Planned"]
+    E2["2. Backend + БД\n✅ Done"]
+    E3["3. Bot → Backend\n🚧 In Progress"]
     E4["4. Аналитика\n📋 Planned"]
     E5["5. Веб-интерфейс\n📋 Planned"]
 
@@ -46,8 +46,8 @@ flowchart LR
 | Итерация | Название | Цель | Статус | Tasklist |
 |----------|----------|------|--------|----------|
 | 1 | MVP Telegram-бота | Запустить первый клиент с диалогом и анализом фото | ✅ Done | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
-| 2 | Backend-ядро и БД | Вынести данные и логику сопровождения в единый backend | 🚧 In Progress | [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) |
-| 3 | Миграция бота на backend | Сделать бота тонким клиентом без локального состояния | 📋 Planned | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
+| 2 | Backend-ядро и БД | Вынести данные и логику сопровождения в единый backend | ✅ Done | [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) |
+| 3 | Миграция бота на backend | Сделать бота тонким клиентом без локального состояния | 🚧 In Progress | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
 | 4 | Аналитика и динамика состояния | Добавить прогресс, тренды и сигналы изменений | 📋 Planned | [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) |
 | 5 | Веб-интерфейс (диабетик/доктор) | Дать единый web-доступ к данным и консультациям | 📋 Planned | [docs/tasks/tasklist-web.md](tasks/tasklist-web.md) |
 
@@ -75,30 +75,29 @@ flowchart LR
 
 ---
 
-### Итерация 2 — Backend-ядро и БД `🚧 In Progress`
+### Итерация 2 — Backend-ядро и БД `✅ Done`
 
 **Основание (backend итерация 1) ✅:** ADR-002, REST-контракты v1 — [summary](tasks/impl/backend/iteration-1-foundation/summary.md).
 
-**Прогресс backend (4/8 задач):** каркас FastAPI + stub v1 ✅ (task-03); contract tests 17 ✅ (task-04); endpoint impl + PostgreSQL 🚧 (task-05).
+**Прогресс backend (6/8 задач):** impl endpoint'ов A/B + PostgreSQL ✅ (task-05); документация backend ✅ (task-06).
 
 **Ценность:** данные сохраняются между сессиями; появляется персистентный контекст пользователя.
 
-**Что включает:**
-- REST API (FastAPI, см. [ADR-002](adr/adr-002-backend-stack.md)): аутентификация, эндпоинты для событий питания, инсулина, диалогов
-- PostgreSQL: схема и миграции для ключевых сущностей (см. [data-model.md](data-model.md))
-- Сущности: Пользователь, Диалог, Запрос, Событие питания, Событие инсулина
-- Базовый анализ фото через LLM на стороне backend
+**Что сделано:**
+- REST API (FastAPI, [ADR-002](adr/adr-002-backend-stack.md)): auth, assistant, events
+- PostgreSQL: схема, миграции Alembic, docker-compose (порт 5433)
+- 21 тест; [backend/README.md](../backend/README.md) — онбординг
 
 **Критерии завершения:**
-- backend принимает запросы и возвращает ответы
-- события питания и инсулина сохраняются в PostgreSQL
-- данные не теряются при перезапуске
+- backend принимает запросы и возвращает ответы ✅
+- события питания и инсулина сохраняются в PostgreSQL ✅
+- данные не теряются при перезапуске ✅
 
-**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [итерация backend 1 ✅](tasks/impl/backend/iteration-1-foundation/summary.md), [итерация backend 2 🚧](tasks/impl/backend/iteration-2-core/plan.md) (03–05), [итерация backend 3 📋](tasks/impl/backend/iteration-3-delivery/plan.md) (06–08)
+**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [iteration-2 ✅](tasks/impl/backend/iteration-2-core/summary.md), [iteration-3 🚧](tasks/impl/backend/iteration-3-delivery/plan.md) (07–08)
 
 ---
 
-### Итерация 3 — Миграция бота на backend `📋 Planned`
+### Итерация 3 — Миграция бота на backend `🚧 In Progress`
 
 **Ценность:** бот становится тонким клиентом; единый контекст для всех будущих интерфейсов.
 

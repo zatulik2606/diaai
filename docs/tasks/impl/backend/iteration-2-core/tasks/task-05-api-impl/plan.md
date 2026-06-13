@@ -1,6 +1,6 @@
 # Task 05: Endpoint'ы и серверная логика
 
-Опирается на [ADR-002](../../../../../../adr/adr-002-backend-stack.md) · [data-model.md](../../../../../../data-model.md) · [task-04-api-tests/plan.md](../task-04-api-tests/plan.md)
+Опирается на [task-04-api-tests/plan.md](../task-04-api-tests/plan.md) · [ADR-002](../../../../../../adr/adr-002-backend-stack.md) · [data-model.md](../../../../../../data-model.md)
 
 Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) — lifespan, get_db, repository/service layers
 
@@ -8,78 +8,82 @@ Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) — lifes
 
 Реализовать endpoint'ы A/B по контрактам: LLM, PostgreSQL, идентификация по `telegram_id`.
 
-## Архитектура (ADR-002 + fastapi-templates)
+## Архитектура
 
 ```
 backend/
-├── main.py              # lifespan: DB connect/disconnect
+├── main.py              # lifespan: DB connect/dispose
 ├── config.py
+├── database.py          # async engine, get_db
 ├── api/v1/              # handlers → services
 ├── schemas/
 ├── services/            # assistant_service, events_service, llm_service
-├── repositories/        # user, dialog, request, food_event, insulin_event
+├── repositories/
 └── models/              # SQLAlchemy ORM
-alembic/                 # migrations
+alembic/                 # migrations (корень репо)
 ```
 
-## Состав работ
+## Фазы реализации
 
-### 1. Database (lifespan + DI)
+### 1. Database + ORM + миграция
 
-- `database.py`: async engine, `AsyncSessionLocal`, `get_db` dependency
-- lifespan в `main.py`: connect on startup, dispose on shutdown
-- Alembic: начальная миграция по [data-model.md](../../../../../../data-model.md) и [adr-001](../../../../../../adr/adr-001-database.md)
+- `database.py`: `AsyncSessionLocal`, `get_db` → 503 без БД
+- Модели: User, Dialog, DialogRequest, FoodEvent, InsulinEvent
+- Alembic `001_initial_schema`
+- `docker-compose.yml` — PostgreSQL (host port **5433**)
+- Makefile: `backend-migrate`
 
-### 2. ORM models + repositories
+### 2. Repositories
 
-- User (telegram_id), Dialog, Request, FoodEvent, InsulinEvent
-- тонкие repositories — CRUD без лишних абстракций
+- get-or-create user/dialog; CRUD events/requests
+- ownership: `request_id`, `food_event_id`
 
-### 3. Сценарий A — `POST /assistant/messages`
+### 3. LLM service
 
-- get-or-create user/dialog по `telegram_id`
-- загрузка истории (env `LLM_MAX_HISTORY`)
-- `llm_service` → OpenRouter (openai client)
-- сохранение Request + reply
-- ошибки: 400/502/503 по [conventions.md](../../../../../../api/conventions.md)
+- OpenRouter через openai-клиент; промпт `prompts/system.txt`
+- 502 `LLM_UNAVAILABLE` при ошибках
 
-### 4. Сценарий B — events
+### 4. Сценарий A — `POST /assistant/messages`
 
-- POST `/events/food`, `/events/insulin` → 201
-- GET `/events/food` (optional MVP) — list by telegram_id, from/to
-- 403/404 для чужих `request_id` / `food_event_id`
+- Response 200: `dialog_id`, `request_id`, `reply`
+- media в JSONB (PhotoAnalysis — post-MVP)
 
-### 5. Замена stub 501 на реализацию
+### 5. Сценарий B — events
 
-Обновить assertions в task-04 тестах:
+| Endpoint | Код | Domain |
+|----------|-----|--------|
+| POST `/events/food` | 201 | 403/404 `request_id` |
+| POST `/events/insulin` | 201 | 403/404 `food_event_id` |
+| GET `/events/food` | 200 | 422 invalid `from`/`to` |
 
-| Файл | task-04 | task-05 |
-|------|---------|---------|
-| `test_assistant.py` | 501 | 200 + `dialog_id`, `request_id`, `reply` |
-| `test_events.py` POST | 501 | 201 + `id`, `recorded_at` |
-| `test_events.py` GET | 501 | 200 + array |
+### 6. Тесты (обновление task-04)
 
-Добавить: 403/404 для чужих ресурсов; mock/stub OpenRouter в тестах.
-
-- все contract tests из task-04 остаются зелёными
-
-### 6. Документы
-
-- актуализировать [data-model.md](../../../../../../data-model.md), [integrations.md](../../../../../../integrations.md)
+| Файл | Изменение |
+|------|-----------|
+| `test_assistant.py` | 501→200 + mock LLM |
+| `test_events.py` | 501→201/200 |
+| `test_events_domain.py` | 403/404 |
 
 ## Затронутые файлы
 
-- `backend/services/`, `backend/repositories/`, `backend/models/`
+- `backend/services/`, `repositories/`, `models/`, `database.py`
 - `backend/api/v1/assistant.py`, `events.py`
-- `alembic/versions/`, `.env.example`
-- `docs/data-model.md`, `docs/integrations.md`
+- `alembic/versions/`, `docker-compose.yml`, `.env.example`, `pyproject.toml`
+- `docs/data-model.md` — секция SQL-схема MVP
 
 ## DoD
 
-| Кто | Критерий |
-|-----|----------|
-| Агент | `make backend-test` зелёный; данные переживают перезапуск PG |
-| Пользователь | curl — сценарии A и B; запись в БД |
+| Кто | Критерий | Статус |
+|-----|----------|--------|
+| Агент | `make backend-test` + lint; ≥20 тестов | ✅ 21 |
+| Агент | `alembic upgrade head`, `make backend-run` | ✅ |
+| Пользователь | curl A/B; данные в PG после перезапуска | ✅ проверено |
+
+## Вне scope
+
+- Bot → API (task-07)
+- PhotoAnalysis таблица, object storage
+- CORS, web auth
 
 ## Следующий шаг
 

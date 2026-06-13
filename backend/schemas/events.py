@@ -33,3 +33,18 @@ class InsulinEventCreate(BaseModel):
 class EventCreated(BaseModel):
     id: str
     recorded_at: str
+
+
+class FoodEventResponse(BaseModel):
+    id: str
+    telegram_id: int
+    description: str
+    xe: float
+    bje: float
+    proteins: float | None = None
+    fats: float | None = None
+    carbs: float | None = None
+    source: FoodSource
+    request_id: str | None = None
+    comment: str | None = None
+    recorded_at: str

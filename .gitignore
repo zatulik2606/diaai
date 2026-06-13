@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# OpenAPI export for local diff (make backend-openapi-export)
+docs/api/openapi.generated.json

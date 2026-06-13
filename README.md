@@ -6,7 +6,7 @@
 
 ## О проекте
 
-Диабет требует постоянного учёта еды, инсулина и контекста дня — это утомляет и легко теряется в голове. diaai помогает осмыслять события, замечать изменения и готовиться к разговору с врачом. Сейчас — Telegram-бот; ядро (backend) и веб — следующие этапы.
+Диабет требует постоянного учёта еды, инсулина и контекста дня — это утомляет и легко теряется в голове. diaai помогает осмыслять события, замечать изменения и готовиться к разговору с врачом. Сейчас — Telegram-бот и backend API; веб — следующий этап.
 
 ## Архитектура
 
@@ -25,15 +25,15 @@ flowchart LR
     Backend --> DB
 ```
 
-MVP-бот работает автономно (LLM напрямую, история в RAM). Целевая схема — все клиенты через backend. Подробнее: [vision.md](docs/vision.md).
+MVP-бот пока работает автономно (LLM напрямую, история в RAM). Backend API и PostgreSQL готовы; миграция бота — task-07. Подробнее: [vision.md](docs/vision.md).
 
 ## Статус
 
 | # | Этап | Статус |
 |---|------|--------|
 | 1 | MVP Telegram-бота | ✅ Done |
-| 2 | Backend-ядро и БД | 🚧 In Progress (каркас + contract tests ✅) |
-| 3 | Миграция бота на backend | 📋 Planned |
+| 2 | Backend-ядро и БД | ✅ Done |
+| 3 | Миграция бота на backend | 🚧 In Progress |
 | 4 | Аналитика и динамика | 📋 Planned |
 | 5 | Веб-интерфейс | 📋 Planned |
 
@@ -45,6 +45,8 @@ MVP-бот работает автономно (LLM напрямую, истор
 - [Архитектурное видение](docs/vision.md)
 - [Модель данных](docs/data-model.md)
 - [Интеграции](docs/integrations.md)
+- [Backend (dev)](backend/README.md)
+- [API](docs/api/)
 - [План](docs/plan.md)
 - [Задачи](docs/tasks/)
 
@@ -52,4 +54,4 @@ MVP-бот работает автономно (LLM напрямую, истор
 
 **MVP-бот (итерация 1):** токены — [how-to-get-tokens.md](docs/how-to-get-tokens.md); `cp .env.example .env`; `make install && make run`.
 
-**Backend (dev):** `cp .env.example .env` → `BACKEND_SERVICE_TOKEN`; `make backend-run` → http://127.0.0.1:8000 (`/health`, `/docs`); `make backend-test` (17 contract-тестов). Детали: [tasklist-backend](docs/tasks/tasklist-backend.md).
+**Backend (dev):** полная инструкция — [backend/README.md](backend/README.md) (`docker compose up -d` → `make backend-migrate` → `make backend-run` → `/docs`).

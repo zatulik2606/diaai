@@ -25,3 +25,9 @@ backend-lint:
 
 backend-format:
 	uv run ruff format backend
+
+backend-migrate:
+	uv run alembic upgrade head
+
+backend-openapi-export:
+	curl -s http://$${BACKEND_HOST:-127.0.0.1}:$${BACKEND_PORT:-8000}/openapi.json | uv run python -m json.tool > docs/api/openapi.generated.json

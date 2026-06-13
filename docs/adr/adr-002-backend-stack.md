@@ -137,5 +137,5 @@ flowchart LR
 ## Статус реализации (2026-06)
 
 - task-03 ✅ — каркас `backend/`, stub v1
-- task-04 ✅ — 17 contract tests, `make backend-test`
-- task-05 🚧 — impl + PostgreSQL
+- task-05 ✅ — endpoint impl + PostgreSQL, 21 tests
+- task-06 🚧 — docs
