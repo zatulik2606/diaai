@@ -31,4 +31,4 @@
 
 ## Следующий шаг
 
-[Итерация backend 2](../iteration-2-core/plan.md) — task-03 ✅, task-04 api-tests.
+[Итерация backend 2](../iteration-2-core/plan.md) — task-03 ✅, task-04 ✅; текущий фокус task-05 (impl).

@@ -79,6 +79,8 @@ flowchart LR
 
 **Основание (backend итерация 1) ✅:** ADR-002, REST-контракты v1 — [summary](tasks/impl/backend/iteration-1-foundation/summary.md).
 
+**Прогресс backend (4/8 задач):** каркас FastAPI + stub v1 ✅ (task-03); contract tests 17 ✅ (task-04); endpoint impl + PostgreSQL 🚧 (task-05).
+
 **Ценность:** данные сохраняются между сессиями; появляется персистентный контекст пользователя.
 
 **Что включает:**

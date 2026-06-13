@@ -20,7 +20,7 @@
 | 2 | Сборка ядра | 03–05 | 🚧 In Progress | [iteration-2-core/plan.md](iteration-2-core/plan.md) · [summary](iteration-2-core/summary.md) |
 | 3 | Поставка | 06–08 | 📋 Planned | [iteration-3-delivery/plan.md](iteration-3-delivery/plan.md) |
 
-**Текущий фокус:** iteration-2, task-04 (API-тесты).
+**Текущий фокус:** iteration-2, task-05 (endpoint impl).
 
 ## Связь с plan.md (продукт)
 
@@ -53,8 +53,8 @@ flowchart LR
 | 01 | Стек, ADR | ✅ |
 | 02 | API-контракты | ✅ |
 | 03 | Каркас backend | ✅ |
-| 04 | API-тесты | 📋 |
-| 05 | Endpoint'ы + БД | 📋 |
+| 04 | API-тесты | ✅ |
+| 05 | Endpoint'ы + БД | 🚧 Next |
 | 06 | Документирование | 📋 |
 | 07 | Рефакторинг бота | 📋 |
 | 08 | Качество | 📋 |
@@ -63,10 +63,11 @@ flowchart LR
 
 - [x] ADR-002, REST-контракты v1
 - [x] FastAPI-каркас, `/health`, stub v1, auth
-- [ ] Contract tests + impl A/B в PostgreSQL
+- [x] Contract tests (17) — auth/422/400/501
+- [ ] Impl A/B в PostgreSQL
 - [ ] README, docker-compose, bot → API
 - [ ] lint/test/run, логи без секретов
 
 ## Документы
 
-- 📝 [Summary](summary.md) — по закрытии всех итераций backend
+- 📝 [Summary](summary.md) — прогресс области (4/8 задач)

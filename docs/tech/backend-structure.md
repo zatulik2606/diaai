@@ -4,7 +4,7 @@
 
 ## Статус реализации
 
-Каталог `backend/` **создан** (task-03 ✅). Слои `database/`, `services/`, `repositories/`, `models/` — task-05.
+Каталог `backend/` **создан** (task-03 ✅). Contract tests **17** (task-04 ✅). Слои `database/`, `services/`, `repositories/`, `models/` — task-05.
 
 ## Целевое дерево (MVP)
 
@@ -27,8 +27,12 @@ backend/
 │   ├── events.py
 │   └── errors.py
 └── tests/
-    ├── conftest.py           # AsyncClient, auth_headers
-    └── test_health.py
+    ├── conftest.py           # AsyncClient, auth/payload fixtures
+    ├── test_health.py
+    ├── test_auth.py          # task-04
+    ├── test_validation.py    # task-04
+    ├── test_assistant.py     # task-04
+    └── test_events.py        # task-04
 ```
 
 ### Task-05 — дополнение
@@ -75,7 +79,7 @@ alembic.ini
 | Router aggregation | `api/v1/router.py` → `include_router(..., prefix="/api/v1")` |
 | Pydantic schemas отдельно от routes | `backend/schemas/` |
 | Service / repository слои | task-05; тонкие repos без base generic на MVP |
-| Testing | httpx `AsyncClient`, `ASGITransport`, fixtures (task-03/04) |
+| Testing | httpx `AsyncClient`, `ASGITransport`, fixtures (task-03/04); 17 contract tests |
 | App factory | `create_app()` для tests (task-03) |
 
 ### Warn (зафиксировано, не блокирует MVP)
@@ -150,5 +154,6 @@ Task-05 добавит: `sqlalchemy[asyncio]`, `asyncpg`, `alembic`.
 |----------|------------|
 | [api-contracts.md](api-contracts.md) | REST v1, endpoints |
 | [task-03 plan](../tasks/impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) | каркас |
+| [task-04 plan](../tasks/impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) | contract tests |
 | [task-05 plan](../tasks/impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) | impl + БД |
 | [ADR-002](../adr/adr-002-backend-stack.md) | стек |

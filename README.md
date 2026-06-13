@@ -32,7 +32,7 @@ MVP-бот работает автономно (LLM напрямую, истор
 | # | Этап | Статус |
 |---|------|--------|
 | 1 | MVP Telegram-бота | ✅ Done |
-| 2 | Backend-ядро и БД | 📋 Planned |
+| 2 | Backend-ядро и БД | 🚧 In Progress (каркас + contract tests ✅) |
 | 3 | Миграция бота на backend | 📋 Planned |
 | 4 | Аналитика и динамика | 📋 Planned |
 | 5 | Веб-интерфейс | 📋 Planned |
@@ -52,4 +52,4 @@ MVP-бот работает автономно (LLM напрямую, истор
 
 **MVP-бот (итерация 1):** токены — [how-to-get-tokens.md](docs/how-to-get-tokens.md); `cp .env.example .env`; `make install && make run`.
 
-**Backend и полный стенд:** инструкция появится после реализации итерации 2 ([tasklist-backend](docs/tasks/tasklist-backend.md)).
+**Backend (dev):** `cp .env.example .env` → `BACKEND_SERVICE_TOKEN`; `make backend-run` → http://127.0.0.1:8000 (`/health`, `/docs`); `make backend-test` (17 contract-тестов). Детали: [tasklist-backend](docs/tasks/tasklist-backend.md).

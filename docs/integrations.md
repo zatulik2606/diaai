@@ -61,7 +61,7 @@ flowchart TB
 | **Протокол** | HTTPS REST `/api/v1` · [openapi.yaml](../api/openapi.yaml) |
 | **Критичность** | **MVP backend** (итерация 2) |
 
-Компонент: `backend`. Клиенты: `bot` (task-07), `web` (позже). Auth: `Authorization: Bearer`, `telegram_id` в теле.
+Компонент: `backend` (task-03 ✅ каркас, task-04 ✅ contract tests; task-05 impl + PostgreSQL). Клиенты: `bot` (task-07), `web` (позже). Auth: `Authorization: Bearer`, `telegram_id` в теле.
 
 Контракты: [assistant-question.md](../api/scenarios/assistant-question.md), [event-record.md](../api/scenarios/event-record.md).
 

@@ -51,7 +51,17 @@ alembic/                 # migrations
 
 ### 5. Замена stub 501 на реализацию
 
-- все contract tests из task-04 зелёные
+Обновить assertions в task-04 тестах:
+
+| Файл | task-04 | task-05 |
+|------|---------|---------|
+| `test_assistant.py` | 501 | 200 + `dialog_id`, `request_id`, `reply` |
+| `test_events.py` POST | 501 | 201 + `id`, `recorded_at` |
+| `test_events.py` GET | 501 | 200 + array |
+
+Добавить: 403/404 для чужих ресурсов; mock/stub OpenRouter в тестах.
+
+- все contract tests из task-04 остаются зелёными
 
 ### 6. Документы
 

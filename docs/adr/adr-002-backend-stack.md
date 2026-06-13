@@ -133,3 +133,9 @@ flowchart LR
 - [adr-001-database.md](adr-001-database.md)
 - [vision.md](../vision.md)
 - [tasklist-backend.md](../tasks/tasklist-backend.md)
+
+## Статус реализации (2026-06)
+
+- task-03 ✅ — каркас `backend/`, stub v1
+- task-04 ✅ — 17 contract tests, `make backend-test`
+- task-05 🚧 — impl + PostgreSQL

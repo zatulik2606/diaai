@@ -1,34 +1,33 @@
 # Итерация backend 2: Summary
 
-> **Статус итерации:** 🚧 In Progress (task-04). Summary обновляется по закрытии task-05.
+> **Статус итерации:** 🚧 In Progress (task-05). Summary обновляется по закрытии task-05.
 
 ## Сделано
 
 ### Task-03: Каркас backend ✅
 
 - Пакет [`backend/`](../../../../../backend/): FastAPI, lifespan, RequestIdMiddleware
-- API v1: `/assistant/messages`, `/events/food`, `/events/insulin` — stub 501
-- Auth Bearer → 401; ErrorBody; Pydantic schemas по openapi
-- `Makefile` (`backend-*`), `pyproject.toml`, `.env.example`
-- Tests: `test_health.py`, `test_auth.py` — `make backend-test` зелёный
-- Документы: [backend-structure.md](../../../tech/backend-structure.md)
+- API v1 stub 501; auth; schemas; Makefile; `.env.example`
 - Детали: [task-03 summary](tasks/task-03-scaffold/summary.md)
 
-### Task-04, Task-05
+### Task-04: API-тесты ✅
 
-- 📋 не начаты
+- 17 contract-тестов: auth (4), validation (5), assistant (4), events (3), health (1)
+- Happy-path assert 501; error paths финальные (401/422/400)
+- Проверка: `make backend-test`, coverage backend ~99%
+- Детали: [task-04 summary](tasks/task-04-api-tests/summary.md)
+
+### Task-05
+
+- 🚧 Next — endpoint impl + PostgreSQL
 
 ## Решения
 
-- Пакет `backend/` в корне репо; `diaai` в `src/`
-- `create_app()` для тестов; GET `/health` вне `/api/v1`
-- 400 для пустого text+image в assistant (до impl)
+- Stub-тесты зелёные на 501; TDD handoff в task-05
+- 403/404 — только с БД (task-05)
+- pytest-cov — ad-hoc (`uv run --with pytest-cov`); в dev-зависимости — task-08
 
 ## Отклонения от плана
-
-Нет.
-
-## Проблемы
 
 Нет.
 
@@ -37,15 +36,10 @@
 | Критерий | Статус |
 |----------|--------|
 | `make backend-run`, `/docs` v1 | ✅ task-03 |
-| `make backend-test` после impl | ⏳ task-05 |
-| endpoint'ы + PostgreSQL | ⏳ task-05 |
-| без миграции бота | ⏳ (iteration-3) |
-
-| Кто | Статус |
-|-----|--------|
-| Агент | 🚧 task-03 ✅ |
-| Пользователь | ✅ `/docs` проверен (task-03) |
+| contract tests (17) | ✅ task-04 |
+| impl A/B + PostgreSQL | ⏳ task-05 |
+| `make backend-test` с 200/201 | ⏳ task-05 |
 
 ## Следующий шаг
 
-[Task-04](tasks/task-04-api-tests/plan.md) — contract tests A/B.
+[Task-05](tasks/task-05-api-impl/plan.md) — impl A/B + PostgreSQL; обновить happy-path assertions.

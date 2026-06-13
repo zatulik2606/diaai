@@ -30,4 +30,4 @@
 
 ## Следующий шаг
 
-Task-04 — contract tests A/B.
+Task-04 ✅ — contract tests. Далее [task-05](../task-05-api-impl/plan.md) — impl endpoint'ов.

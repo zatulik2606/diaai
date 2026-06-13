@@ -237,7 +237,7 @@ diaai/
 └── README.md
 ```
 
-**Текущее состояние:** код бота в `src/diaai/` — MVP первого клиента. При переходе к целевой архитектуре логика мигрирует в `backend/`, `bot/` становится тонким клиентом.
+**Текущее состояние:** MVP-бот в `src/diaai/` (LLM напрямую, RAM). `backend/` — FastAPI-каркас (task-03) и contract tests (task-04); endpoint'ы A/B и PostgreSQL — task-05. Затем `bot/` станет тонким клиентом API.
 
 ---
 

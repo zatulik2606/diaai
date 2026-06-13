@@ -6,60 +6,62 @@ Skills: [fastapi-templates](.agents/skills/fastapi-templates/SKILL.md) — Async
 
 ## Цель
 
-Contract-тесты API для сценариев A и B на каркасе task-03: auth, validation, routes.
+Contract-тесты API для сценариев A и B: auth, validation, stub 501. Happy-path 200/201 — task-05.
 
-## Состав работ
+## Стратегия stub vs impl
 
-### 1. Расширить `backend/tests/conftest.py`
+| Тип | task-04 | task-05 |
+|-----|---------|---------|
+| 401/422/400 | финальные коды | без изменений |
+| Happy-path | 501 NOT_IMPLEMENTED | 200/201 + body |
+| 403/404 | не пишем | с БД |
 
-```python
-@pytest.fixture
-async def client():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        yield ac
+## Матрица тестов
 
-@pytest.fixture
-def auth_headers(settings):
-    return {"Authorization": f"Bearer {settings.backend_service_token}"}
+### conftest.py
+
+- `auth_headers`, `invalid_auth_headers`
+- `assistant_text_payload`, `assistant_photo_payload`, `food_event_payload`, `insulin_event_payload`
+
+### test_auth.py
+
+- без Bearer → 401
+- неверный Bearer → 401 (assistant, food)
+- GET /health без auth → 200
+
+### test_validation.py
+
+- assistant: missing telegram_id → 422
+- food: missing fields, negative xe → 422
+- insulin: dose=0 → 422
+- GET food: missing telegram_id → 422
+
+### test_assistant.py
+
+- text/photo valid body → 501
+- empty content → 400
+- X-Request-Id echo
+
+### test_events.py
+
+- POST food/insulin → 501
+- GET food list → 501
+
+## Проверка
+
+```bash
+make backend-test    # 17 passed
+make backend-lint
+uv run --with pytest-cov pytest backend/tests --cov=backend --cov-report=term-missing
 ```
-
-- fixture `app` / override settings для тестов
-- опционально: override `get_db` (sqlite memory) — задел под task-05
-
-### 2. Тесты auth и validation
-
-- `test_health.py` — GET `/health` 200, без auth
-- без Bearer → 401 на `/api/v1/assistant/messages`
-- невалидное тело → 422
-
-### 3. Тесты сценария A
-
-- POST assistant/messages: текст (mock LLM или expect 501 до task-05)
-- POST с `image_base64` — schema validation
-- 400: пустой text и нет image
-
-### 4. Тесты сценария B
-
-- POST `/events/food`, `/events/insulin` — schema, auth
-- 403/404 cases по [event-record.md](../../../../../../api/scenarios/event-record.md)
-
-### 5. Makefile
-
-- `make backend-test` → `pytest backend/tests`
-
-## Затронутые файлы
-
-- `backend/tests/conftest.py`
-- `backend/tests/test_health.py`, `test_auth.py`, `test_assistant.py`, `test_events.py`
-- `Makefile`
 
 ## DoD
 
 | Кто | Критерий |
 |-----|----------|
-| Агент | тесты падают на stub 501 до task-05; проходят после impl; auth/422 покрыты |
-| Пользователь | `make backend-test` зелёный после task-05 |
+| Агент | `make backend-test` зелёный; 17 тестов |
+| Пользователь | список тестов понятен до impl |
 
 ## Следующий шаг
 
-Task-05 — реализация endpoint'ов и PostgreSQL.
+Task-05 — impl + обновить happy-path assertions (501 → 200/201).

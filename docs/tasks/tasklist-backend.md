@@ -6,7 +6,9 @@
 
 Рабочий план реализации backend на [итерации 2 plan.md](../plan.md#итерация-2--backend-ядро-и-бд): вынести логику из MVP-бота в API, два базовых сценария (вопрос ассистенту, фиксация события), затем тонкий клиент.
 
-> **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); искать через `/find-skills`.
+**Прогресс:** 4 / 8 задач ✅ · **текущая:** task-05 (endpoint impl) · код: [`backend/`](../../backend/)
+
+> **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); **03** — `fastapi-templates`; искать через `/find-skills`.
 
 ## Итерации backend
 
@@ -29,7 +31,7 @@
 ## Легенда статусов
 
 - 📋 Planned — запланирован
-- 🚧 In Progress — в работе
+- 🚧 In Progress / Next — в работе или следующая
 - ✅ Done — завершён
 
 ## Список задач
@@ -39,8 +41,8 @@
 | 01 | Стек, ADR, conventions | ✅ Done | [план](impl/backend/iteration-1-foundation/tasks/task-01-stack-adr/plan.md) · [summary](impl/backend/iteration-1-foundation/tasks/task-01-stack-adr/summary.md) |
 | 02 | API-контракты (2 сценария) | ✅ Done | [план](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/plan.md) · [summary](impl/backend/iteration-1-foundation/tasks/task-02-api-contracts/summary.md) |
 | 03 | Каркас backend | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-03-scaffold/summary.md) |
-| 04 | API-тесты сценариев бота | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-04-api-tests/summary.md) |
-| 05 | Endpoint'ы и серверная логика | 📋 Planned | [план](impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md) |
+| 04 | API-тесты сценариев бота | ✅ Done | [план](impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-04-api-tests/summary.md) |
+| 05 | Endpoint'ы и серверная логика | 🚧 Next | [план](impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) · [summary](impl/backend/iteration-2-core/tasks/task-05-api-impl/summary.md) |
 | 06 | Документирование backend | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md) |
 | 07 | Рефакторинг бота → API | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
 | 08 | Качество и инженерные практики | 📋 Planned | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
@@ -102,6 +104,7 @@
 - [x] **Сценарий B — фиксация события:** [event-record.md](../api/scenarios/event-record.md)
 - [x] Соглашения — [conventions.md](../api/conventions.md), [openapi.yaml](../api/openapi.yaml)
 - [x] Актуализировать [data-model.md](../data-model.md), [integrations.md](../integrations.md)
+- [x] Post-review: [api-contracts.md](../tech/api-contracts.md), [backend-structure.md](../tech/backend-structure.md)
 - [x] Skills: `api-design-principles`, `fastapi-templates` (task-03+)
 
 ### Артефакты
@@ -125,9 +128,9 @@
 
 ---
 
-## Блок 2: Сборка (задачи 03–05)
+## Блок 2: Сборка (задачи 03–05) 🚧
 
-→ [iteration-2-core](impl/backend/iteration-2-core/plan.md)
+→ [iteration-2-core](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md)
 
 ---
 
@@ -142,27 +145,28 @@
 ### Состав работ
 
 **Инфраструктура**
-- [ ] Структура `backend/` по ADR-002; `config.py` (pydantic-settings)
-- [ ] Запуск: `uvicorn backend.main:app`; пакет `backend` в `pyproject.toml`
-- [ ] `GET /health` (без auth); `make`: `backend-install`, `backend-run`, `backend-lint`, `backend-format`
-- [ ] `.env.example` — `BACKEND_SERVICE_TOKEN`, `BACKEND_HOST`, `BACKEND_PORT`, заготовки под БД/LLM
-- [ ] `pyproject.toml`: fastapi, uvicorn, pydantic-settings; dev: **httpx**, pytest, pytest-asyncio
+- [x] Структура `backend/` по ADR-002; `config.py` (pydantic-settings)
+- [x] Запуск: `uvicorn backend.main:app`; пакет `backend` в `pyproject.toml`
+- [x] `GET /health` (без auth); `make`: `backend-install`, `backend-run`, `backend-lint`, `backend-format`
+- [x] `.env.example` — `BACKEND_SERVICE_TOKEN`, `BACKEND_HOST`, `BACKEND_PORT`, заготовки под БД/LLM
+- [x] `pyproject.toml`: fastapi, uvicorn, pydantic-settings; dev: **httpx**, pytest, pytest-asyncio
 
 **API-скелет (contract-first)**
-- [ ] Роутеры `api/v1/`: `assistant`, `events` — **async** handlers; stub `501` до task-05
-- [ ] Pydantic-схемы в `schemas/` по контрактам task-02
-- [ ] Dependency `verify_service_token` — `Authorization: Bearer` (кроме `/health`)
-- [ ] Exception handlers → формат `{ "error": { "code", "message", "details" } }`
-- [ ] Lifespan в `main.py` — placeholder под БД (task-05)
-- [ ] Middleware `X-Request-Id` — async, трассировка в логах
-- [ ] OpenAPI: `/docs` согласован с [openapi.yaml](../api/openapi.yaml)
+- [x] Роутеры `api/v1/`: `assistant`, `events` — **async** handlers; stub `501` до task-05
+- [x] Pydantic-схемы в `schemas/` по контрактам task-02
+- [x] Dependency `verify_service_token` — `Authorization: Bearer` (кроме `/health`)
+- [x] Exception handlers → формат `{ "error": { "code", "message", "details" } }`
+- [x] Lifespan в `main.py` — placeholder под БД (task-05)
+- [x] Middleware `X-Request-Id` — async, трассировка в логах
+- [x] OpenAPI: `/docs` согласован с [openapi.yaml](../api/openapi.yaml)
 
 **Задел под тесты (task-04)**
-- [ ] `backend/tests/conftest.py` — `AsyncClient`, fixture `app`, auth headers
+- [x] `backend/tests/conftest.py` — `AsyncClient`, fixture `app`, auth headers
+- [x] Smoke: `test_health.py`, `test_auth.py`
 
 ### Артефакты
 
-- `backend/` (`main.py`, `config.py`, `api/v1/`, `schemas/`, `tests/conftest.py`)
+- `backend/` — см. [backend-structure.md](../tech/backend-structure.md)
 - `Makefile`, `.env.example`, `pyproject.toml`
 
 ### Definition of Done
@@ -182,7 +186,7 @@
 
 ---
 
-## Задача 04: API-тесты сценариев бота 📋
+## Задача 04: API-тесты сценариев бота ✅
 
 ### Цель
 
@@ -190,29 +194,36 @@
 
 ### Состав работ
 
-- [ ] Тесты auth: без Bearer → 401; невалидное тело → 422
-- [ ] Тесты сценария A: текст и фото (mock LLM; stub/501 до task-05)
-- [ ] Тесты сценария B: создание события питания / инсулина
-- [ ] `make backend-test` в Makefile
+- [x] Тесты auth: без Bearer → 401; невалидный Bearer → 401
+- [x] Тесты validation: невалидное тело → 422
+- [x] Тесты сценария A: text/photo → 501; пустой контент → 400
+- [x] Тесты сценария B: food/insulin/list → 501
+- [x] `make backend-test` в Makefile (17 тестов)
 
 ### Артефакты
 
-- `backend/tests/` или `tests/backend/`
+- `backend/tests/conftest.py` — fixtures auth/payloads
+- `backend/tests/test_auth.py`, `test_validation.py`, `test_assistant.py`, `test_events.py`
+- `backend/tests/test_health.py` — smoke (дубль health в test_auth)
 
 ### Definition of Done
 
-**Агент:** тесты падают до impl и проходят после task-05; покрыты happy-path и базовые ошибки.
+**Агент:** ✅ `make backend-test` зелёный; 17 тестов; auth/422/400 финальные; happy-path assert 501 (обновить в task-05).
 
-**Пользователь:** `make backend-test` — зелёный прогон после task-05.
+**Пользователь:** ⏳ просмотреть список тестов — понятно, что проверяется до impl.
 
 ### Документы
 
 - 📋 [План](impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md)
 - 📝 [Summary](impl/backend/iteration-2-core/tasks/task-04-api-tests/summary.md)
 
+**Проверка блока 2 (после 04):**  
+Агент: `make backend-test && make backend-lint`; coverage backend ~99%.  
+Пользователь: `pytest backend/tests -v` — матрица auth/validation/assistant/events.
+
 ---
 
-## Задача 05: Endpoint'ы и серверная логика 📋
+## Задача 05: Endpoint'ы и серверная логика 🚧 Next
 
 ### Цель
 
@@ -322,7 +333,7 @@
 
 ### Состав работ
 
-- [ ] ruff + `make backend-lint` / `make backend-format`
+- [ ] ruff + `make backend-lint` / `make backend-format` *(каркас task-03 ✅)*
 - [ ] Structured logging (request id, status); без промптов и ПДн
 - [ ] Правила изменения контрактов в `docs/api/`
 - [ ] Финальная актуализация: [vision.md](../vision.md), [plan.md](../plan.md)

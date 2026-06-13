@@ -101,4 +101,4 @@ async def client():
 
 ## Следующий шаг
 
-Task-04 — расширить tests на auth, validation, scenarios A/B.
+Task-04 ✅ — [summary](../task-04-api-tests/summary.md). Task-05 — impl endpoint'ов + PostgreSQL.

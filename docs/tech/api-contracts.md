@@ -123,6 +123,19 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 | 422 для GET food (invalid `from`/`to`) | добавлен в scenario + OpenAPI |
 | Лимит `image_base64` не описан | добавлен в conventions |
 
+## Contract tests (task-04 ✅)
+
+Реализация: `backend/tests/` — 17 тестов, `make backend-test`.
+
+| Группа | Файл | Коды |
+|--------|------|------|
+| Auth | `test_auth.py` | 401, health 200 |
+| Validation | `test_validation.py` | 422 |
+| Сценарий A | `test_assistant.py` | 400, 501, headers |
+| Сценарий B | `test_events.py` | 501 |
+
+Happy-path assert **501** до task-05; после impl — 200/201 + body. 403/404 — task-05.
+
 ## Связанные документы
 
 | Документ | Содержание |
