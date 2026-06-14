@@ -18,12 +18,14 @@
 
 | Критерий | Результат |
 |----------|-----------|
-| `make db-reset` | one-command PG + migrate + seed |
+| `make db-reset` | one-command PG + migrate 001 + seed |
+| Seed data | users:2, food_events:10, insulin_events:5 |
 | Seed idempotent | повторный `make db-seed` → +0 rows |
 | Inspect | `make db-inspect` — counts без ПДн |
-| Verification | `make backend-test` 30 passed |
+| Docs | `db-*` в README, backend README, database-access |
+| Verification | `make backend-test` 30 passed · `make lint` green |
 
-[iteration-4 summary](iteration-4-db-infra-seed/summary.md)
+Self-check ✅ · User-check 📋 — [iteration-4 summary](iteration-4-db-infra-seed/summary.md)
 
 ## Итерации 1–3 (кратко)
 
