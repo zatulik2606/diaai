@@ -194,4 +194,5 @@ Tooltip: `--popover` background, `--foreground` text.
 | Документ | Назначение |
 |----------|------------|
 | [frontend-requirements.md](frontend-requirements.md) | функциональные блоки |
-| [tasklist-frontend.md](../tasks/tasklist-frontend.md) iter 2 | scaffold + shadcn init |
+| [shadcn skill](../../.agents/skills/shadcn/SKILL.md) | init, add components, theming (iter 2+) |
+| [tasklist-frontend.md](../tasks/tasklist-frontend.md) iter 2 | scaffold |

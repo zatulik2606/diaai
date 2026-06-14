@@ -11,7 +11,7 @@
 | Итерация | Задачи | Статус | Документы |
 |----------|--------|--------|-----------|
 | 0 UI-требования и API-контракты | 00 | ✅ Done | [plan](iteration-0-ui-contracts/plan.md) · [summary](iteration-0-ui-contracts/summary.md) |
-| 1 API для frontend | 01 | 📋 Planned | [plan](iteration-1-frontend-api/plan.md) |
+| 1 API для frontend | 01 | ✅ Done | [plan](iteration-1-frontend-api/plan.md) · [summary](iteration-1-frontend-api/summary.md) |
 | 2 Каркас frontend | 02 | 📋 Planned | [plan](iteration-2-scaffold/plan.md) |
 | 3 Панель доктора | 03 | 📋 Planned | [plan](iteration-3-teacher-dashboard/plan.md) |
 | 4 Лидерboard | 04 | 📋 Planned | [plan](iteration-4-leaderboard/plan.md) |
@@ -21,7 +21,7 @@
 | 8 Голосовой режим | 08 | 📋 Planned | [plan](iteration-8-voice-chat/plan.md) |
 | 9 Text-to-SQL | 09 | 📋 Planned | [plan](iteration-9-text-to-sql/plan.md) |
 
-**1 / 10** итераций завершено.
+**2 / 10** итераций завершено.
 
 ## Артефакты области
 
@@ -29,9 +29,9 @@
 |------|--------|
 | `docs/spec/frontend-requirements.md` | ✅ iter 0 |
 | `docs/spec/frontend-design-system.md` | ✅ iter 0 |
-| `docs/api/frontend-contract.md` | ✅ iter 0 |
-| `docs/api/api-contract.md` | ✅ iter 0 (web-секция) |
+| `docs/api/frontend-contract.md` | ✅ iter 0–1 |
+| `docs/api/api-contract.md` | ✅ iter 0–1 (web impl) |
 | `docs/api/api-contract-review.md` | ✅ iter 0 |
 | `web/` Next.js app | 📋 iter 2 |
 
-Сводка iter 0: [summary.md](summary.md) · [iteration-0/summary.md](iteration-0-ui-contracts/summary.md)
+Сводка: [summary.md](summary.md) · iter 0: [iteration-0-ui-contracts/summary.md](iteration-0-ui-contracts/summary.md) · iter 1: [iteration-1-frontend-api/summary.md](iteration-1-frontend-api/summary.md)

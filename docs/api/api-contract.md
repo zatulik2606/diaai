@@ -2,14 +2,14 @@
 
 Описание REST API backend для MVP. Machine-readable: [openapi.yaml](openapi.yaml) (tags: `system`, `assistant`, `events`, `web`). Соглашения и коды ошибок: [conventions.md](conventions.md).
 
-**Статус:** bot endpoint'ы ✅ (backend iter 2–3) · web `/api/v1/web/*` 📋 (контракт iter 0, impl [frontend iter 1](../tasks/tasklist-frontend.md)).
+**Статус:** bot endpoint'ы ✅ (backend iter 2–3) · web `/api/v1/web/*` ✅ (frontend iter 1).
 
 **Клиенты:**
 
 | Клиент | Endpoint'ы | Статус |
 |--------|------------|--------|
 | Telegram-бот | `/api/v1/assistant/*`, `/api/v1/events/*` | ✅ `src/diaai/backend_client.py` |
-| Web (Next.js) | `/api/v1/web/*` + reuse `POST /assistant/messages` | 📋 [frontend-contract.md](frontend-contract.md) |
+| Web (Next.js) | `/api/v1/web/*` + reuse `POST /assistant/messages` | ✅ [frontend-contract.md](frontend-contract.md) |
 
 Продуктовые требования web UI — [frontend-requirements.md](../spec/frontend-requirements.md).
 
@@ -61,7 +61,7 @@
 | GET | `/api/v1/events/food` | Bearer | 200 | Список событий питания (optional MVP) |
 | POST | `/api/v1/events/insulin` | Bearer | 201 | Создать событие инсулина |
 
-### Web (`/api/v1/web/*`) — контракт ✅, impl 📋
+### Web (`/api/v1/web/*`) — ✅ impl
 
 | Method | Path | Auth | Success | Зона | Описание |
 |--------|------|------|---------|------|----------|

@@ -4,7 +4,7 @@ REST-расширения backend для web-клиента. Machine-readable: [
 
 Опирается на [api-contract.md](api-contract.md) · [conventions.md](conventions.md) · [frontend-requirements.md](../spec/frontend-requirements.md) · [data-model.md](../data-model.md)
 
-**Статус:** контракт iter 0 ✅ · реализация — frontend iter 1.
+**Статус:** контракт iter 0 ✅ · реализация iter 1 ✅.
 
 ---
 

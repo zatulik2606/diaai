@@ -1,31 +1,42 @@
 # Seed data — progress import
 
-Эталонная анонимизированная выгрузка для локальной разработки ([database iter 4](../docs/tasks/tasklist-database.md)).
+Эталонная анонимизированная выгрузка для локальной разработки ([database iter 4](../docs/tasks/tasklist-database.md), [frontend iter 1](../docs/tasks/tasklist-frontend.md)).
 
 | Файл | Назначение |
 |------|------------|
-| [progress-import.v1.json](progress-import.v1.json) | users, food/insulin events |
+| [progress-import.v1.json](progress-import.v1.json) | users, dialogs, events, snapshots, photo_analyses |
 
 **Не путать** с [docs/data/](../docs/data/) — продуктовые сценарии и требования.
 
-## Формат v2 (`schema_version: 2`)
+## Формат v3 (`schema_version: 3`)
 
 ```json
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "users": [...],
+  "dialogs": [...],
+  "dialog_requests": [...],
   "food_events": [...],
   "insulin_events": [...],
   "progress_snapshots": [...],
+  "photo_analyses": [...],
   "consultations": [...],
-  "recommendations": [],
-  "photo_analyses": []
+  "recommendations": []
 }
 ```
 
+- **Demo doctor:** `@akozhin`, `telegram_id: 162684825`
+- **Patients:** 6 diabetics с `telegram_username`, food/insulin за 14 дней
+- **Dialogs/requests:** Q&A для dashboard questions и assistant history
+- **Photo analyses:** 4 записи для submissions feed
+- **Progress snapshots:** 3 недели × каждый patient
+
+## Формат v2 (legacy)
+
+v2 содержал только users + food/insulin без dialogs. Текущий файл — v3.
+
 - **Идемпотентность:** фиксированные UUID; `ON CONFLICT DO NOTHING` по `id`.
-- **`progress_snapshots`, `consultations`:** seed после миграции `002_*` (database iter 5).
-- **`photo_analyses`:** создаются через API assistant (photo), не через seed.
+- **`users.telegram_username`:** после миграции `003_*` (frontend iter 1).
 
 ## Загрузка
 
@@ -39,9 +50,6 @@ uv run python scripts/db/seed_from_progress.py --file data/progress-import.v1.js
 
 ## Обновление seed
 
-1. Отредактировать JSON, сохраняя стабильные `id` для существующих записей.
-2. Новые записи — новые UUID.
-3. Проверить FK: `user_id`, `food_event_id` ссылаются на существующие id.
-4. `make db-seed` или `make db-reset`.
-
-См. [database-access.md](../docs/tech/database-access.md) — секция «Локальное окружение и seed».
+1. Редактировать `progress-import.v1.json` (фиксированные UUID).
+2. `make db-seed` — idempotent, повторный запуск +0 строк.
+3. `make db-inspect` — counts + users by role.

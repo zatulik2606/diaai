@@ -15,9 +15,9 @@
 | Чат (глобальный + страницы) | Диалог с **ассистентом** (сценарий D2) |
 | Студенты × уроки | **Пациенты × периоды/метрики** (progress matrix) |
 
-**Текущее состояние:** spec UI + API contracts ✅ (iter 0); `web/` — toolchain only (Next.js iter 2).
+**Текущее состояние:** spec UI ✅ (iter 0) · backend `/api/v1/web/*` + seed v3 ✅ (iter 1) · `web/` — toolchain only, приложение в iter 2.
 
-**Прогресс:** **1 / 10** итераций ✅ · **1 / 10** задач ✅ · **следующая:** iter 1 (API) · [impl/frontend/plan.md](impl/frontend/plan.md) · [summary](impl/frontend/summary.md)
+**Прогресс:** **2 / 10** итераций ✅ · **2 / 10** задач ✅ · **следующая:** 🚧 iter 2 — [каркас frontend](impl/frontend/iteration-2-scaffold/plan.md) · [plan области](impl/frontend/plan.md) · [summary](impl/frontend/summary.md)
 
 **Зависимости:**
 
@@ -25,7 +25,7 @@
 |---------|--------|------------------|
 | Backend MVP (assistant, events) | ✅ | базовый чат, события |
 | Database iter 5 (9 таблиц) | ✅ | analytics, consultations |
-| Backend iter 4 (analytics API) | 📋 | KPI, snapshots, leaderboard *(iter 1 frontend частично закрывает gap)* |
+| Backend iter 4 (analytics API) | 📋 опционально | UI DTO для dashboard/leaderboard закрыты `/api/v1/web/*` (iter 1 ✅) |
 
 ## Стек
 
@@ -60,7 +60,7 @@ web/
 | [modern-python](../.agents/skills/modern-python/SKILL.md) | **iter 1** — при новых services/утилитах | uv, ruff, pyproject, async patterns |
 | [postgresql-table-design](../.agents/skills/postgresql-table-design/SKILL.md) | **iter 1** — если нужна доработка схемы | типы, индексы, FK, TIMESTAMPTZ |
 | [sharp-edges](../.agents/skills/sharp-edges/SKILL.md) | **iter 1** — при изменении схемы/API | security, auth, config pitfalls |
-| `shadcn` | **iter 2** (каркас), **iter 3–6** (экраны), **iter 7** (ревью) | компоненты, a11y, theming *(skill — `/find-skills`)* |
+| [shadcn](../.agents/skills/shadcn/SKILL.md) | **iter 2** (каркас), **iter 3–6** (экраны), **iter 7** (ревью) | init, components, theming, a11y |
 | [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md) | **iter 2**, **iter 3–6**, **iter 7** | RSC, data fetching, rerenders, bundle |
 | [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md) | **iter 2**, **iter 3–6**, **iter 7** | layouts, routes, server/client components |
 
@@ -84,8 +84,8 @@ web/
 | # | Название | Задача | Статус | Документы |
 |---|----------|--------|--------|-----------|
 | 0 | Требования UI и API-контракты | 00 | ✅ Done | [plan](impl/frontend/iteration-0-ui-contracts/plan.md) · [summary](impl/frontend/iteration-0-ui-contracts/summary.md) |
-| 1 | API для frontend | 01 | 📋 Planned | [plan](impl/frontend/iteration-1-frontend-api/plan.md) · [summary](impl/frontend/iteration-1-frontend-api/summary.md) |
-| 2 | Каркас frontend | 02 | 📋 Planned | [plan](impl/frontend/iteration-2-scaffold/plan.md) · [summary](impl/frontend/iteration-2-scaffold/summary.md) |
+| 1 | API для frontend | 01 | ✅ Done | [plan](impl/frontend/iteration-1-frontend-api/plan.md) · [summary](impl/frontend/iteration-1-frontend-api/summary.md) |
+| 2 | Каркас frontend | 02 | 📋 Planned → **next** | [plan](impl/frontend/iteration-2-scaffold/plan.md) · [summary](impl/frontend/iteration-2-scaffold/summary.md) |
 | 3 | Панель преподавателя | 03 | 📋 Planned | [plan](impl/frontend/iteration-3-teacher-dashboard/plan.md) · [summary](impl/frontend/iteration-3-teacher-dashboard/summary.md) |
 | 4 | Лидерборд | 04 | 📋 Planned | [plan](impl/frontend/iteration-4-leaderboard/plan.md) · [summary](impl/frontend/iteration-4-leaderboard/summary.md) |
 | 5 | Чат с ассистентом | 05 | 📋 Planned | [plan](impl/frontend/iteration-5-assistant-chat/plan.md) · [summary](impl/frontend/iteration-5-assistant-chat/summary.md) |
@@ -112,8 +112,8 @@ web/
 | Задача | Описание | Статус | Документы |
 |--------|----------|--------|-----------|
 | 00 | UI-требования и API-контракты frontend | ✅ Done | [план](impl/frontend/iteration-0-ui-contracts/tasks/task-00-ui-contracts/plan.md) · [summary](impl/frontend/iteration-0-ui-contracts/tasks/task-00-ui-contracts/summary.md) |
-| 01 | Backend API + mock seed для UI | 📋 Planned | [план](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/plan.md) |
-| 02 | Каркас Next.js + layout + auth | 📋 Planned | [план](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/plan.md) |
+| 01 | Backend API + mock seed для UI | ✅ Done | [план](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/plan.md) · [summary](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/summary.md) |
+| 02 | Каркас Next.js + layout + auth | 📋 Planned → **next** | [план](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/plan.md) |
 | 03 | Панель преподавателя / доктора | 📋 Planned | [план](impl/frontend/iteration-3-teacher-dashboard/tasks/task-03-teacher-dashboard/plan.md) |
 | 04 | Лидерборд | 📋 Planned | [план](impl/frontend/iteration-4-leaderboard/tasks/task-04-leaderboard/plan.md) |
 | 05 | Чат с ассистентом (страница) | 📋 Planned | [план](impl/frontend/iteration-5-assistant-chat/tasks/task-05-assistant-chat/plan.md) |
@@ -177,7 +177,7 @@ web/
 
 ---
 
-## Итерация 1: Реализация API для frontend 📋
+## Итерация 1: Реализация API для frontend ✅
 
 → [iteration-1-frontend-api/plan.md](impl/frontend/iteration-1-frontend-api/plan.md)
 
@@ -191,40 +191,40 @@ web/
 
 #### Состав работ
 
-- [ ] Gap analysis: data-model + iter 0 контракты → список недостающих полей/таблиц
-- [ ] Новые endpoint'ы backend: dashboard KPI, activity series, questions feed, submissions feed, progress matrix, leaderboard
-- [ ] Миграция `003_*` (при необходимости) + seed/mock для «красивого» demo-наполнения
-- [ ] Добавить **преподавателя/доктора** в БД: `@akozhin`, `telegram_id: 162684825` (role `doctor`, `display_name`)
-- [ ] Contract tests / pytest для новых endpoint'ов
-- [ ] Обновить [api-contracts.md](../tech/api-contracts.md), [backend/README.md](../../backend/README.md)
+- [x] Gap analysis: data-model + iter 0 контракты → список недостающих полей/таблиц
+- [x] Новые endpoint'ы backend: dashboard KPI, activity series, questions feed, submissions feed, progress matrix, leaderboard
+- [x] Миграция `003_*` (при необходимости) + seed/mock для «красивого» demo-наполнения
+- [x] Добавить **преподавателя/доктора** в БД: `@akozhin`, `telegram_id: 162684825` (role `doctor`, `display_name`)
+- [x] Contract tests / pytest для новых endpoint'ов
+- [x] Обновить [api-contracts.md](../tech/api-contracts.md), [backend/README.md](../../backend/README.md)
 
 #### Skills
 
-| Skill | Когда | Фокус |
-|-------|-------|-------|
-| [api-design-principles](../.agents/skills/api-design-principles/SKILL.md) | контракты ↔ impl | соответствие iter 0 spec |
-| [fastapi-templates](../.agents/skills/fastapi-templates/SKILL.md) | новые routers/services | слои, DI, async session |
-| [modern-python](../.agents/skills/modern-python/SKILL.md) | новые services/утилиты | uv/ruff, структура модулей |
-| [postgresql-table-design](../.agents/skills/postgresql-table-design/SKILL.md) | миграция `003_*` | schema review перед merge |
-| [sharp-edges](../.agents/skills/sharp-edges/SKILL.md) | изменения API/схемы | auth, SQL injection, secrets |
+| Skill | Фокус | Статус |
+|-------|-------|--------|
+| [api-design-principles](../.agents/skills/api-design-principles/SKILL.md) | контракты ↔ impl | ✅ |
+| [fastapi-templates](../.agents/skills/fastapi-templates/SKILL.md) | слои, DI, async session | ✅ |
+| [modern-python](../.agents/skills/modern-python/SKILL.md) | uv/ruff, структура модулей | ✅ |
+| [postgresql-table-design](../.agents/skills/postgresql-table-design/SKILL.md) | миграция `003_*` | ✅ |
+| [sharp-edges](../.agents/skills/sharp-edges/SKILL.md) | auth, SQL injection, secrets | ✅ |
 
 #### Make-команды
 
 ```bash
-make db-reset && make db-inspect
-make backend-test && make test
-curl # smoke новых endpoint'ов
+make db-reset && make db-inspect   # users:7, requests:24, photos:4
+make lint && make test             # 60 passed
+make backend-run                   # curl smoke 8 web endpoints
 ```
 
 #### Definition of Done
 
-**Self-check (агент):** миграция применяется; seed/idempotent; новые endpoint'ы 200 + schema; doctor akozhin в PG; `make test` green.
+**Self-check (агент):** ✅ миграция `003`; seed idempotent (+0); 8 endpoint'ов 200 + schema; doctor `@akozhin` в PG; `make test` 60 passed; skills review.
 
-**User-check (пользователь):** `make db-inspect` — demo counts; `make backend-run` + curl dashboard/leaderboard — JSON как в контракте.
+**User-check:** ✅ `make db-inspect` — demo counts; `make backend-run` + curl dashboard/leaderboard/history — JSON по контракту.
 
 ### Документы
 
-- 📋 [План итерации](impl/frontend/iteration-1-frontend-api/plan.md) · [task-01 plan](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/plan.md)
+- ✅ [План итерации](impl/frontend/iteration-1-frontend-api/plan.md) · [Summary](impl/frontend/iteration-1-frontend-api/summary.md) · [task-01 plan](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/plan.md) · [task-01 summary](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/summary.md)
 
 ---
 
@@ -253,7 +253,7 @@ curl # smoke новых endpoint'ов
 
 | Skill | Фокус |
 |-------|-------|
-| `shadcn` | init, theme, базовые компоненты |
+| [shadcn](../.agents/skills/shadcn/SKILL.md) | init, theme, базовые компоненты |
 | [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md) | структура app/, data fetching |
 | [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md) | layout, routes, client boundaries |
 
@@ -309,7 +309,7 @@ make web-lint && make web-build
 
 | Skill | Фокус |
 |-------|-------|
-| `shadcn` | Card, Table, Chart |
+| [shadcn](../.agents/skills/shadcn/SKILL.md) | Card, Table, Chart |
 | [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md) | charts, lists, memo |
 | [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md) | server components для data |
 
@@ -346,7 +346,7 @@ make web-lint && make web-build
 
 | Skill | Фокус |
 |-------|-------|
-| `shadcn` | Tabs, Table, badges |
+| [shadcn](../.agents/skills/shadcn/SKILL.md) | Tabs, Table, badges |
 | [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md) | chart performance |
 | [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md) | parallel routes / loading |
 
@@ -383,7 +383,7 @@ make web-lint && make web-build
 
 | Skill | Фокус |
 |-------|-------|
-| `shadcn` | ScrollArea, Input, Button |
+| [shadcn](../.agents/skills/shadcn/SKILL.md) | ScrollArea, Input, Button |
 | [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md) | streaming, optimistic updates |
 | [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md) | client component chat |
 
@@ -419,7 +419,7 @@ make web-lint && make web-build
 
 | Skill | Фокус |
 |-------|-------|
-| `shadcn` | Sheet / Dialog для FAB |
+| [shadcn](../.agents/skills/shadcn/SKILL.md) | Sheet / Dialog для FAB |
 | [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md) | shared state, DRY |
 | [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md) | layout reuse |
 
@@ -449,7 +449,7 @@ make web-lint && make web-build
 
 - [ ] Audit: [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md)
 - [ ] Audit: [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md)
-- [ ] Audit: `shadcn` — consistency, a11y
+- [ ] Audit: [shadcn](../.agents/skills/shadcn/SKILL.md) — consistency, a11y
 - [ ] Fix: критичные (data fetching, rerenders, bundle)
 - [ ] `make web-lint` + `make web-build` green
 - [ ] Краткий отчёт pass/warn/fix в `docs/tech/frontend-review.md`
@@ -460,7 +460,7 @@ make web-lint && make web-build
 |-------|-------|
 | [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md) | полный checklist |
 | [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md) | routing, RSC boundaries |
-| `shadcn` | component patterns, theme |
+| [shadcn](../.agents/skills/shadcn/SKILL.md) | component patterns, theme |
 
 #### Definition of Done
 
@@ -552,12 +552,12 @@ make web-lint && make web-build
 | Итерация | Критерий | Проверка |
 |----------|----------|----------|
 | 0 | UI spec + frontend API contracts | ✅ `frontend-requirements.md`, `frontend-contract.md`, [review](../api/api-contract-review.md) |
-| 1 | Backend API + demo seed | curl; skills: api-design, fastapi-templates, modern-python, pg/sharp-edges *при схеме* |
-| 2 | Next.js scaffold | `make web-dev`; skills: shadcn, vercel, nextjs |
-| 3 | Dashboard | live API; skills: shadcn, vercel, nextjs |
-| 4 | Leaderboard | table + scatter; skills: shadcn, vercel, nextjs |
-| 5–6 | Chat | history + send; skills: shadcn, vercel, nextjs |
-| 7 | Quality review | `frontend-review.md`; skills: shadcn, vercel, nextjs |
+| 1 | Backend API + demo seed | ✅ [summary](impl/frontend/iteration-1-frontend-api/summary.md) · 60 tests · curl smoke |
+| 2 | Next.js scaffold | `make web-dev`; skills: [shadcn](../.agents/skills/shadcn/SKILL.md), vercel, nextjs |
+| 3 | Dashboard | live API; skills: [shadcn](../.agents/skills/shadcn/SKILL.md), vercel, nextjs |
+| 4 | Leaderboard | table + scatter; skills: [shadcn](../.agents/skills/shadcn/SKILL.md), vercel, nextjs |
+| 5–6 | Chat | history + send; skills: [shadcn](../.agents/skills/shadcn/SKILL.md), vercel, nextjs |
+| 7 | Quality review | `frontend-review.md`; skills: [shadcn](../.agents/skills/shadcn/SKILL.md), vercel, nextjs |
 | 8 | Voice | web + bot smoke |
 | 9 | Text-to-SQL | ADR + 3 scenarios on PG |
 
@@ -569,8 +569,8 @@ make web-lint && make web-build
 | [tasklist-backend.md](tasklist-backend.md) | analytics API 09–12 |
 | [tasklist-database.md](tasklist-database.md) | PG schema ✅ |
 | [frontend-requirements.md](../spec/frontend-requirements.md) | UI 4 зоны (iter 0 ✅) |
-| [frontend-contract.md](../api/frontend-contract.md) | Web API (iter 0 ✅) |
-| [api-contract.md](../api/api-contract.md) | REST v1 bot + web |
+| [frontend-contract.md](../api/frontend-contract.md) | Web API (iter 0–1 ✅ impl) |
+| [api-contract.md](../api/api-contract.md) | REST v1 bot + web (impl ✅) |
 | [api-contract-review.md](../api/api-contract-review.md) | Design review iter 0 |
 | [templates/workflow.md](../templates/workflow.md) | plan/summary workflow |
 | [web/package.json](../../web/package.json) | engines, pnpm |

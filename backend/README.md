@@ -57,7 +57,7 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `make backend-install` | `uv sync` — зависимости |
 | `make backend-run` | uvicorn с reload |
 | `make backend-migrate` | `alembic upgrade head` |
-| `make backend-test` | pytest (36 тестов) |
+| `make backend-test` | pytest (45 тестов) |
 | `make backend-lint` | ruff check |
 | `make backend-format` | ruff format |
 | `make backend-openapi-export` | dump `/openapi.json` для diff (не коммитить) |
@@ -119,6 +119,21 @@ curl -s "$BASE/api/v1/events/food?telegram_id=123456789" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+**Web dashboard (demo doctor `@akozhin`, telegram_id `162684825`):**
+
+```bash
+curl -s "$BASE/api/v1/web/auth/resolve" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "akozhin"}'
+
+curl -s "$BASE/api/v1/web/doctor/dashboard/summary?doctor_telegram_id=162684825" \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -s "$BASE/api/v1/web/leaderboard?doctor_telegram_id=162684825" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
 ## Docker Compose
 
 В репозитории только **PostgreSQL** (backend запускается локально через `make backend-run`):
@@ -161,7 +176,9 @@ Smoke: `backend/tests/test_health.py`, `backend/tests/test_auth.py`.
 
 ## Миграции и БД
 
-PostgreSQL через SQLAlchemy 2 async + Alembic. Миграции: `001_initial_schema` → `002_full_data_layer` (9 таблиц). Архитектура — [ADR-003](../docs/adr/adr-003-data-access-layer.md). Guide — [database-access.md](../docs/tech/database-access.md).
+PostgreSQL через SQLAlchemy 2 async + Alembic. Миграции: `001_initial_schema` → `002_full_data_layer` → `003_telegram_username` (9 таблиц + `users.telegram_username`). Архитектура — [ADR-003](../docs/adr/adr-003-data-access-layer.md). Guide — [database-access.md](../docs/tech/database-access.md).
+
+Web routes: `backend/api/v1/web/` — auth, doctor dashboard, leaderboard, assistant history. Контракт — [frontend-contract.md](../docs/api/frontend-contract.md).
 
 ```bash
 make db-reset              # 001 + 002 + seed

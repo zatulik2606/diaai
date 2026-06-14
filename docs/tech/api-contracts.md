@@ -7,9 +7,9 @@
 ## Назначение и scope
 
 - **Версия:** v1 (`/api/v1/…`)
-- **Клиент MVP:** Telegram-бот → backend (service token)
-- **Сценарии:** A — вопрос ассистенту; B — фиксация питания и инсулина
-- **Вне scope v1:** web-auth, роли доктора, аналитика, CRUD диалогов
+- **Клиент MVP:** Telegram-бот → backend (service token); Next.js BFF → web routes
+- **Сценарии:** A — вопрос ассистенту; B — фиксация питания и инсулина; Web — dashboard, leaderboard, auth, history
+- **Вне scope v1:** JWT/web-session на backend, CRUD консультаций, `/api/v1/analytics/*`
 
 ## Базовый URL и версионирование
 
@@ -30,8 +30,12 @@
 | POST | `/api/v1/events/food` | создать событие питания | 201 | Bearer |
 | GET | `/api/v1/events/food` | список событий питания (optional MVP) | 200 | Bearer |
 | POST | `/api/v1/events/insulin` | создать событие инсулина | 201 | Bearer |
+| POST | `/api/v1/web/auth/resolve` | username → user (web login) | 200 | Bearer |
+| GET | `/api/v1/web/doctor/dashboard/*` | KPI, activity, questions, submissions, matrix | 200 | Bearer |
+| GET | `/api/v1/web/leaderboard` | рейтинг + scatter | 200 | Bearer |
+| GET | `/api/v1/web/assistant/history` | история FAB-чата | 200 | Bearer |
 
-Machine-readable: [openapi.yaml](../api/openapi.yaml).
+Web DTO: [frontend-contract.md](../api/frontend-contract.md).
 
 ## Cross-cutting
 
@@ -125,7 +129,7 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 
 ## Contract tests (task-04–08 ✅)
 
-Реализация: `backend/tests/` + `tests/` — **45** тестов (`make test`: 30 backend + 15 bot).
+Реализация: `backend/tests/` + `tests/` — **60** тестов (`make test`: 45 backend + 15 bot).
 
 | Группа | Файл | Коды |
 |--------|------|------|
@@ -133,7 +137,7 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 | Validation | `test_validation.py` | 422 |
 | Сценарий A | `test_assistant.py` | 200, 400, headers |
 | Сценарий B | `test_events.py`, `test_events_domain.py` | 201/200, 403/404 |
-| Bot client | `tests/test_backend_client.py` | httpx mock |
+| Web API | `test_web_api.py` | 200 auth/dashboard/leaderboard/history; 403 non-doctor; 404 auth |
 
 ## Связанные документы
 

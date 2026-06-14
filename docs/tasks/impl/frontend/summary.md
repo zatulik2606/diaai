@@ -1,9 +1,10 @@
-# Frontend iter 0: сводка (область)
+# Frontend: сводка области
 
-Краткая ссылка на закрытую итерацию 0. Полный отчёт: [iteration-0-ui-contracts/summary.md](iteration-0-ui-contracts/summary.md).
+**Прогресс:** **2 / 10** итераций ✅
 
-**Статус:** ✅ Done · **1 / 10** итераций области.
+| Итерация | Статус | Summary |
+|----------|--------|---------|
+| 0 UI-требования и API-контракты | ✅ | [iteration-0-ui-contracts/summary.md](iteration-0-ui-contracts/summary.md) |
+| 1 API для frontend | ✅ | [iteration-1-frontend-api/summary.md](iteration-1-frontend-api/summary.md) |
 
-**Результат:** spec UI (4 зоны), design system, web API contract, openapi `web`, api-contract review — без кода.
-
-**Следующий:** [iteration-1-frontend-api](iteration-1-frontend-api/plan.md).
+**Следующий:** [iteration-2-scaffold/plan.md](iteration-2-scaffold/plan.md) — каркас Next.js в `web/`.

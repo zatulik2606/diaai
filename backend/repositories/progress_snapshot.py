@@ -1,5 +1,6 @@
 import uuid
 from datetime import date
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -66,4 +67,19 @@ class ProgressSnapshotRepository:
             .where(ProgressSnapshot.user_id == user_id)
             .order_by(ProgressSnapshot.period_start.desc())
         )
+        return list(result.scalars().all())
+
+    async def list_for_users(
+        self,
+        user_ids: list[UUID],
+        *,
+        period: str | None = None,
+    ) -> list[ProgressSnapshot]:
+        if not user_ids:
+            return []
+        query = select(ProgressSnapshot).where(ProgressSnapshot.user_id.in_(user_ids))
+        if period is not None:
+            query = query.where(ProgressSnapshot.period == period)
+        query = query.order_by(ProgressSnapshot.period_start.asc())
+        result = await self._session.execute(query)
         return list(result.scalars().all())

@@ -48,6 +48,13 @@ async def print_counts(session: AsyncSession) -> None:
         count = await count_rows(session, model)
         print(f"  {name}: {count}")
 
+    print("\n=== users by role ===")
+    result = await session.execute(
+        select(User.role, func.count()).group_by(User.role).order_by(User.role)
+    )
+    for role, count in result.all():
+        print(f"  {role}: {count}")
+
 
 async def print_user_samples(session: AsyncSession, *, verbose: bool) -> None:
     print("\n=== users (sample) ===")

@@ -14,6 +14,7 @@ class User(Base):
     telegram_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, index=True)
     role: Mapped[str] = mapped_column(String(32), default="diabetic", nullable=False)
     display_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    telegram_username: Mapped[str | None] = mapped_column(Text, nullable=True)
     email: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(

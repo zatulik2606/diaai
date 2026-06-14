@@ -1,9 +1,11 @@
 import uuid
+from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.photo_analysis import PhotoAnalysis
+from backend.models.user import User
 
 
 class PhotoAnalysisRepository:
@@ -55,3 +57,27 @@ class PhotoAnalysisRepository:
             .order_by(PhotoAnalysis.created_at.desc())
         )
         return list(result.scalars().all())
+
+    async def list_for_users_with_patient(
+        self,
+        user_ids: list[UUID],
+    ) -> list[tuple[PhotoAnalysis, User]]:
+        if not user_ids:
+            return []
+        result = await self._session.execute(
+            select(PhotoAnalysis, User)
+            .join(User, PhotoAnalysis.user_id == User.id)
+            .where(PhotoAnalysis.user_id.in_(user_ids))
+            .order_by(PhotoAnalysis.created_at.desc())
+        )
+        return list(result.all())
+
+    async def count_for_users(self, user_ids: list[UUID]) -> int:
+        if not user_ids:
+            return 0
+        result = await self._session.scalar(
+            select(func.count())
+            .select_from(PhotoAnalysis)
+            .where(PhotoAnalysis.user_id.in_(user_ids))
+        )
+        return int(result or 0)
