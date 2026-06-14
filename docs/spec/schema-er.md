@@ -2,7 +2,7 @@
 
 Опирается на [user-scenarios.md](user-scenarios.md) · [data-requirements.md](data-requirements.md) · [data-model.md](../data-model.md)
 
-Design review — [schema-review.md](schema-review.md). Миграция `002_*` — database iter 5 (здесь только черновик DDL).
+Design review — [schema-review.md](schema-review.md). Миграция `002_*` — [`alembic/versions/002_full_data_layer.py`](../../alembic/versions/002_full_data_layer.py) (database iter 5 ✅).
 
 ---
 
@@ -303,7 +303,7 @@ erDiagram
 
 ## 6. Appendix: Draft migration 002
 
-> **Не коммитить** в `alembic/versions/` до database iter 5. Черновик для согласования.
+> Реализовано в [`alembic/versions/002_full_data_layer.py`](../../alembic/versions/002_full_data_layer.py) (database iter 5 ✅). Ниже — исходный черновик DDL.
 
 ```sql
 -- === ALTER users ===

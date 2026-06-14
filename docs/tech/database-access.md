@@ -13,7 +13,7 @@
 | [`backend/repositories/`](../../backend/repositories/) | SQLAlchemy queries |
 | [`backend/services/`](../../backend/services/) | доменная логика, orchestration |
 | [`backend/api/v1/`](../../backend/api/v1/) | routers — **без SQL** |
-| [`docs/spec/schema-er.md`](../spec/schema-er.md) | целевая DDL, draft `002` |
+| [`docs/spec/schema-er.md`](../spec/schema-er.md) | DDL; `002_full_data_layer` ✅ |
 | [`scripts/db/`](../../scripts/db/) | seed, inspect (iter 4) |
 | [`data/progress-import.v1.json`](../../data/progress-import.v1.json) | эталонный seed |
 

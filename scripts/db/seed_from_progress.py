@@ -12,16 +12,19 @@ import asyncio
 import json
 import sys
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from backend.config import get_settings
+from backend.models.consultation import Consultation
 from backend.models.food_event import FoodEvent
 from backend.models.insulin_event import InsulinEvent
+from backend.models.progress_snapshot import ProgressSnapshot
+from backend.models.recommendation import Recommendation
 from backend.models.user import User
 
 DEFAULT_IMPORT = Path("data/progress-import.v1.json")
@@ -29,8 +32,10 @@ DEFAULT_IMPORT = Path("data/progress-import.v1.json")
 
 class UserImport(BaseModel):
     id: uuid.UUID
-    telegram_id: int
+    telegram_id: int | None = None
     role: str
+    display_name: str | None = None
+    email: str | None = None
     is_active: bool = True
 
 
@@ -58,22 +63,41 @@ class InsulinEventImport(BaseModel):
     comment: str | None = None
 
 
+class ProgressSnapshotImport(BaseModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    period: str
+    period_start: date
+    period_end: date
+    sum_xe: float
+    sum_bje: float
+    sum_insulin: float
+    trend: str
+    sum_proteins: float | None = None
+    sum_fats: float | None = None
+    sum_carbs: float | None = None
+    comment: str | None = None
+
+
+class ConsultationImport(BaseModel):
+    id: uuid.UUID
+    diabetic_id: uuid.UUID
+    doctor_id: uuid.UUID
+    format: str
+    scheduled_at: datetime
+    status: str
+    doctor_comment: str | None = None
+
+
 class ProgressImport(BaseModel):
     schema_version: int = Field(ge=1)
     users: list[UserImport]
     food_events: list[FoodEventImport]
     insulin_events: list[InsulinEventImport]
-    progress_snapshots: list[dict] = Field(default_factory=list)
-
-    @field_validator("progress_snapshots")
-    @classmethod
-    def warn_unsupported_snapshots(cls, value: list[dict]) -> list[dict]:
-        if value:
-            print(
-                "Note: progress_snapshots in import file are ignored until migration 002 (iter 5).",
-                file=sys.stderr,
-            )
-        return value
+    progress_snapshots: list[ProgressSnapshotImport] = Field(default_factory=list)
+    consultations: list[ConsultationImport] = Field(default_factory=list)
+    recommendations: list[dict] = Field(default_factory=list)
+    photo_analyses: list[dict] = Field(default_factory=list)
 
 
 def load_import(path: Path) -> ProgressImport:
@@ -98,6 +122,19 @@ def validate_references(data: ProgressImport) -> None:
             msg = f"insulin_event {event.id}: unknown food_event_id {event.food_event_id}"
             raise ValueError(msg)
 
+    for snapshot in data.progress_snapshots:
+        if snapshot.user_id not in user_ids:
+            msg = f"progress_snapshot {snapshot.id}: unknown user_id {snapshot.user_id}"
+            raise ValueError(msg)
+
+    for consultation in data.consultations:
+        if consultation.diabetic_id not in user_ids:
+            msg = f"consultation {consultation.id}: unknown diabetic_id"
+            raise ValueError(msg)
+        if consultation.doctor_id not in user_ids:
+            msg = f"consultation {consultation.id}: unknown doctor_id"
+            raise ValueError(msg)
+
 
 async def upsert_rows(session: AsyncSession, table, rows: list[dict]) -> int:
     if not rows:
@@ -109,23 +146,32 @@ async def upsert_rows(session: AsyncSession, table, rows: list[dict]) -> int:
     return result.rowcount or 0
 
 
-async def seed(session: AsyncSession, data: ProgressImport) -> tuple[int, int, int]:
-    users_inserted = await upsert_rows(
-        session,
-        User.__table__,
-        [u.model_dump() for u in data.users],
+async def seed(session: AsyncSession, data: ProgressImport) -> dict[str, int]:
+    counts = {}
+    counts["users"] = await upsert_rows(
+        session, User.__table__, [u.model_dump() for u in data.users]
     )
-    food_inserted = await upsert_rows(
-        session,
-        FoodEvent.__table__,
-        [f.model_dump() for f in data.food_events],
+    counts["food_events"] = await upsert_rows(
+        session, FoodEvent.__table__, [f.model_dump() for f in data.food_events]
     )
-    insulin_inserted = await upsert_rows(
-        session,
-        InsulinEvent.__table__,
-        [i.model_dump() for i in data.insulin_events],
+    counts["insulin_events"] = await upsert_rows(
+        session, InsulinEvent.__table__, [i.model_dump() for i in data.insulin_events]
     )
-    return users_inserted, food_inserted, insulin_inserted
+    counts["progress_snapshots"] = await upsert_rows(
+        session,
+        ProgressSnapshot.__table__,
+        [s.model_dump() for s in data.progress_snapshots],
+    )
+    counts["consultations"] = await upsert_rows(
+        session,
+        Consultation.__table__,
+        [c.model_dump() for c in data.consultations],
+    )
+    if data.recommendations:
+        counts["recommendations"] = await upsert_rows(
+            session, Recommendation.__table__, data.recommendations
+        )
+    return counts
 
 
 async def run_seed(path: Path) -> int:
@@ -146,17 +192,15 @@ async def run_seed(path: Path) -> int:
 
     try:
         async with session_factory() as session:
-            users_n, food_n, insulin_n = await seed(session, data)
+            counts = await seed(session, data)
     except Exception as exc:
         print(f"Database error: {exc}", file=sys.stderr)
         return 1
     finally:
         await engine.dispose()
 
-    print(
-        f"Seed complete: users +{users_n}, food_events +{food_n}, insulin_events +{insulin_n} "
-        f"(skipped rows already present)"
-    )
+    parts = ", ".join(f"{k} +{v}" for k, v in counts.items())
+    print(f"Seed complete: {parts} (skipped rows already present)")
     return 0
 
 

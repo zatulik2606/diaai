@@ -1,16 +1,20 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "users": [
     {
       "id": "a1000001-0000-4000-8000-000000000001",
       "telegram_id": 900000001,
       "role": "diabetic",
+      "display_name": "Seed Diabetic",
+      "email": null,
       "is_active": true
     },
     {
       "id": "a1000001-0000-4000-8000-000000000002",
       "telegram_id": 900000002,
       "role": "doctor",
+      "display_name": "Dr. Seed",
+      "email": "doctor.seed@example.com",
       "is_active": true
     }
   ],
@@ -198,5 +202,46 @@
       "comment": "Базальный"
     }
   ],
-  "progress_snapshots": []
+  "progress_snapshots": [
+    {
+      "id": "d4000001-0000-4000-8000-000000000001",
+      "user_id": "a1000001-0000-4000-8000-000000000001",
+      "period": "week",
+      "period_start": "2026-04-28",
+      "period_end": "2026-05-04",
+      "sum_xe": 26.5,
+      "sum_bje": 12.3,
+      "sum_insulin": 31.0,
+      "sum_proteins": 120.0,
+      "sum_fats": 65.0,
+      "sum_carbs": 320.0,
+      "trend": "stable",
+      "comment": "Неделя seed-данных"
+    },
+    {
+      "id": "d4000001-0000-4000-8000-000000000002",
+      "user_id": "a1000001-0000-4000-8000-000000000001",
+      "period": "day",
+      "period_start": "2026-05-04",
+      "period_end": "2026-05-04",
+      "sum_xe": 5.0,
+      "sum_bje": 2.1,
+      "sum_insulin": 12.0,
+      "trend": "improving",
+      "comment": null
+    }
+  ],
+  "consultations": [
+    {
+      "id": "e5000001-0000-4000-8000-000000000001",
+      "diabetic_id": "a1000001-0000-4000-8000-000000000001",
+      "doctor_id": "a1000001-0000-4000-8000-000000000002",
+      "format": "online",
+      "scheduled_at": "2026-05-10T10:00:00+00:00",
+      "status": "scheduled",
+      "doctor_comment": null
+    }
+  ],
+  "recommendations": [],
+  "photo_analyses": []
 }

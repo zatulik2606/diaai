@@ -6,7 +6,9 @@
 
 Рабочий план backend: итерации **1–3** ✅ (01–08). Бот — клиент backend API; unit-тесты bot в `tests/`. **Backend delivery complete** — следующий этап: итерация 4 (аналитика).
 
-**Прогресс:** **8 / 12** задач (01–08 ✅) · **`make test`** — 45 (30 backend + 15 bot) · [`backend/README.md`](../../backend/README.md)
+**Прогресс:** **8 / 12** задач (01–08 ✅) · **`make test`** — 51 (36 backend + 15 bot) · [`backend/README.md`](../../backend/README.md)
+
+**Зависимость:** [database iter 5](tasklist-database.md#итерация-5-orm-репозитории-backend-) ✅ — 9 таблиц, ORM/repos готовы для задач 09–12.
 
 > **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); **03** — `fastapi-templates`; искать через `/find-skills`.
 
@@ -383,6 +385,8 @@
 ## Блок 4: Аналитика (задачи 09–12) 📋
 
 → [iteration-4-analytics/plan.md](impl/backend/iteration-4-analytics/plan.md) · [summary](impl/backend/iteration-4-analytics/summary.md)
+
+**Зависимость:** [database iter 5](tasklist-database.md#итерация-5-orm-репозитории-backend-) ✅ (`progress_snapshots`, `recommendations`, `consultations`, `photo_analyses`).
 
 **Прогресс блока:** 0 / 4
 

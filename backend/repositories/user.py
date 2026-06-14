@@ -23,3 +23,20 @@ class UserRepository:
 
     async def get_by_id(self, user_id) -> User | None:
         return await self._session.get(User, user_id)
+
+    async def create_doctor(
+        self,
+        *,
+        display_name: str,
+        email: str | None = None,
+        telegram_id: int | None = None,
+    ) -> User:
+        user = User(
+            role="doctor",
+            display_name=display_name,
+            email=email,
+            telegram_id=telegram_id,
+        )
+        self._session.add(user)
+        await self._session.flush()
+        return user

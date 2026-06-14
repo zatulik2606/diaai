@@ -63,5 +63,5 @@ MVP-бот — тонкий клиент backend API (история в PostgreS
 
 ```bash
 make lint    # ruff: src, backend, tests
-make test    # 45 tests (30 backend + 15 bot)
+make test    # 51 tests (36 backend + 15 bot)
 ```

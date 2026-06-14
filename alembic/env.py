@@ -8,7 +8,17 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from backend.config import get_settings
 from backend.database import Base
-from backend.models import Dialog, DialogRequest, FoodEvent, InsulinEvent, User  # noqa: F401
+from backend.models import (  # noqa: F401
+    Consultation,
+    Dialog,
+    DialogRequest,
+    FoodEvent,
+    InsulinEvent,
+    PhotoAnalysis,
+    ProgressSnapshot,
+    Recommendation,
+    User,
+)
 
 config = context.config
 if config.config_file_name is not None:

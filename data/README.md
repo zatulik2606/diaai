@@ -8,21 +8,24 @@
 
 **Не путать** с [docs/data/](../docs/data/) — продуктовые сценарии и требования.
 
-## Формат v1
+## Формат v2 (`schema_version: 2`)
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "users": [...],
   "food_events": [...],
   "insulin_events": [...],
-  "progress_snapshots": []
+  "progress_snapshots": [...],
+  "consultations": [...],
+  "recommendations": [],
+  "photo_analyses": []
 }
 ```
 
-- **Идемпотентность:** фиксированные UUID в JSON; повторный `make db-seed` не создаёт дублей (`ON CONFLICT DO NOTHING` по `id`).
-- **Анонимизация:** `telegram_id` из диапазона `900000xxx`; синтетические описания еды, без реальных ПДн.
-- **`progress_snapshots`:** пустой массив — заполнение в database iter 5 после миграции `002_*`.
+- **Идемпотентность:** фиксированные UUID; `ON CONFLICT DO NOTHING` по `id`.
+- **`progress_snapshots`, `consultations`:** seed после миграции `002_*` (database iter 5).
+- **`photo_analyses`:** создаются через API assistant (photo), не через seed.
 
 ## Загрузка
 

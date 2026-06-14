@@ -39,20 +39,19 @@
 
 ## Gap analysis: MVP schema → целевая модель
 
-Текущая миграция: [`001_initial_schema.py`](../alembic/versions/001_initial_schema.py). Целевая схема — [schema-er.md](spec/schema-er.md) (database iter 2 ✅).
+Текущие миграции: [`001_initial_schema.py`](../alembic/versions/001_initial_schema.py), [`002_full_data_layer.py`](../alembic/versions/002_full_data_layer.py) (database iter 5 ✅). Спецификация — [schema-er.md](spec/schema-er.md).
 
-| Доменная сущность | В `001_initial_schema` | Целевая таблица | Статус iter 2 |
-|-------------------|------------------------|-----------------|---------------|
-| User (diabetic) | `users` | `users` | ✅ расширение |
-| Dialog | `dialogs` | `dialogs` | ✅ as-is |
-| Request | `dialog_requests` | `dialog_requests` | ✅ as-is |
-| FoodEvent | `food_events` | `food_events` | ✅ + индексы |
-| InsulinEvent | `insulin_events` | `insulin_events` | ✅ + индексы |
-| PhotoAnalysis | нет | `photo_analyses` | ✅ спроектировано |
-| ProgressSnapshot | нет | `progress_snapshots` | ✅ спроектировано |
-| Recommendation | нет | `recommendations` | ✅ спроектировано |
-| Consultation | нет | `consultations` | ✅ спроектировано |
-| User.display_name, doctor role | частично | `users` ALTER | ✅ спроектировано |
+| Доменная сущность | В `001` | Целевая таблица | Статус |
+|-------------------|---------|-----------------|--------|
+| User | `users` | `users` (+ display_name, email) | ✅ `002` |
+| Dialog | `dialogs` | `dialogs` | ✅ |
+| Request | `dialog_requests` | `dialog_requests` | ✅ |
+| FoodEvent | `food_events` | `food_events` | ✅ |
+| InsulinEvent | `insulin_events` | `insulin_events` | ✅ |
+| PhotoAnalysis | нет | `photo_analyses` | ✅ `002` |
+| ProgressSnapshot | нет | `progress_snapshots` | ✅ `002` |
+| Recommendation | нет | `recommendations` | ✅ `002` |
+| Consultation | нет | `consultations` | ✅ `002` |
 
 Решения open questions iter 1: таблица `photo_analyses`, persist `progress_snapshots`, doctor в `users`, связь patient–doctor через `consultations` — [schema-er.md §1](spec/schema-er.md#1-логическая-модель).
 

@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.config import Settings
 from backend.models.request import DialogRequest
 from backend.repositories.dialog import DialogRepository
+from backend.repositories.photo_analysis import PhotoAnalysisRepository
 from backend.repositories.request import RequestRepository
 from backend.repositories.user import UserRepository
 from backend.schemas.assistant import AssistantMessageRequest, AssistantMessageResponse
@@ -22,6 +23,7 @@ class AssistantService:
         self._users = UserRepository(session)
         self._dialogs = DialogRepository(session)
         self._requests = RequestRepository(session)
+        self._photo_analyses = PhotoAnalysisRepository(session)
 
     async def handle_message(self, body: AssistantMessageRequest) -> AssistantMessageResponse:
         user = await self._users.get_or_create(body.telegram_id)
@@ -79,6 +81,14 @@ class AssistantService:
             reply=reply,
             media=media,
         )
+
+        if request_type in ("photo", "mixed"):
+            await self._photo_analyses.create(
+                user_id=user.id,
+                request_id=record.id,
+                object_type="dish",
+                comment=reply,
+            )
 
         return AssistantMessageResponse(
             dialog_id=str(dialog.id),

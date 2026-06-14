@@ -57,7 +57,7 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `make backend-install` | `uv sync` — зависимости |
 | `make backend-run` | uvicorn с reload |
 | `make backend-migrate` | `alembic upgrade head` |
-| `make backend-test` | pytest (30 тестов) |
+| `make backend-test` | pytest (36 тестов) |
 | `make backend-lint` | ruff check |
 | `make backend-format` | ruff format |
 | `make backend-openapi-export` | dump `/openapi.json` для diff (не коммитить) |
@@ -161,11 +161,12 @@ Smoke: `backend/tests/test_health.py`, `backend/tests/test_auth.py`.
 
 ## Миграции и БД
 
-PostgreSQL через SQLAlchemy 2 async + Alembic. Архитектура и соглашения — [ADR-003](../docs/adr/adr-003-data-access-layer.md). Пошаговый guide (новая таблица, make-команды) — [database-access.md](../docs/tech/database-access.md).
+PostgreSQL через SQLAlchemy 2 async + Alembic. Миграции: `001_initial_schema` → `002_full_data_layer` (9 таблиц). Архитектура — [ADR-003](../docs/adr/adr-003-data-access-layer.md). Guide — [database-access.md](../docs/tech/database-access.md).
 
 ```bash
-make db-reset
-make backend-test       # pytest (sqlite in-memory)
+make db-reset              # 001 + 002 + seed
+make backend-migrate       # alembic upgrade head
+make backend-test
 ```
 
-Целевая схема 9 таблиц — [schema-er.md](../docs/spec/schema-er.md). Seed и `db-*` — [database-access.md](../docs/tech/database-access.md) § Локальное окружение.
+Новые таблицы `002`: `photo_analyses`, `progress_snapshots`, `recommendations`, `consultations`. Photo-запросы assistant persist → `photo_analyses` (structured fields — backend iter 11).

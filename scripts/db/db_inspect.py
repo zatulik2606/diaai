@@ -11,9 +11,13 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from backend.config import get_settings
+from backend.models.consultation import Consultation
 from backend.models.dialog import Dialog
 from backend.models.food_event import FoodEvent
 from backend.models.insulin_event import InsulinEvent
+from backend.models.photo_analysis import PhotoAnalysis
+from backend.models.progress_snapshot import ProgressSnapshot
+from backend.models.recommendation import Recommendation
 from backend.models.request import DialogRequest
 from backend.models.user import User
 
@@ -23,6 +27,10 @@ TABLES = [
     ("insulin_events", InsulinEvent),
     ("dialogs", Dialog),
     ("dialog_requests", DialogRequest),
+    ("photo_analyses", PhotoAnalysis),
+    ("progress_snapshots", ProgressSnapshot),
+    ("recommendations", Recommendation),
+    ("consultations", Consultation),
 ]
 
 SAMPLE_LIMIT = 3
@@ -51,7 +59,10 @@ async def print_user_samples(session: AsyncSession, *, verbose: bool) -> None:
                 f"role={user.role} active={user.is_active}"
             )
         else:
-            print(f"  id={user.id} role={user.role} active={user.is_active}")
+            print(
+                f"  id={user.id} role={user.role} active={user.is_active} "
+                f"display_name={user.display_name!r}"
+            )
 
 
 async def print_food_samples(session: AsyncSession, *, verbose: bool) -> None:
