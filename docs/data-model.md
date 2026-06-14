@@ -17,6 +17,45 @@
 | Вопрос ассистенту (API) | Диалог, Запрос — [assistant-question.md](api/scenarios/assistant-question.md) |
 | Фиксация питания / инсулина (API) | Событие питания, Событие инсулина — [event-record.md](api/scenarios/event-record.md) |
 
+Детальные сценарии UI и read/write — [docs/spec/](spec/) ([user-scenarios.md](spec/user-scenarios.md), [data-requirements.md](spec/data-requirements.md)).
+
+---
+
+## Требования из сценариев
+
+Источник: database iter 1 — [data-requirements.md](spec/data-requirements.md).
+
+| Сценарий | Сущности |
+|----------|----------|
+| D1 Дневник | FoodEvent, InsulinEvent |
+| D2 Вопрос ассистенту | Dialog, Request, User |
+| D3 Динамика | ProgressSnapshot, FoodEvent, InsulinEvent |
+| D4 Рекомендации | Recommendation |
+| D5–D6 Консультации | Consultation, User (doctor) |
+| D7 Анализ фото | PhotoAnalysis, Request, FoodEvent |
+| Doc1–Doc4 Доктор | User, ProgressSnapshot, Consultation, события пациента |
+
+---
+
+## Gap analysis: MVP schema → целевая модель
+
+Текущая миграция: [`001_initial_schema.py`](../alembic/versions/001_initial_schema.py). Целевая модель — [data-requirements.md](spec/data-requirements.md#mvp-data-scope).
+
+| Доменная сущность | В `001_initial_schema` | Нужна для сценариев | Приоритет |
+|-------------------|------------------------|---------------------|-----------|
+| User (diabetic) | `users` (telegram_id, role) | D1–D7 | — |
+| Dialog | `dialogs` | D2 | — |
+| Request | `dialog_requests` (+ media JSON) | D2, D7 | — |
+| FoodEvent | `food_events` | D1, D7 | — |
+| InsulinEvent | `insulin_events` | D1 | — |
+| PhotoAnalysis | нет *(media в Request)* | D2, D7 | P1 |
+| ProgressSnapshot | нет | D3, Doc2 | P1 |
+| Recommendation | нет | D4 | P1 |
+| Consultation | нет | D5, D6, Doc3, Doc4 | P2 |
+| User.display_name, doctor role | частично (`role` string) | Doc1, web | P2 |
+
+Open questions (PhotoAnalysis table vs JSON, snapshot persist) — [data-requirements.md](spec/data-requirements.md#open-questions-для-итерации-2); решение в database iter 2.
+
 ---
 
 ## API-поля (v1)

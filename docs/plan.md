@@ -171,6 +171,7 @@ flowchart LR
 | [prompts/generate-tasklist.md](prompts/generate-tasklist.md) | prompt и эталон декомпозиции tasklist'ов |
 | [tasks/tasklist-backend.md](tasks/tasklist-backend.md) | детализация итераций 2 и 4 (backend) |
 | [tasks/tasklist-database.md](tasks/tasklist-database.md) | полноценный слой данных PostgreSQL |
+| [spec/](spec/) | продуктовые сценарии и требования к данным |
 | [api/api-contract.md](api/api-contract.md) | REST API v1 — контракт, endpoint'ы, примеры |
 | [api/conventions.md](api/conventions.md) | коды ошибок и соглашения REST API |
 | [api/openapi.yaml](api/openapi.yaml) | OpenAPI 3.1 (machine-readable) |
