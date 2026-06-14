@@ -98,8 +98,8 @@ flowchart TB
 - [x] OpenAPI совпадает с реализацией
 - [x] бот через backend; история в PG (task-07)
 - [x] unit-тесты bot client (`tests/`, 15 тестов)
-- [ ] structured logging без токенов/промптов (task-08)
-- [ ] закрыть iteration-3 summary ✅
+- [x] structured logging без токенов/промптов (task-08)
+- [x] закрыть iteration-3 summary ✅
 
 ## Dev quick start
 
@@ -114,7 +114,7 @@ make backend-run
 # терминал 2
 make run
 
-make test   # 36 passed (21 backend + 15 bot)
+make test   # 45 passed (30 backend + 15 bot)
 ```
 
 ## Definition of Done
@@ -125,9 +125,9 @@ make test   # 36 passed (21 backend + 15 bot)
 
 ## Следующий этап
 
-[task-08](tasks/task-08-quality/plan.md) → закрытие итерации → [Итерация 4 — Аналитика](../../../../../plan.md#итерация-4--аналитика-и-динамика-состояния).
+[task-08](tasks/task-08-quality/plan.md) ✅ → [Итерация 4 — Аналитика](../iteration-4-analytics/plan.md).
 
 ## Документы
 
 - 📋 [План области](../plan.md)
-- 📝 [Summary](summary.md) — 🚧 in progress (06–07 ✅, task-08 next)
+- 📝 [Summary](summary.md) — ✅ Done (06–08)

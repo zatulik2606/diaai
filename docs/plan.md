@@ -135,7 +135,7 @@ flowchart LR
 - система выдаёт рекомендации на основе истории питания и инсулина
 - сигналы изменений доступны через API
 
-**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [итерация 4 в tasklist](tasks/tasklist-backend.md#итерация-4-аналитика-и-динамика-)
+**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [iteration-4 plan](tasks/impl/backend/iteration-4-analytics/plan.md)
 
 ---
 

@@ -160,6 +160,7 @@ JSON. Структура — в контрактах сценариев (`docs/a
 
 ## Связанные документы
 
+- [api-contract.md](api-contract.md) — полный контракт v1
 - [api-contracts.md](../tech/api-contracts.md) — сводка и design review
 - [tasklist-backend.md](../tasks/tasklist-backend.md) — task-02, task-04, task-05
 - [integrations.md](../integrations.md) — OpenRouter, PostgreSQL

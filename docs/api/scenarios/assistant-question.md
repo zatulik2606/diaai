@@ -45,7 +45,7 @@ Content-Type: `application/json`
 |------|-----|--------------|----------|
 | `telegram_id` | integer | да | Telegram `chat.id` пользователя |
 | `text` | string | условно | Текст вопроса или подпись к фото; min 1 символ, если передан |
-| `image_base64` | string | условно | Base64 фото без data-URL префикса |
+| `image_base64` | string | условно | Base64 фото; data-URL префиксы снимаются на backend; лимит 5 MB |
 | `image_media_type` | string | нет | По умолчанию `image/jpeg` |
 
 **Правила:**

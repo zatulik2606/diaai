@@ -1,6 +1,6 @@
 # API-контракты diaai (v1)
 
-Сводка REST API backend для MVP. Детали — в [`docs/api/`](../api/).
+Сводка REST API backend для MVP. **Полный контракт:** [`docs/api/api-contract.md`](../api/api-contract.md). Детали — в [`docs/api/`](../api/).
 
 Опирается на [ADR-002](../adr/adr-002-backend-stack.md) · [data-model.md](../data-model.md) · [integrations.md](../integrations.md).
 
@@ -139,6 +139,7 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 
 | Документ | Содержание |
 |----------|------------|
+| [docs/api/api-contract.md](../api/api-contract.md) | **API-контракт v1** — endpoint'ы, схемы, примеры |
 | [docs/api/README.md](../api/README.md) | индекс API |
 | [conventions.md](../api/conventions.md) | коды ошибок, auth, правила изменений |
 | [openapi.yaml](../api/openapi.yaml) | OpenAPI 3.1 |

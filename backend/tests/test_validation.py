@@ -77,3 +77,36 @@ async def test_assistant_invalid_base64_422(client, auth_headers) -> None:
     )
     assert response.status_code == 422
     assert "detail" in response.json()
+
+
+_MINIMAL_WEBP_B64 = (
+    "UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/vuUAAA="
+)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "image_base64",
+    [
+        _MINIMAL_WEBP_B64,
+        f"data:image/webp;base64,{_MINIMAL_WEBP_B64}",
+        f"image/webp;base64,{_MINIMAL_WEBP_B64}",
+        f"image/webp;{_MINIMAL_WEBP_B64}",
+        f"{_MINIMAL_WEBP_B64[:20]}\n{_MINIMAL_WEBP_B64[20:]}",
+    ],
+)
+async def test_assistant_image_base64_strips_prefix(
+    client, auth_headers, image_base64: str
+) -> None:
+    response = await client.post(
+        "/api/v1/assistant/messages",
+        headers=auth_headers,
+        json={
+            "telegram_id": 123456789,
+            "text": "Укажи ХЕ",
+            "image_base64": image_base64,
+            "image_media_type": "image/webp",
+        },
+    )
+    assert response.status_code == 200
+    assert "reply" in response.json()

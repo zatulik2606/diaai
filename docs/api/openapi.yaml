@@ -189,7 +189,9 @@ components:
           minLength: 1
         image_base64:
           type: string
-          description: Base64 image; decoded size must not exceed 5 MB
+          description: >-
+            Base64 image; decoded size must not exceed 5 MB.
+            Data-URL prefixes (data:image/...;base64, or image/webp;...) are stripped automatically.
         image_media_type:
           type: string
           default: image/jpeg

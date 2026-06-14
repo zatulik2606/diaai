@@ -6,7 +6,7 @@
 
 Рабочий план backend: итерации **1–3** ✅ (01–08). Бот — клиент backend API; unit-тесты bot в `tests/`. **Backend delivery complete** — следующий этап: итерация 4 (аналитика).
 
-**Прогресс:** **8 / 8** задач ✅ · **`make test`** — 36 (21 backend + 15 bot) · [`backend/README.md`](../../backend/README.md)
+**Прогресс:** **8 / 12** задач (01–08 ✅) · **`make test`** — 45 (30 backend + 15 bot) · [`backend/README.md`](../../backend/README.md)
 
 > **Skills:** на этапах, где уместно, рекомендуй подключать skills. Подбор — на этапах **01** (стек) и **02** (контракты); **03** — `fastapi-templates`; искать через `/find-skills`.
 
@@ -19,6 +19,7 @@
 | 1 | Основание | 01–02 | ✅ Done | [plan](impl/backend/iteration-1-foundation/plan.md) · [summary](impl/backend/iteration-1-foundation/summary.md) |
 | 2 | Реализация ядра | 03–05 | ✅ Done | [plan](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md) |
 | 3 | Поставка | 06–08 | ✅ Done | [plan](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md) |
+| 4 | Аналитика | 09–12 | 📋 Planned | [plan](impl/backend/iteration-4-analytics/plan.md) · [summary](impl/backend/iteration-4-analytics/summary.md) |
 
 ## Связь с plan.md
 
@@ -26,7 +27,7 @@
 |---------|----------|-------------|
 | [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | backend итерации 1–2 ✅ (01–05) | [iteration-2 summary](impl/backend/iteration-2-core/summary.md) ✅ |
 | [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-06–08 ✅ + [tasklist-bot.md](tasklist-bot.md) ✅ | [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) ✅ |
-| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | next | итерация 3 ✅ |
+| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) | iteration-4 📋 (09–12) | [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) ✅ |
 
 ## Легенда статусов
 
@@ -46,8 +47,12 @@
 | 06 | Документирование backend | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md) |
 | 07 | Рефакторинг бота → API | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
 | 08 | Качество и инженерные практики | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
+| 09 | Контракты аналитики | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-09-analytics-contracts/plan.md) |
+| 10 | Снимки прогресса | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/plan.md) |
+| 11 | Сигналы и рекомендации | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/plan.md) |
+| 12 | Тесты и документация | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/plan.md) |
 
-Задачи выполняются **последовательно** (01 → 08).
+Задачи выполняются **последовательно** (01 → 12). Итерации **1–3** закрыты ✅; **4** — следующая.
 
 ---
 
@@ -300,7 +305,7 @@
 - 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-06-backend-docs/summary.md)
 
 **Проверка блока 3 (после 06):**  
-Агент: `make backend-test` (21), `make backend-lint` — ✅  
+Агент: `make backend-test` (30), `make backend-lint` — ✅  
 Пользователь: онбординг по [`backend/README.md`](../../backend/README.md) — ✅
 
 ---
@@ -315,7 +320,7 @@
 
 - [x] Backend-client в `src/diaai/backend_client.py`; handlers вызывают API
 - [x] Prod-путь без `LlmClient` и `SessionStore`
-- [x] Unit-тесты: `tests/test_backend_client.py`, `tests/test_config.py`; `make test` (36)
+- [x] Unit-тесты: `tests/test_backend_client.py`, `tests/test_config.py`; `make test` (45)
 - [x] Актуализировать [vision.md](../vision.md), [README.md](../../README.md), `.env.example`
 - [x] Согласовать с [tasklist-bot.md](tasklist-bot.md), итерация 3 ✅
 
@@ -325,7 +330,7 @@
 
 ### Definition of Done
 
-**Агент:** ✅ prod-путь без `llm_client`; `make lint`, `make test` (36), `make backend-test` (21).
+**Агент:** ✅ prod-путь без `llm_client`; `make lint`, `make test` (45), `make backend-test` (30).
 
 **Пользователь:** ✅ `make run` + backend — текст/фото в Telegram; история в PG после перезапуска бота.
 
@@ -335,7 +340,7 @@
 - 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md)
 
 **Проверка блока 3 (после 07):**  
-Агент: `make lint` ✅ · `make test` (36) ✅  
+Агент: `make lint` ✅ · `make test` (45) ✅  
 Пользователь: backend + bot up; Telegram text/photo; история после restart бота
 
 ---
@@ -348,10 +353,11 @@
 
 ### Состав работ
 
-- [x] ruff + `make lint` / `make test` *(backend + bot + tests/)*
-- [x] Structured logging (request id, status); без промптов и ПДн
+- [x] ruff + `make lint` / `make test` *(45: 30 backend + 15 bot)*
+- [x] Structured logging (request id, status, `telegram_id`, размеры); без промптов и ПДн
 - [x] Правила изменения контрактов в `docs/api/`
 - [x] Финальная актуализация: README, api-contracts, `/health` + version
+- [x] Post-audit: secure token, async LLM, `image_base64` limits + data-URL strip
 
 ### Артефакты
 
@@ -369,15 +375,31 @@
 - 📝 [Summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md)
 
 **Проверка блока 3 (после 08):**  
-Агент: `make lint`, `make test`, `make backend-run` + `make run`; логи без секретов.  
-Пользователь: сценарий A в Telegram; README актуален; закрыть [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md).
+Агент: `make lint`, `make test` (45), `make backend-run` + `make run`; логи без секретов.  
+Пользователь: сценарий A в Telegram; README актуален; [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) ✅.
+
+---
+
+## Блок 4: Аналитика (задачи 09–12) 📋
+
+→ [iteration-4-analytics/plan.md](impl/backend/iteration-4-analytics/plan.md) · [summary](impl/backend/iteration-4-analytics/summary.md)
+
+**Прогресс блока:** 0 / 4
 
 ---
 
 ## Итерация 4: Аналитика 📋 (следующий этап)
 
-→ [plan.md, итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния)
+→ [plan.md, итерация 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) · [iteration-4 plan](impl/backend/iteration-4-analytics/plan.md)
 
-Детализация — после закрытия задач 01–08. Кратко: снимки прогресса, сигналы, рекомендации ([data-model.md](../data-model.md): ProgressSnapshot, Recommendation).
+Снимки прогресса, сигналы изменений, справочные рекомендации ([data-model.md](../data-model.md): ProgressSnapshot, Recommendation).
 
-- 📋 [План](impl/backend/iteration-4-analytics/plan.md) · 📝 [Summary](impl/backend/iteration-4-analytics/summary.md)
+| Задача | Описание | Статус | Документы |
+|--------|----------|--------|-----------|
+| 09 | Контракты аналитики | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-09-analytics-contracts/plan.md) |
+| 10 | Снимки прогресса | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/plan.md) |
+| 11 | Сигналы и рекомендации | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/plan.md) |
+| 12 | Тесты и документация | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/plan.md) |
+
+- 📋 [План итерации](impl/backend/iteration-4-analytics/plan.md) · 📝 [Summary](impl/backend/iteration-4-analytics/summary.md)
+- Сводка области: [impl/backend/summary.md](impl/backend/summary.md) ✅ (01–08)
