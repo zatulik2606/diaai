@@ -124,7 +124,7 @@ flowchart LR
 
 ### Что не входит в это решение
 
-- детальные API-контракты — task-02, `docs/api/`;
+- детальные API-контракты — [api-contract.md](../api/api-contract.md), `docs/api/`;
 - схема таблиц — [data-model.md](../data-model.md), task-05;
 - auth для web — позже; на MVP — идентификация по `telegram_id`.
 
@@ -132,10 +132,12 @@ flowchart LR
 
 - [adr-001-database.md](adr-001-database.md)
 - [vision.md](../vision.md)
+- [api-contract.md](../api/api-contract.md)
 - [tasklist-backend.md](../tasks/tasklist-backend.md)
 
 ## Статус реализации (2026-06)
 
 - task-03 ✅ — каркас `backend/`, stub v1
-- task-05 ✅ — endpoint impl + PostgreSQL, 21 tests
-- task-06 🚧 — docs
+- task-05 ✅ — endpoint impl + PostgreSQL
+- task-06–08 ✅ — docs, bot → API, quality gate
+- **30** backend + **15** bot тестов (`make test` — 45)

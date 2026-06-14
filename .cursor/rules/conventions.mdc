@@ -11,7 +11,7 @@ alwaysApply: true
 
 **Общее:** Python 3.12+, `uv sync`, `ruff`, команды через `Makefile`.
 
-**Bot (MVP, `src/diaai/`):** aiogram 3 (polling), OpenRouter через `openai`-клиент. До task-07: SessionStore (RAM), прямой вызов LLM.
+**Bot (`src/diaai/`):** aiogram 3 (polling), httpx → backend API v1.
 
 **Backend (`backend/`, [ADR-002](docs/adr/adr-002-backend-stack.md)):** FastAPI, Uvicorn, PostgreSQL, SQLAlchemy 2, Alembic, pydantic-settings, pytest + httpx.
 
@@ -29,13 +29,11 @@ alwaysApply: true
 |-------|----------|
 | Bot: код в `src/diaai/`; Backend: код в `backend/` | Новые фреймворки, ORM-слои ради слоёв, RAG, лишние сервices |
 | `make lint` / `make format` (и `backend-*` когда появятся) | Логировать промпты, тексты сообщений, токены |
-| API-контракты в `docs/api/`; изменения — по соглашениям task-02 | Назначать дозы инсулина — только обсуждение в контексте |
+| API-контракты в `docs/api/` ([api-contract.md](docs/api/api-contract.md)); изменения — conventions + openapi | Назначать дозы инсулина — только обсуждение в контексте |
 | Миграции БД через Alembic | Хранить фото в PostgreSQL (ссылки + object storage позже) |
 
 ## Поток данных
 
-**Целевой:** Telegram → handlers → **backend API** → PostgreSQL / OpenRouter → ответ.
+**Целевой (prod):** Telegram → handlers → **backend API** → PostgreSQL / OpenRouter → ответ.
 
-**MVP-бот (до task-07):** Telegram → handlers → SessionStore → LlmClient → ответ.
-
-Фото — multimodal-запрос к OpenRouter через backend (целевое) или напрямую из бота (текущее MVP).
+Фото — multimodal-запрос к OpenRouter через backend (`image_base64` в `POST /api/v1/assistant/messages`).

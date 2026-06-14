@@ -39,3 +39,4 @@
 
 - [plan.md](plan.md) — сводный план области
 - [tasklist-backend.md](../../tasklist-backend.md)
+- [api-contract.md](../../../api/api-contract.md) — REST API v1

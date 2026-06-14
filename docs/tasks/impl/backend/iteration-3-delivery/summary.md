@@ -26,7 +26,7 @@
 
 - **Logging** — middleware key=value без body/tokens; assistant endpoint — `telegram_id`, `text_len`, `image_b64_len`; bot handlers — `chat_id` + размеры; 5xx handlers — `request_id` + code/class name
 - **`GET /health`** — `{"status":"ok","version":"1.0.0"}`
-- **Docs** — Logging + Quality в `backend/README.md` и корневом README; api-contracts tech debt (422 deferred)
+- **Docs** — Logging + Quality в `backend/README.md` и корневом README; [api-contract.md](../../../../api/api-contract.md); api-contracts tech debt (422 deferred)
 - **Post-audit hardening** (в рамках task-08):
   - `validate_service_token` — запрет insecure `BACKEND_SERVICE_TOKEN` при старте
   - LLM через `asyncio.to_thread` (не блокирует event loop)

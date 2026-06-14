@@ -238,7 +238,7 @@ diaai/
 └── README.md
 ```
 
-**Текущее состояние:** MVP-бот в `src/diaai/` — клиент backend API (task-07). `backend/` — FastAPI, PostgreSQL, OpenRouter, сценарии A/B.
+**Текущее состояние:** MVP-бот в `src/diaai/` — клиент backend API (task-07). `backend/` — FastAPI, PostgreSQL, OpenRouter, сценарии A/B. Контракт: [api-contract.md](api/api-contract.md).
 
 ---
 

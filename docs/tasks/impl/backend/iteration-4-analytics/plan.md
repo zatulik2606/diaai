@@ -89,6 +89,7 @@ flowchart TB
 
 | Артефакт | Содержание |
 |----------|------------|
+| `docs/api/api-contract.md` | новые endpoint'ы analytics v1 |
 | `docs/api/scenarios/` | сценарий progress / signals |
 | `docs/api/openapi.yaml` | `GET /api/v1/analytics/progress`, signals, recommendations |
 | `docs/data-model.md` | поля `ProgressSnapshot`, `Recommendation` |

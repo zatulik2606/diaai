@@ -46,7 +46,7 @@ MVP-бот — тонкий клиент backend API (история в PostgreS
 - [Модель данных](docs/data-model.md)
 - [Интеграции](docs/integrations.md)
 - [Backend (dev)](backend/README.md)
-- [API](docs/api/)
+- [API](docs/api/) — [контракт v1](docs/api/api-contract.md)
 - [План](docs/plan.md)
 - [Задачи](docs/tasks/)
 
@@ -61,5 +61,5 @@ MVP-бот — тонкий клиент backend API (история в PostgreS
 
 ```bash
 make lint    # ruff: src, backend, tests
-make test    # 36 tests (21 backend + 15 bot)
+make test    # 45 tests (30 backend + 15 bot)
 ```

@@ -125,7 +125,7 @@ Machine-readable: [openapi.yaml](../api/openapi.yaml).
 
 ## Contract tests (task-04–08 ✅)
 
-Реализация: `backend/tests/` + `tests/` — **36** тестов, `make test`.
+Реализация: `backend/tests/` + `tests/` — **45** тестов (`make test`: 30 backend + 15 bot).
 
 | Группа | Файл | Коды |
 |--------|------|------|

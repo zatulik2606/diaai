@@ -152,7 +152,8 @@ Task-05 добавит: `sqlalchemy[asyncio]`, `asyncpg`, `alembic`.
 
 | Документ | Содержание |
 |----------|------------|
-| [api-contracts.md](api-contracts.md) | REST v1, endpoints |
+| [api-contract.md](../api/api-contract.md) | **API-контракт v1** — endpoint'ы, схемы, примеры |
+| [api-contracts.md](api-contracts.md) | сводка, design review, contract tests |
 | [task-03 plan](../tasks/impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) | каркас |
 | [task-04 plan](../tasks/impl/backend/iteration-2-core/tasks/task-04-api-tests/plan.md) | contract tests |
 | [task-05 plan](../tasks/impl/backend/iteration-2-core/tasks/task-05-api-impl/plan.md) | impl + БД |

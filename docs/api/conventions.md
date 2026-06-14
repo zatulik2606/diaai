@@ -52,7 +52,7 @@ Web-auth и роли доктора — позже.
 
 ## Формат успешного ответа
 
-JSON. Структура — в контрактах сценариев (`docs/api/scenarios/`).
+JSON. Структура — [api-contract.md](api-contract.md) и сценарии (`docs/api/scenarios/`).
 
 ## Формат ошибки
 

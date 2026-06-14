@@ -1,6 +1,6 @@
 # Сценарий A: вопрос ассистенту
 
-Продукт: [idea.md](../../idea.md) · Сущности: Диалог, Запрос · Соглашения: [conventions.md](../conventions.md)
+Полный контракт: [api-contract.md](../api-contract.md) · Продукт: [idea.md](../../idea.md) · Сущности: Диалог, Запрос · Соглашения: [conventions.md](../conventions.md)
 
 Маппинг на MVP-бот: [handlers.py](../../../src/diaai/handlers.py) — `text_handler`, `photo_handler`.
 

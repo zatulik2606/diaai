@@ -21,7 +21,7 @@
 
 ## API-поля (v1)
 
-Маппинг домен → JSON REST API ([openapi.yaml](api/openapi.yaml)):
+Маппинг домен → JSON REST API: [api-contract.md](api/api-contract.md) · [openapi.yaml](api/openapi.yaml):
 
 | Домен | API JSON | Примечание |
 |-------|----------|------------|
@@ -248,7 +248,7 @@ erDiagram
 
 ## Что вне scope этого документа
 
-- Детали endpoint'ов — [docs/api/](api/)
+- Детали endpoint'ов — [api-contract.md](api/api-contract.md) · [docs/api/](api/)
 - детали интеграций — см. [integrations.md](integrations.md)
 
 ---

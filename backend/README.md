@@ -1,6 +1,6 @@
 # diaai Backend
 
-FastAPI backend для MVP diaai: сценарий A (вопрос ассистенту) и сценарий B (события питания и инсулина). Контракты API — в [`docs/api/`](../docs/api/).
+FastAPI backend для MVP diaai: сценарий A (вопрос ассистенту) и сценарий B (события питания и инсулина). Контракт API — [api-contract.md](../docs/api/api-contract.md) (индекс: [`docs/api/`](../docs/api/)).
 
 ## Prerequisites
 
@@ -26,7 +26,7 @@ make backend-run              # http://127.0.0.1:8000
 
 ```bash
 curl http://127.0.0.1:8000/health
-# {"status":"ok"}
+# {"status":"ok","version":"1.0.0"}
 ```
 
 Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)  
@@ -56,7 +56,7 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `make backend-install` | `uv sync` — зависимости |
 | `make backend-run` | uvicorn с reload |
 | `make backend-migrate` | `alembic upgrade head` |
-| `make backend-test` | pytest (21 тест) |
+| `make backend-test` | pytest (30 тестов) |
 | `make backend-lint` | ruff check |
 | `make backend-format` | ruff format |
 | `make backend-openapi-export` | dump `/openapi.json` для diff (не коммитить) |
@@ -139,7 +139,9 @@ Smoke: `backend/tests/test_health.py`, `backend/tests/test_auth.py`.
 
 ## Документация
 
+- [API-контракт v1](../docs/api/api-contract.md) — endpoint'ы, схемы, ошибки
 - [API conventions](../docs/api/conventions.md)
-- [OpenAPI yaml](../docs/api/openapi.yaml) — контракт в репо
+- [OpenAPI yaml](../docs/api/openapi.yaml) — machine-readable контракт
 - [Сценарии](../docs/api/scenarios/)
+- [Design review](../docs/tech/api-contracts.md)
 - [Tasklist backend](../docs/tasks/tasklist-backend.md)

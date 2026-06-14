@@ -107,14 +107,14 @@
 
 - [x] **Сценарий A — вопрос ассистенту:** [assistant-question.md](../api/scenarios/assistant-question.md)
 - [x] **Сценарий B — фиксация события:** [event-record.md](../api/scenarios/event-record.md)
-- [x] Соглашения — [conventions.md](../api/conventions.md), [openapi.yaml](../api/openapi.yaml)
+- [x] Соглашения — [conventions.md](../api/conventions.md), [api-contract.md](../api/api-contract.md), [openapi.yaml](../api/openapi.yaml)
 - [x] Актуализировать [data-model.md](../data-model.md), [integrations.md](../integrations.md)
 - [x] Post-review: [api-contracts.md](../tech/api-contracts.md), [backend-structure.md](../tech/backend-structure.md)
 - [x] Skills: `api-design-principles`, `fastapi-templates` (task-03+)
 
 ### Артефакты
 
-- `docs/api/` — контракты и conventions
+- `docs/api/` — [api-contract.md](../api/api-contract.md), scenarios, conventions, openapi
 
 ### Definition of Done
 
@@ -356,12 +356,12 @@
 - [x] ruff + `make lint` / `make test` *(45: 30 backend + 15 bot)*
 - [x] Structured logging (request id, status, `telegram_id`, размеры); без промптов и ПДн
 - [x] Правила изменения контрактов в `docs/api/`
-- [x] Финальная актуализация: README, api-contracts, `/health` + version
+- [x] Финальная актуализация: README, [api-contract.md](../api/api-contract.md), api-contracts, `/health` + version
 - [x] Post-audit: secure token, async LLM, `image_base64` limits + data-URL strip
 
 ### Артефакты
 
-- conventions в `docs/api/`, logging config
+- [api-contract.md](../api/api-contract.md), conventions в `docs/api/`, logging config
 
 ### Definition of Done
 

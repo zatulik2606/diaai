@@ -45,7 +45,7 @@ flowchart LR
     API --> OR
 ```
 
-Структура: [backend-structure.md](../../../tech/backend-structure.md) · контракты: [api-contracts.md](../../../tech/api-contracts.md) · онбординг: [backend/README.md](../../../backend/README.md).
+Структура: [backend-structure.md](../../../tech/backend-structure.md) · контракт: [api-contract.md](../../../api/api-contract.md) · сводка: [api-contracts.md](../../../tech/api-contracts.md) · онбординг: [backend/README.md](../../../backend/README.md).
 
 ## Прогресс задач
 

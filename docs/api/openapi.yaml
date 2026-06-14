@@ -3,7 +3,8 @@ info:
   title: diaai Backend API
   version: 1.0.0
   description: |
-    MVP backend для diaai. Сценарии: [assistant-question.md](scenarios/assistant-question.md),
+    MVP backend для diaai. Полный контракт: [api-contract.md](api-contract.md).
+    Сценарии: [assistant-question.md](scenarios/assistant-question.md),
     [event-record.md](scenarios/event-record.md). Соглашения: [conventions.md](conventions.md).
 
 servers:

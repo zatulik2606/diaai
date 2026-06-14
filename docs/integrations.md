@@ -54,7 +54,7 @@ flowchart TB
 
 | | |
 |---|---|
-| **Сервис** | diaai backend (FastAPI) · [docs/api/](../api/) |
+| **Сервис** | diaai backend (FastAPI) · [api-contract.md](../api/api-contract.md) |
 | **Назначение** | ядро: сценарий A (вопрос ассистенту), сценарий B (фиксация питания/инсулина) |
 | **Направление** | bidirectional |
 | **Протокол** | HTTPS REST `/api/v1` · [openapi.yaml](../api/openapi.yaml) |
@@ -62,7 +62,7 @@ flowchart TB
 
 Компонент: `backend` (task-03–05 ✅). Клиенты: `bot` (task-07), `web` (позже). Auth: `Authorization: Bearer`, `telegram_id` в теле.
 
-Контракты: [assistant-question.md](../api/scenarios/assistant-question.md), [event-record.md](../api/scenarios/event-record.md).
+Контракты: [api-contract.md](../api/api-contract.md) · [assistant-question.md](../api/scenarios/assistant-question.md) · [event-record.md](../api/scenarios/event-record.md).
 
 ---
 
@@ -166,4 +166,4 @@ flowchart LR
 - SDK и реализация клиентов
 - SLA провайдеров
 
-Эндпоинты и payload — [docs/api/](../api/).
+Эндпоинты и payload — [api-contract.md](../api/api-contract.md) · [docs/api/](../api/).
