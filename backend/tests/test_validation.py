@@ -79,9 +79,7 @@ async def test_assistant_invalid_base64_422(client, auth_headers) -> None:
     assert "detail" in response.json()
 
 
-_MINIMAL_WEBP_B64 = (
-    "UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/vuUAAA="
-)
+_MINIMAL_WEBP_B64 = "UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/vuUAAA="
 
 
 @pytest.mark.asyncio

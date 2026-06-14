@@ -16,3 +16,4 @@
 |-----|----------|--------|------|
 | [adr-001-database.md](adr-001-database.md) | Выбор СУБД: PostgreSQL | Принято | 2026-06-07 |
 | [adr-002-backend-stack.md](adr-002-backend-stack.md) | Стек backend: FastAPI | Принято | 2026-06-07 |
+| [adr-003-data-access-layer.md](adr-003-data-access-layer.md) | Слой доступа к данным: SQLAlchemy 2 + Alembic | Принято | 2026-06-07 |

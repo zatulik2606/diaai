@@ -54,8 +54,10 @@ MVP-бот — тонкий клиент backend API (история в PostgreS
 
 **Telegram-бот:** токены — [how-to-get-tokens.md](docs/how-to-get-tokens.md); `cp .env.example .env` (`TELEGRAM_BOT_TOKEN`, `BACKEND_URL`, `BACKEND_SERVICE_TOKEN`).
 
-1. Backend: [backend/README.md](backend/README.md) — `docker compose up -d` → `make backend-migrate` → `make backend-run`
+1. Backend + БД: `make db-reset` (PostgreSQL + migrate + seed) → `make backend-run` — подробнее [backend/README.md](backend/README.md)
 2. Бот: `make install && make run` (в отдельном терминале)
+
+Проверка данных: `make db-inspect`.
 
 ## Quality
 

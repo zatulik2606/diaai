@@ -131,6 +131,7 @@ flowchart LR
 ## Связанные документы
 
 - [adr-001-database.md](adr-001-database.md)
+- [adr-003-data-access-layer.md](adr-003-data-access-layer.md) — SQLAlchemy async, Alembic, repositories
 - [vision.md](../vision.md)
 - [api-contract.md](../api/api-contract.md)
 - [tasklist-backend.md](../tasks/tasklist-backend.md)

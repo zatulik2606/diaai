@@ -17,10 +17,11 @@ cp .env.example .env
 # Заполнить BACKEND_SERVICE_TOKEN и OPENROUTER_API_KEY (см. раздел «Конфигурация»)
 
 make backend-install
-docker compose up -d          # PostgreSQL на localhost:5433
-make backend-migrate
-make backend-run              # http://127.0.0.1:8000
+make db-reset              # PostgreSQL :5433 + migrate + seed
+make backend-run           # http://127.0.0.1:8000
 ```
+
+Проверка данных: `make db-inspect`.
 
 Проверка:
 
@@ -60,6 +61,18 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `make backend-lint` | ruff check |
 | `make backend-format` | ruff format |
 | `make backend-openapi-export` | dump `/openapi.json` для diff (не коммитить) |
+
+### Локальная БД
+
+| Команда | Назначение |
+|---------|------------|
+| `make db-up` | PostgreSQL в Docker + wait healthy |
+| `make db-down` | остановка контейнера |
+| `make db-reset` | чистая БД: down -v → up → migrate → seed |
+| `make db-migrate` | alias `make backend-migrate` |
+| `make db-seed` | загрузка [`data/progress-import.v1.json`](../data/progress-import.v1.json) |
+| `make db-shell` | psql в контейнере |
+| `make db-inspect` | counts и sample rows (без ПДн) |
 
 ## API и авторизация
 
@@ -145,3 +158,14 @@ Smoke: `backend/tests/test_health.py`, `backend/tests/test_auth.py`.
 - [Сценарии](../docs/api/scenarios/)
 - [Design review](../docs/tech/api-contracts.md)
 - [Tasklist backend](../docs/tasks/tasklist-backend.md)
+
+## Миграции и БД
+
+PostgreSQL через SQLAlchemy 2 async + Alembic. Архитектура и соглашения — [ADR-003](../docs/adr/adr-003-data-access-layer.md). Пошаговый guide (новая таблица, make-команды) — [database-access.md](../docs/tech/database-access.md).
+
+```bash
+make db-reset
+make backend-test       # pytest (sqlite in-memory)
+```
+
+Целевая схема 9 таблиц — [schema-er.md](../docs/spec/schema-er.md). Seed и `db-*` — [database-access.md](../docs/tech/database-access.md) § Локальное окружение.

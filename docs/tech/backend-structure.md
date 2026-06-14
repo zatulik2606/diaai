@@ -92,14 +92,29 @@ alembic.ini
 | `endpoints/` subfolder | шаблон | два домена — файлы в `v1/` достаточно |
 | Monorepo pyproject | сейчас только `src/diaai` | task-03: добавить discovery для `backend/` |
 
-### Fix (внести при task-03)
+### Fix (внесено при task-03 / task-05)
 
-| Проблема | Действие |
-|----------|----------|
-| `pyproject.toml` без backend | `[tool.setuptools.packages.find] where = ["src", "."]` или явный `packages` для `backend` |
-| Нет `__init__.py` в плане | добавить в task-03 чеклист |
-| Alembic путь | `alembic/` в корне репо; `script_location` → `backend.models` metadata |
-| Health вне v1 | `GET /health` на app root, не под `/api/v1` — по openapi |
+| Проблема | Действие | Статус |
+|----------|----------|--------|
+| `pyproject.toml` без backend | `[tool.setuptools.packages.find] where = ["src", "."]` | ✅ |
+| Нет `__init__.py` | добавлено в task-03 | ✅ |
+| Alembic путь | `alembic/` в корне; metadata → `backend.models` | ✅ |
+| Health вне v1 | `GET /health` на app root | ✅ |
+
+## Слой данных
+
+Практика доступа к PostgreSQL — [database-access.md](database-access.md) · [ADR-003](../adr/adr-003-data-access-layer.md).
+
+| Слой | Каталог | Ответственность |
+|------|---------|-----------------|
+| Session / DI | `database.py` | engine, `get_db`, commit/rollback |
+| ORM | `models/` | одна модель = один файл = одна таблица |
+| Queries | `repositories/` | SQLAlchemy select/add/flush; без HTTP |
+| Domain | `services/` | бизнес-правила, orchestration |
+| HTTP | `api/v1/` | routers; `Depends(get_db)`; без SQL |
+| Migrations | `alembic/` | revisions, async env |
+
+Workflow «новая таблица» — 5 шагов в [database-access.md](database-access.md#workflow-новая-таблица-5-шагов).
 
 ## Поток зависимостей (task-05)
 
@@ -152,6 +167,8 @@ Task-05 добавит: `sqlalchemy[asyncio]`, `asyncpg`, `alembic`.
 
 | Документ | Содержание |
 |----------|------------|
+| [database-access.md](database-access.md) | **guide** — миграции, 5 шагов, make-команды |
+| [adr-003-data-access-layer.md](../adr/adr-003-data-access-layer.md) | ADR — SQLAlchemy async + Alembic |
 | [api-contract.md](../api/api-contract.md) | **API-контракт v1** — endpoint'ы, схемы, примеры |
 | [api-contracts.md](api-contracts.md) | сводка, design review, contract tests |
 | [task-03 plan](../tasks/impl/backend/iteration-2-core/tasks/task-03-scaffold/plan.md) | каркас |
