@@ -1,6 +1,6 @@
 # Task 02: Каркас Next.js + layout + auth — Summary
 
-> **Статус:** 🚧 In Progress
+> **Статус:** ✅ Done
 
 Итерация: [iteration-2-scaffold](../../plan.md) · [plan](plan.md)
 
@@ -8,70 +8,63 @@
 
 ## Сделано
 
-### Планирование ✅
+### shadcn + тема
 
-- Plan-артефакты iter 2 и task 02 по [tasklist-frontend.md](../../../../../tasklist-frontend.md)
-- Архитектура BFF-auth, route groups, role matrix, целевая структура `web/`
-- [tasklist-frontend.md](../../../../../tasklist-frontend.md) актуализирован (iter 2 → next)
+- Ручная установка shadcn-компонентов (CLI недоступен): Button, Card, Input, Label, Avatar, Separator, Skeleton, Sheet, Table, Chart wrapper
+- Design tokens tbench в `globals.css`; `components.json`
+- `app/layout.tsx`: dark theme, Inter + JetBrains Mono
 
-### Частичная реализация
+### Auth BFF + session
 
-- `pnpm create next-app` в `web/` — Next.js 16.2.9, React 19, Tailwind 4, ESLint, App Router
-- Восстановлены toolchain-файлы: `.nvmrc` (24), `.npmrc`, `engines`/`packageManager` в `package.json`
-- Default scaffold: `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `next.config.ts`
+- `lib/types/auth.ts`, `lib/session.ts`, `lib/backend-client.ts`
+- `POST /api/auth/login`, `POST /api/auth/logout`
+- Cookie `diaai_session` (httpOnly, 7d)
+- `middleware.ts`: guard, role redirects (doctor ↔ leaderboard, diabetic ↔ dashboard)
 
-## Не сделано (остаток iter 2)
+### UI shell
 
-| Блок | Статус |
-|------|--------|
-| shadcn/ui init + компоненты | 📋 |
-| Design tokens tbench в `globals.css` | 📋 |
-| BFF `/api/auth/login|logout`, session cookie | 📋 |
-| `middleware.ts`, role redirects | 📋 |
-| Login page, AppShell, sidebar, header | 📋 |
-| Placeholder routes (`/dashboard`, `/leaderboard`, `/chat`) | 📋 |
-| ChatFab + Sheet-заглушка | 📋 |
-| Makefile `web-*` targets | 📋 |
-| `web/.env.example`, `web/README.md` (diaai) | 📋 |
-| Skills review (shadcn, vercel, nextjs) | 📋 |
+- Login page `(auth)/login`
+- App shell: `(app)/layout.tsx`, sidebar, header, logout
+- Placeholders: `/dashboard`, `/leaderboard`, `/chat`
+- ChatFab (Sheet-заглушка iter 5)
+- Root `page.tsx` → redirect по роли
+
+### Infra + docs
+
+- Makefile: `web-install`, `web-dev`, `web-build`, `web-lint`
+- `web/.env.example`, `web/README.md`
+- Root `README.md`, `docs/integrations.md`, `.env.example`
 
 ## Отклонения от плана
 
 | Отклонение | Причина |
 |------------|---------|
-| shadcn CLI init не завершён | сеть / `ui.shadcn.com` недоступна; fallback — ручная установка deps |
-| Default create-next-app page | iter 2 не закрыт — placeholder diaai UI не добавлен |
-| `pnpm-workspace.yaml` в `web/` | артеfact create-next-app; не блокирует, можно удалить при cleanup |
+| shadcn CLI init | network error; ручная установка Radix + компоненты |
+| Mobile sidebar Sheet | desktop-only sidebar в iter 2; mobile nav — iter 7 |
+| `pnpm-workspace.yaml` в `web/` | artifact create-next-app; не блокирует |
 
-## Решения (зафиксированы в plan)
+## Решения
 
 | Решение | Обоснование |
 |---------|-------------|
 | BFF-only auth | `BACKEND_SERVICE_TOKEN` только server-side |
-| httpOnly cookie `diaai_session` | безопаснее localStorage для MVP |
+| httpOnly cookie | безопаснее localStorage для MVP |
 | Route groups `(auth)` / `(app)` | публичный login vs protected shell |
-| Placeholder pages без API fetch | scope iter 2 — каркас, не dashboard |
-
-## Проблемы
-
-| Проблема | Статус |
-|----------|--------|
-| `create next-app` в непустой `web/` | обход: временный move `package.json` → init → merge |
-| shadcn init network error | pending: ручной setup или retry CLI |
-| `pnpm install` ERR_PNPM_IGNORED_BUILDS (sharp) | `pnpm approve-builds` при необходимости build |
 
 ## Проверки
 
 | Команда | Результат |
 |---------|-----------|
-| `make web-dev` | ❌ нет Makefile targets |
-| `make web-lint` / `make web-build` | ❌ не настроено |
-| Login `akozhin` → `/dashboard` | ❌ auth не реализован |
-| DoD iter 2 | ❌ не выполнен |
+| `make web-lint` | ✅ |
+| `make web-build` | ✅ |
+| `make web-dev` + login `akozhin` | ✅ → `/leaderboard` |
+| login `ivan_p` | ✅ → `/dashboard` |
+| doctor на `/dashboard` | ✅ 307 → leaderboard |
 
-## Следующий шаг
+## Skills review
 
-1. shadcn + design tokens
-2. BFF auth + middleware + AppShell + FAB
-3. Makefile `web-*`, env, README
-4. `make web-lint && make web-build` → закрыть task-02 и iter 2
+| Skill | Verdict |
+|-------|---------|
+| shadcn | ✅ semantic tokens, Sheet с title/description |
+| vercel-react-best-practices | ✅ server layout, client только form/FAB/logout |
+| nextjs-app-router-patterns | ✅ middleware matcher, route groups |

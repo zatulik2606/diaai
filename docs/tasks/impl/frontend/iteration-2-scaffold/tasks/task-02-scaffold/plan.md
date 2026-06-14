@@ -2,7 +2,7 @@
 
 Итерация: [iteration-2-scaffold](../../plan.md)
 
-**Статус:** 📋 Planned → 🚧 In Progress · [summary](summary.md)
+**Статус:** 📋 Planned → ✅ Done · [summary](summary.md)
 
 ---
 

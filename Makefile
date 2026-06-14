@@ -64,3 +64,17 @@ db-shell:
 
 db-inspect:
 	uv run python scripts/db/db_inspect.py
+
+.PHONY: web-install web-dev web-build web-lint
+
+web-install:
+	cd web && pnpm install
+
+web-dev:
+	cd web && pnpm dev
+
+web-build:
+	cd web && pnpm build
+
+web-lint:
+	cd web && pnpm lint

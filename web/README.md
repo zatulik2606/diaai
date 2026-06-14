@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# diaai web
 
-## Getting Started
+Next.js App Router frontend для diaai: login по Telegram username, app shell, навигация, FAB чата.
 
-First, run the development server:
+## Требования
+
+- Node 20+ (рекомендуется 24 — см. `.nvmrc`)
+- pnpm 11.6 (`corepack enable && corepack prepare pnpm@11.6.0 --activate`)
+- Backend на `:8000` с seeded БД
+
+## Быстрый старт
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# из корня репозитория
+make db-reset && make backend-run   # :8000
+
+cp web/.env.example web/.env.local  # BACKEND_URL, BACKEND_SERVICE_TOKEN
+make web-install && make web-dev    # :3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Demo login:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| username | роль | redirect |
+|----------|------|----------|
+| `ivan_p` | пациент | `/dashboard` |
+| `akozhin` | доктор | `/leaderboard` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Команды
 
-## Learn More
+| Команда | Действие |
+|---------|----------|
+| `make web-install` | `pnpm install` |
+| `make web-dev` | dev-сервер :3000 |
+| `make web-build` | production build |
+| `make web-lint` | ESLint |
 
-To learn more about Next.js, take a look at the following resources:
+## Архитектура auth
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- BFF: `POST /api/auth/login`, `POST /api/auth/logout`
+- Cookie `diaai_session` (httpOnly)
+- Backend: `POST /api/v1/web/auth/resolve` + `BACKEND_SERVICE_TOKEN` (только server-side)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Подробнее: [docs/integrations.md](../docs/integrations.md) · [frontend-contract.md](../docs/api/frontend-contract.md)

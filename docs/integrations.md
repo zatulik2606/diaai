@@ -74,11 +74,11 @@ flowchart TB
 | **Назначение** | dashboard доктора, leaderboard, чат с ассистентом |
 | **Направление** | bidirectional |
 | **Протокол** | HTTPS REST `/api/v1/web/*` · [frontend-contract.md](../api/frontend-contract.md) |
-| **Критичность** | **Planned** (frontend iter 2+) |
+| **Критичность** | **MVP scaffold** (frontend iter 2 ✅) |
 
 Компонент: `web`. Backend — единый источник данных (PostgreSQL). Auth MVP: Telegram username → BFF (Next Route Handler) → `POST /api/v1/web/auth/resolve`; `BACKEND_SERVICE_TOKEN` только на сервере.
 
-Env (iter 2): `NEXT_PUBLIC_BACKEND_URL`, server-side `BACKEND_SERVICE_TOKEN`.
+Env (`web/.env.local`): `BACKEND_URL`, `BACKEND_SERVICE_TOKEN`. Опционально для browser fetch (iter 3+): `NEXT_PUBLIC_BACKEND_URL`.
 
 ---
 

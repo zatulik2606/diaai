@@ -15,9 +15,9 @@
 | Глобальный чат (FAB) | Диалог с **ассистентом** (сценарий D2) |
 | Матрица «студенты × уроки» | **Пациенты × периоды/метрики** (`progress_snapshots`) |
 
-**Текущее состояние:** spec UI ✅ (iter 0) · backend `/api/v1/web/*` + seed v3 ✅ (iter 1) · `web/` — Next.js 16 init ✅, shadcn/auth/shell 📋 (iter 2 🚧).
+**Текущее состояние:** spec UI ✅ (iter 0) · backend `/api/v1/web/*` + seed v3 ✅ (iter 1) · `web/` — каркас Next.js + auth BFF + app shell ✅ (iter 2).
 
-**Прогресс:** **2 / 10** итераций ✅ · **2 / 10** задач ✅ · **1** 🚧 in progress · **текущая:** iter 2 — [каркас frontend](impl/frontend/iteration-2-scaffold/plan.md) · [summary iter 2](impl/frontend/iteration-2-scaffold/summary.md) · [plan области](impl/frontend/plan.md)
+**Прогресс:** **3 / 10** итераций ✅ · **3 / 10** задач ✅ · **текущая:** iter 3 — [панель пациента с диабетом](impl/frontend/iteration-3-patient-dashboard/plan.md) · [plan области](impl/frontend/plan.md)
 
 **Зависимости:**
 
@@ -38,17 +38,18 @@
 | Package manager | pnpm (corepack) |
 | Node | 20+; dev pin — `web/.nvmrc` → 24 |
 
-**Toolchain + scaffold (iter 2, partial):**
+**Toolchain + scaffold (iter 2 ✅):**
 
 ```
 web/
 ├── .nvmrc, .npmrc, package.json   # engines, pnpm 11.6
-├── app/                           # Next.js 16 App Router (default template)
-├── next.config.ts, tsconfig.json
-└── node_modules/                  # next 16, react 19, tailwind 4
+├── app/(auth)/login, app/(app)/   # route groups
+├── app/api/auth/                  # BFF login/logout
+├── components/ui/, components/    # shadcn + shell
+├── lib/                           # session, backend-client
+├── middleware.ts
+└── Makefile web-* (корень)
 ```
-
-*Ожидается iter 2:* `components/`, `lib/`, `middleware.ts`, BFF auth, Makefile `web-*`.
 
 Локально: `cd web && nvm use && corepack enable && corepack prepare pnpm@11.6.0 --activate`
 
@@ -75,12 +76,11 @@ web/
 | `make web-dev` | `cd web && pnpm dev` (:3000) | 2 |
 | `make web-build` | `cd web && pnpm build` | 2+ |
 | `make web-lint` | `cd web && pnpm lint` | 2+ |
-| `cd web && pnpm dev` | dev-сервер (до `make web-dev`) | 2 🚧 |
 | `make backend-run` | FastAPI :8000 | 1+ |
 | `make db-reset` | migrate + seed v3 | 1+ |
 | `make db-inspect` | counts по ролям/таблицам | 1+ |
 
-*Целевые `web-*` — добавить в корневой `Makefile` при реализации iter 2.*
+*Целевые `web-*` — в корневом `Makefile`.*
 
 ## Итерации
 
@@ -90,8 +90,8 @@ web/
 |---|----------|--------|--------|-----------|
 | 0 | Требования UI и API-контракты | 00 | ✅ Done | [plan](impl/frontend/iteration-0-ui-contracts/plan.md) · [summary](impl/frontend/iteration-0-ui-contracts/summary.md) |
 | 1 | API для frontend | 01 | ✅ Done | [plan](impl/frontend/iteration-1-frontend-api/plan.md) · [summary](impl/frontend/iteration-1-frontend-api/summary.md) |
-| 2 | Каркас frontend | 02 | 🚧 In Progress | [plan](impl/frontend/iteration-2-scaffold/plan.md) · [summary](impl/frontend/iteration-2-scaffold/summary.md) |
-| 3 | Панель пациента с диабетом | 03 | 📋 Planned | [plan](impl/frontend/iteration-3-patient-dashboard/plan.md) |
+| 2 | Каркас frontend | 02 | ✅ Done | [plan](impl/frontend/iteration-2-scaffold/plan.md) · [summary](impl/frontend/iteration-2-scaffold/summary.md) |
+| 3 | Панель пациента с диабетом | 03 | 📋 Next | [plan](impl/frontend/iteration-3-patient-dashboard/plan.md) |
 | 4 | Лидерборд | 04 | 📋 Planned | [plan](impl/frontend/iteration-4-leaderboard/plan.md) |
 | 5 | Чат с ассистентом | 05 | 📋 Planned | [plan](impl/frontend/iteration-5-assistant-chat/plan.md) |
 | 6 | Чат в основной области | 06 | 📋 Planned | [plan](impl/frontend/iteration-6-main-chat/plan.md) |
@@ -118,8 +118,8 @@ web/
 |--------|----------|--------|-----------|
 | 00 | UI-требования и API-контракты frontend | ✅ Done | [план](impl/frontend/iteration-0-ui-contracts/tasks/task-00-ui-contracts/plan.md) · [summary](impl/frontend/iteration-0-ui-contracts/tasks/task-00-ui-contracts/summary.md) |
 | 01 | Backend API + demo seed для UI | ✅ Done | [план](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/plan.md) · [summary](impl/frontend/iteration-1-frontend-api/tasks/task-01-frontend-api/summary.md) |
-| 02 | Каркас Next.js + layout + auth | 🚧 In Progress | [план](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/plan.md) · [summary](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/summary.md) |
-| 03 | Панель пациента с диабетом (`/dashboard`) | 📋 Planned | [план](impl/frontend/iteration-3-patient-dashboard/tasks/task-03-patient-dashboard/plan.md) |
+| 02 | Каркас Next.js + layout + auth | ✅ Done | [план](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/plan.md) · [summary](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/summary.md) |
+| 03 | Панель пациента с диабетом (`/dashboard`) | 📋 Next | [план](impl/frontend/iteration-3-patient-dashboard/tasks/task-03-patient-dashboard/plan.md) |
 | 04 | Лидерборд | 📋 Planned | [план](impl/frontend/iteration-4-leaderboard/tasks/task-04-leaderboard/plan.md) |
 | 05 | Чат с ассистентом (FAB / страница) | 📋 Planned | [план](impl/frontend/iteration-5-assistant-chat/tasks/task-05-assistant-chat/plan.md) |
 | 06 | Чат в меню «Чат» | 📋 Planned | [план](impl/frontend/iteration-6-main-chat/tasks/task-06-main-chat/plan.md) |
@@ -232,7 +232,7 @@ make backend-run   # curl smoke 8 web endpoints
 
 ---
 
-## Итерация 2: Каркас frontend-проекта 🚧
+## Итерация 2: Каркас frontend-проекта ✅
 
 → [iteration-2-scaffold/plan.md](impl/frontend/iteration-2-scaffold/plan.md)
 
@@ -246,13 +246,13 @@ make backend-run   # curl smoke 8 web endpoints
 
 - [x] Plan-артефакты iter 2 + task 02 ([plan](impl/frontend/iteration-2-scaffold/plan.md), [summary](impl/frontend/iteration-2-scaffold/summary.md))
 - [x] `pnpm create next-app` в `web/` — Next.js 16.2.9, React 19, Tailwind 4, ESLint (default template)
-- [ ] shadcn/ui init; базовые компоненты (Button, Card, Table, Chart wrapper)
-- [ ] Тёмная тема (CSS variables); ориентир tbench dev-style
-- [ ] Вход: форма Telegram username → BFF → session (httpOnly cookie); header: user info + logout
-- [ ] Layout: sidebar/nav (Dashboard, Leaderboard, Chat); **FAB глобального чата**
-- [ ] API client (server BFF; `BACKEND_URL` + `BACKEND_SERVICE_TOKEN` только на сервере)
-- [ ] Makefile: `web-install`, `web-dev`, `web-build`, `web-lint`
-- [ ] `web/README.md` — quick start
+- [x] shadcn/ui init; базовые компоненты (Button, Card, Table, Chart wrapper)
+- [x] Тёмная тема (CSS variables); ориентир tbench dev-style
+- [x] Вход: форма Telegram username → BFF → session (httpOnly cookie); header: user info + logout
+- [x] Layout: sidebar/nav (Dashboard, Leaderboard, Chat); **FAB глобального чата**
+- [x] API client (server BFF; `BACKEND_URL` + `BACKEND_SERVICE_TOKEN` только на сервере)
+- [x] Makefile: `web-install`, `web-dev`, `web-build`, `web-lint`
+- [x] `web/README.md` — quick start
 
 #### Skills
 
@@ -286,11 +286,11 @@ make web-lint && make web-build
 
 ### Документы
 
-- 🚧 [План итерации](impl/frontend/iteration-2-scaffold/plan.md) · [Summary](impl/frontend/iteration-2-scaffold/summary.md) · [task-02 plan](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/plan.md) · [task-02 summary](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/summary.md)
+- ✅ [План итерации](impl/frontend/iteration-2-scaffold/plan.md) · [Summary](impl/frontend/iteration-2-scaffold/summary.md) · [task-02 plan](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/plan.md) · [task-02 summary](impl/frontend/iteration-2-scaffold/tasks/task-02-scaffold/summary.md)
 
 ---
 
-## Итерация 3: Панель пациента с диабетом 📋
+## Итерация 3: Панель пациента с диабетом 📋 Next
 
 → [iteration-3-patient-dashboard/plan.md](impl/frontend/iteration-3-patient-dashboard/plan.md)
 
