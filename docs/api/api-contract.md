@@ -1,8 +1,17 @@
 # API-контракт diaai (v1)
 
-Описание REST API backend для MVP. Machine-readable: [openapi.yaml](openapi.yaml). Соглашения и коды ошибок: [conventions.md](conventions.md).
+Описание REST API backend для MVP. Machine-readable: [openapi.yaml](openapi.yaml) (tags: `system`, `assistant`, `events`, `web`). Соглашения и коды ошибок: [conventions.md](conventions.md).
 
-**Статус:** реализовано ✅ (итерации 2–3). Клиент MVP — Telegram-бот (`src/diaai/backend_client.py`).
+**Статус:** bot endpoint'ы ✅ (backend iter 2–3) · web `/api/v1/web/*` 📋 (контракт iter 0, impl [frontend iter 1](../tasks/tasklist-frontend.md)).
+
+**Клиенты:**
+
+| Клиент | Endpoint'ы | Статус |
+|--------|------------|--------|
+| Telegram-бот | `/api/v1/assistant/*`, `/api/v1/events/*` | ✅ `src/diaai/backend_client.py` |
+| Web (Next.js) | `/api/v1/web/*` + reuse `POST /assistant/messages` | 📋 [frontend-contract.md](frontend-contract.md) |
+
+Продуктовые требования web UI — [frontend-requirements.md](../spec/frontend-requirements.md).
 
 ---
 
@@ -14,28 +23,60 @@
 | Версия API | `/api/v1/` |
 | Формат | JSON, `Content-Type: application/json` |
 | Auth | `Authorization: Bearer <BACKEND_SERVICE_TOKEN>` |
-| Пользователь | `telegram_id` — Telegram `chat.id` в теле POST или query GET |
+| Пользователь (bot) | `telegram_id` — Telegram `chat.id` в теле POST или query GET |
+| Пользователь (web) | `doctor_telegram_id` / `telegram_id` в query; `username` в body auth; BFF держит Bearer |
 
-**Сценарии:**
+**Сценарии (bot):**
 
 | ID | Назначение | Endpoint'ы |
 |----|------------|------------|
 | A | Вопрос ассистенту (текст / фото → LLM) | `POST /api/v1/assistant/messages` |
 | B | Фиксация питания и инсулина | `POST /api/v1/events/food`, `POST /api/v1/events/insulin`, `GET /api/v1/events/food` |
 
-**Вне scope v1:** web-auth, роли доктора, аналитика (`/api/v1/analytics/*` — итерация 4), CRUD диалогов.
+**Сценарии (web)** — см. [frontend-requirements.md](../spec/frontend-requirements.md):
+
+| Зона | Сценарии | Endpoint'ы |
+|------|----------|------------|
+| 1 Dashboard доктора | Doc1, Doc2 | `GET /api/v1/web/doctor/dashboard/*` |
+| 2 Лидерboard | D3 | `GET /api/v1/web/leaderboard` |
+| 3 FAB-чат | D2 | `GET /api/v1/web/assistant/history`, `POST /api/v1/assistant/messages` |
+| 4 Матрица прогресса | Doc2, D3 | `GET /api/v1/web/doctor/dashboard/progress-matrix` |
+| Auth (login) | — | `POST /api/v1/web/auth/resolve` |
+
+**Вне scope v1:** JWT/web-session на backend, CRUD консультаций Doc3–Doc4, `/api/v1/analytics/*` (backend iter 4 — отдельный track).
+
+**Web:** детальные контракты, JSON-примеры и PG mapping — [frontend-contract.md](frontend-contract.md).
 
 ---
 
 ## Карта endpoint'ов
 
+### System и bot (реализовано ✅)
+
 | Method | Path | Auth | Success | Описание |
 |--------|------|------|---------|----------|
 | GET | `/health` | нет | 200 | Health check + версия приложения |
-| POST | `/api/v1/assistant/messages` | Bearer | 200 | Сценарий A — вопрос ассистенту |
+| POST | `/api/v1/assistant/messages` | Bearer | 200 | Сценарий A / D2 — вопрос ассистенту |
 | POST | `/api/v1/events/food` | Bearer | 201 | Создать событие питания |
 | GET | `/api/v1/events/food` | Bearer | 200 | Список событий питания (optional MVP) |
 | POST | `/api/v1/events/insulin` | Bearer | 201 | Создать событие инсулина |
+
+### Web (`/api/v1/web/*`) — контракт ✅, impl 📋
+
+| Method | Path | Auth | Success | Зона | Описание |
+|--------|------|------|---------|------|----------|
+| POST | `/api/v1/web/auth/resolve` | Bearer | 200 | auth | username → user |
+| GET | `/api/v1/web/doctor/dashboard/summary` | Bearer | 200 | 1 | 4 KPI + delta |
+| GET | `/api/v1/web/doctor/dashboard/activity` | Bearer | 200 | 1 | активность по дням |
+| GET | `/api/v1/web/doctor/dashboard/questions` | Bearer | 200 | 1 | лента вопросов |
+| GET | `/api/v1/web/doctor/dashboard/submissions` | Bearer | 200 | 1 | food + photo events |
+| GET | `/api/v1/web/doctor/dashboard/progress-matrix` | Bearer | 200 | 4 | матрица пациенты × периоды |
+| GET | `/api/v1/web/leaderboard` | Bearer | 200 | 2 | таблица + scatter |
+| GET | `/api/v1/web/assistant/history` | Bearer | 200 | 3 | история чата |
+
+Doctor dashboard/leaderboard: обязательный query `doctor_telegram_id`. Списки: `limit` (default 20, max 100), `offset` (default 0), ответ `{ items, total, limit, offset }`.
+
+Полные параметры и структуры ответов — [frontend-contract.md](frontend-contract.md).
 
 Runtime Swagger: `make backend-run` → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs). Сверка с yaml: `make backend-openapi-export`.
 
@@ -76,6 +117,19 @@ Runtime Swagger: `make backend-run` → [http://127.0.0.1:8000/docs](http://127.
 
 Полная таблица кодов — [conventions.md](conventions.md#http-коды-ошибок).
 
+**Web-specific:** doctor endpoint'ы → **403** `FORBIDDEN` при role mismatch; auth resolve → **404** `NOT_FOUND` если username не найден.
+
+### Pagination (web)
+
+List endpoint'ы web (`questions`, `submissions`, `assistant/history`):
+
+| Query | Default | Max | Описание |
+|-------|---------|-----|----------|
+| `limit` | 20 | 100 | размер страницы |
+| `offset` | 0 | — | смещение |
+
+Обёртка ответа: `items[]`, `total`, `limit`, `offset`. Bot `GET /events/food` — голый array (backlog без изменений).
+
 ---
 
 ## GET /health
@@ -95,7 +149,9 @@ Runtime Swagger: `make backend-run` → [http://127.0.0.1:8000/docs](http://127.
 
 ## POST /api/v1/assistant/messages
 
-Сценарий A: текстовый вопрос или фото → OpenRouter → ответ ассистента. Сохраняет **Запрос** в активном **Диалоге**.
+Сценарий A (bot) / D2 (web FAB): текстовый вопрос или фото → OpenRouter → ответ ассистента. Сохраняет **Запрос** в активном **Диалоге**.
+
+**Web:** BFF передаёт `telegram_id` из сессии; на MVP FAB — только `text` (фото iter 5+). История — `GET /api/v1/web/assistant/history`.
 
 ### Request
 
@@ -294,6 +350,85 @@ GET /api/v1/events/food?telegram_id=123456789&from=2026-06-01T00:00:00Z&to=2026-
 
 ---
 
+## Web client — `/api/v1/web/*`
+
+Контракт зафиксирован в frontend iter 0; реализация — [frontend iter 1](../tasks/tasklist-frontend.md). Детали — [frontend-contract.md](frontend-contract.md).
+
+### Auth (MVP)
+
+| Шаг | Действие |
+|-----|----------|
+| 1 | Web: форма Telegram `@username` |
+| 2 | Next.js BFF → `POST /api/v1/web/auth/resolve` с Bearer |
+| 3 | Response: `user_id`, `telegram_id`, `role`, `display_name` |
+| 4 | Сессия на клиенте (cookie/localStorage, iter 2) |
+
+Demo doctor (seed): `username=akozhin`, `telegram_id=162684825`, `role=doctor`.
+
+`BACKEND_SERVICE_TOKEN` **не** попадает в браузер.
+
+### POST `/api/v1/web/auth/resolve`
+
+| | |
+|---|---|
+| Body | `{ "username": "akozhin" }` — string, без `@`, lowercase |
+| Response 200 | `user_id` (uuid), `telegram_id` (int64), `role` (`diabetic`\|`doctor`), `display_name` |
+| Errors | 401, 404, 422, 503 |
+
+### GET `/api/v1/web/doctor/dashboard/summary`
+
+| Query | Обяз. | Default | Описание |
+|-------|-------|---------|----------|
+| `doctor_telegram_id` | да | — | Telegram ID доктора |
+| `period_days` | нет | 7 | окно KPI |
+
+Response 200: `{ period_days, kpis[] }` — 4 KPI (`active_patients`, `total_xe`, `questions_count`, `food_events_count`); каждый: `id`, `label`, `value`, `delta`, `delta_pct`, `trend` (`up`\|`down`\|`flat`).
+
+### GET `/api/v1/web/doctor/dashboard/activity`
+
+| Query | Обяз. | Default |
+|-------|-------|---------|
+| `doctor_telegram_id` | да | — |
+| `days` | нет | 14 |
+
+Response 200: `{ days, series[] }` — `series[].date`, `requests_count`, `food_events_count`.
+
+### GET `/api/v1/web/doctor/dashboard/questions`
+
+Query: `doctor_telegram_id`, `limit?`, `offset?`.
+
+Response 200: paginated `{ items[], total, limit, offset }`; item: `id`, `patient`, `content`, `reply`, `created_at`.
+
+### GET `/api/v1/web/doctor/dashboard/submissions`
+
+Query: `doctor_telegram_id`, `limit?`, `offset?`.
+
+Response 200: paginated; item: `id`, `type` (`food_event`\|`photo_analysis`), `patient`, `title`, `xe`, `bje`, `confidence?`, `recorded_at`, `detail_url`.
+
+### GET `/api/v1/web/doctor/dashboard/progress-matrix`
+
+| Query | Default | Значения |
+|-------|---------|----------|
+| `doctor_telegram_id` | — | required |
+| `period` | `week` | `week`, `month` |
+| `columns` | `period` | `period`, `metric` |
+
+Response 200: `{ period, columns[{ id, label }], rows[{ patient, cells[] }] }`; cell: `column_id`, `score`, `completion_pct`, `snapshot_date`, `metrics`.
+
+### GET `/api/v1/web/leaderboard`
+
+Query: `doctor_telegram_id`, `period?` (`30d`), `metric?`, `metric_x?`, `metric_y?` — метрики: `xe`, `bje`, `insulin_dose`, `activity_score`.
+
+Response 200: `{ period, metric, table[], scatter[] }`; table row: `rank`, `patient`, `progress_pct`, `metrics`, `medal?`; scatter point: `patient_id`, `display_name`, `x`, `y`.
+
+### GET `/api/v1/web/assistant/history`
+
+Query: `telegram_id`, `limit?` (50), `offset?`.
+
+Response 200: paginated; item: `id`, `role` (`user`\|`assistant`), `text`, `created_at`.
+
+---
+
 ## Маппинг bot → API
 
 | Bot | API |
@@ -304,21 +439,34 @@ GET /api/v1/events/food?telegram_id=123456789&from=2026-06-01T00:00:00Z&to=2026-
 | bytes из `download_file` → base64 | `image_base64` |
 | env `BACKEND_SERVICE_TOKEN` | заголовок `Authorization` |
 
+### Web → API
+
+| Web | API |
+|-----|-----|
+| Login `@username` | `POST /api/v1/web/auth/resolve` body `username` |
+| Session `telegram_id` | query `doctor_telegram_id` / `telegram_id` |
+| Next.js Route Handler | Bearer `BACKEND_SERVICE_TOKEN` (server-only) |
+| FAB send | `POST /api/v1/assistant/messages` |
+| FAB history | `GET /api/v1/web/assistant/history` |
+
 ---
 
 ## MVP-ограничения и backlog
 
-| Тема | v1 | Backlog |
-|------|----|---------|
-| `POST /assistant/messages` → 200 | осознанно (ответ диалога) | 201 + `Location` |
-| Pagination GET food | голый array | `page`/`page_size` или cursor |
-| Rate limiting | нет | 429 + `Retry-After` |
-| Idempotency keys | нет | `Idempotency-Key` для POST events |
-| Единый формат 422 | dual (FastAPI `detail` + `ErrorBody`) | маппинг post-MVP |
-| `telegram_id` в query | допустимо | header / nested resource v2 |
-| `image_base64` > 5 MB | 422 | 413 `PAYLOAD_TOO_LARGE` |
+| Тема | v1 bot | v1 web | Backlog |
+|------|--------|--------|---------|
+| `POST /assistant/messages` → 200 | ✅ | ✅ (FAB) | 201 + `Location` |
+| Pagination GET food | голый array | — | cursor для bot |
+| Pagination web lists | — | `limit`/`offset` | cursor |
+| Rate limiting | нет | нет | 429 + `Retry-After` |
+| Idempotency keys | нет | нет | `Idempotency-Key` для POST events |
+| Единый формат 422 | dual | dual | маппинг post-MVP |
+| `telegram_id` в query | bot GET food | web doctor/history | header v2 |
+| `image_base64` > 5 MB | 422 | 422 | 413 `PAYLOAD_TOO_LARGE` |
+| Username lookup | — | seed-map / display_name (iter 1) | `telegram_username` column |
+| Web JWT | — | client session only | backend JWT post-MVP |
 
-Design review и contract tests: [docs/tech/api-contracts.md](../tech/api-contracts.md).
+Design review (api-design-principles): [api-contract-review.md](api-contract-review.md) · contract tests: [docs/tech/api-contracts.md](../tech/api-contracts.md).
 
 ---
 
@@ -335,7 +483,10 @@ Design review и contract tests: [docs/tech/api-contracts.md](../tech/api-contra
 
 | Документ | Содержание |
 |----------|------------|
-| [openapi.yaml](openapi.yaml) | OpenAPI 3.1 |
+| [openapi.yaml](openapi.yaml) | OpenAPI 3.1 (tags: `system`, `assistant`, `events`, `web`) |
+| [api-contract-review.md](api-contract-review.md) | Design review (api-design-principles) |
+| [frontend-contract.md](frontend-contract.md) | Web endpoint'ы — полные JSON и PG mapping |
+| [frontend-requirements.md](../spec/frontend-requirements.md) | UI зоны 1–4, auth, wireframes |
 | [conventions.md](conventions.md) | Auth, коды ошибок, лимиты |
 | [scenarios/assistant-question.md](scenarios/assistant-question.md) | Сценарий A — детали |
 | [scenarios/event-record.md](scenarios/event-record.md) | Сценарий B — детали |

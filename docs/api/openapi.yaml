@@ -4,6 +4,7 @@ info:
   version: 1.0.0
   description: |
     MVP backend для diaai. Полный контракт: [api-contract.md](api-contract.md).
+    Web extensions: [frontend-contract.md](frontend-contract.md).
     Сценарии: [assistant-question.md](scenarios/assistant-question.md),
     [event-record.md](scenarios/event-record.md). Соглашения: [conventions.md](conventions.md).
 
@@ -161,6 +162,229 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
 
+  /api/v1/web/auth/resolve:
+    post:
+      summary: Resolve Telegram username to user (web login)
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/XRequestId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthResolveRequest"
+      responses:
+        "200":
+          description: User resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResolveResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/doctor/dashboard/summary:
+    get:
+      summary: Doctor dashboard KPI summary
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/DoctorTelegramId"
+        - name: period_days
+          in: query
+          schema:
+            type: integer
+            default: 7
+            minimum: 1
+      responses:
+        "200":
+          description: KPI cards with delta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummaryResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/doctor/dashboard/activity:
+    get:
+      summary: Doctor dashboard activity time series
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/DoctorTelegramId"
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 14
+            minimum: 1
+            maximum: 90
+      responses:
+        "200":
+          description: Daily activity series
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardActivityResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/doctor/dashboard/questions:
+    get:
+      summary: Recent patient questions feed
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/DoctorTelegramId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Paginated questions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionsFeedResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/doctor/dashboard/submissions:
+    get:
+      summary: Recent food events and photo analyses
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/DoctorTelegramId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Paginated submissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionsFeedResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/doctor/dashboard/progress-matrix:
+    get:
+      summary: Patient progress matrix
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/DoctorTelegramId"
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month]
+            default: week
+        - name: columns
+          in: query
+          schema:
+            type: string
+            enum: [period, metric]
+            default: period
+      responses:
+        "200":
+          description: Progress matrix
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgressMatrixResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/leaderboard:
+    get:
+      summary: Patient leaderboard table and scatter data
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/DoctorTelegramId"
+        - name: period
+          in: query
+          schema:
+            type: string
+            default: 30d
+        - name: metric
+          in: query
+          schema:
+            type: string
+            enum: [xe, bje, insulin_dose, activity_score]
+            default: xe
+        - name: metric_x
+          in: query
+          schema:
+            type: string
+            enum: [xe, bje, insulin_dose, activity_score]
+            default: xe
+        - name: metric_y
+          in: query
+          schema:
+            type: string
+            enum: [xe, bje, insulin_dose, activity_score]
+            default: insulin_dose
+      responses:
+        "200":
+          description: Leaderboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaderboardResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/assistant/history:
+    get:
+      summary: Assistant chat history for web FAB
+      tags: [web]
+      parameters:
+        - name: telegram_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Chat message history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssistantHistoryResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -176,8 +400,338 @@ components:
       schema:
         type: string
         format: uuid
+    DoctorTelegramId:
+      name: doctor_telegram_id
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int64
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 100
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
 
   schemas:
+    AuthResolveRequest:
+      type: object
+      required: [username]
+      properties:
+        username:
+          type: string
+          minLength: 1
+
+    AuthResolveResponse:
+      type: object
+      required: [user_id, telegram_id, role, display_name]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        telegram_id:
+          type: integer
+          format: int64
+        role:
+          type: string
+          enum: [diabetic, doctor]
+        display_name:
+          type: string
+
+    DashboardKpi:
+      type: object
+      required: [id, label, value, delta, delta_pct, trend]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+        delta:
+          type: number
+        delta_pct:
+          type: number
+        trend:
+          type: string
+          enum: [up, down, flat]
+
+    DashboardSummaryResponse:
+      type: object
+      required: [period_days, kpis]
+      properties:
+        period_days:
+          type: integer
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/DashboardKpi"
+
+    ActivityDay:
+      type: object
+      required: [date, requests_count, food_events_count]
+      properties:
+        date:
+          type: string
+          format: date
+        requests_count:
+          type: integer
+          minimum: 0
+        food_events_count:
+          type: integer
+          minimum: 0
+
+    DashboardActivityResponse:
+      type: object
+      required: [days, series]
+      properties:
+        days:
+          type: integer
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityDay"
+
+    PatientRef:
+      type: object
+      required: [user_id, display_name]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        telegram_id:
+          type: integer
+          format: int64
+
+    QuestionItem:
+      type: object
+      required: [id, patient, content, reply, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        patient:
+          $ref: "#/components/schemas/PatientRef"
+        content:
+          type: string
+        reply:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    PaginatedMeta:
+      type: object
+      required: [total, limit, offset]
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    QuestionsFeedResponse:
+      allOf:
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/QuestionItem"
+        - $ref: "#/components/schemas/PaginatedMeta"
+
+    SubmissionItem:
+      type: object
+      required: [id, type, patient, title, xe, bje, recorded_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [food_event, photo_analysis]
+        patient:
+          $ref: "#/components/schemas/PatientRef"
+        title:
+          type: string
+        xe:
+          type: number
+        bje:
+          type: number
+        confidence:
+          type: number
+          nullable: true
+        recorded_at:
+          type: string
+          format: date-time
+        detail_url:
+          type: string
+
+    SubmissionsFeedResponse:
+      allOf:
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/SubmissionItem"
+        - $ref: "#/components/schemas/PaginatedMeta"
+
+    MatrixColumn:
+      type: object
+      required: [id, label]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+
+    MatrixCell:
+      type: object
+      required: [column_id, score, completion_pct, snapshot_date, metrics]
+      properties:
+        column_id:
+          type: string
+        score:
+          type: number
+        completion_pct:
+          type: number
+        snapshot_date:
+          type: string
+          format: date-time
+        metrics:
+          type: object
+          properties:
+            xe:
+              type: number
+            bje:
+              type: number
+            insulin_dose:
+              type: number
+
+    MatrixRow:
+      type: object
+      required: [patient, cells]
+      properties:
+        patient:
+          $ref: "#/components/schemas/PatientRef"
+        cells:
+          type: array
+          items:
+            $ref: "#/components/schemas/MatrixCell"
+
+    ProgressMatrixResponse:
+      type: object
+      required: [period, columns, rows]
+      properties:
+        period:
+          type: string
+        columns:
+          type: array
+          items:
+            $ref: "#/components/schemas/MatrixColumn"
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/MatrixRow"
+
+    LeaderboardTableRow:
+      type: object
+      required: [rank, patient, progress_pct, metrics]
+      properties:
+        rank:
+          type: integer
+          minimum: 1
+        patient:
+          $ref: "#/components/schemas/PatientRef"
+        progress_pct:
+          type: number
+        metrics:
+          type: object
+          properties:
+            xe:
+              type: number
+            bje:
+              type: number
+            insulin_dose:
+              type: number
+        medal:
+          type: string
+          nullable: true
+          enum: [gold, silver, bronze]
+
+    ScatterPoint:
+      type: object
+      required: [patient_id, display_name, x, y]
+      properties:
+        patient_id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        x:
+          type: number
+        y:
+          type: number
+
+    LeaderboardResponse:
+      type: object
+      required: [period, metric, table, scatter]
+      properties:
+        period:
+          type: string
+        metric:
+          type: string
+        table:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeaderboardTableRow"
+        scatter:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScatterPoint"
+
+    ChatHistoryItem:
+      type: object
+      required: [id, role, text, created_at]
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          enum: [user, assistant]
+        text:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AssistantHistoryResponse:
+      allOf:
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/ChatHistoryItem"
+        - $ref: "#/components/schemas/PaginatedMeta"
+
     AssistantMessageRequest:
       type: object
       required: [telegram_id]

@@ -1,0 +1,9 @@
+{
+  "name": "diaai-web",
+  "private": true,
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@11.6.0"
+}

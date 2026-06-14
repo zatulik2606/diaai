@@ -60,9 +60,25 @@ flowchart TB
 | **Протокол** | HTTPS REST `/api/v1` · [openapi.yaml](../api/openapi.yaml) |
 | **Критичность** | **MVP backend** (итерация 2) |
 
-Компонент: `backend` (task-03–05 ✅). Клиенты: `bot` (task-07), `web` (позже). Auth: `Authorization: Bearer`, `telegram_id` в теле.
+Компонент: `backend` (task-03–05 ✅). Клиенты: `bot` (task-07), `web` (frontend iter 2+). Auth: `Authorization: Bearer`, `telegram_id` в теле.
 
-Контракты: [api-contract.md](../api/api-contract.md) · [assistant-question.md](../api/scenarios/assistant-question.md) · [event-record.md](../api/scenarios/event-record.md).
+Контракты: [api-contract.md](../api/api-contract.md) · [frontend-contract.md](../api/frontend-contract.md) · [assistant-question.md](../api/scenarios/assistant-question.md) · [event-record.md](../api/scenarios/event-record.md).
+
+---
+
+### Web client (Next.js)
+
+| | |
+|---|---|
+| **Сервис** | diaai web (`web/`) · [frontend-requirements.md](../spec/frontend-requirements.md) |
+| **Назначение** | dashboard доктора, leaderboard, чат с ассистентом |
+| **Направление** | bidirectional |
+| **Протокол** | HTTPS REST `/api/v1/web/*` · [frontend-contract.md](../api/frontend-contract.md) |
+| **Критичность** | **Planned** (frontend iter 2+) |
+
+Компонент: `web`. Backend — единый источник данных (PostgreSQL). Auth MVP: Telegram username → BFF (Next Route Handler) → `POST /api/v1/web/auth/resolve`; `BACKEND_SERVICE_TOKEN` только на сервере.
+
+Env (iter 2): `NEXT_PUBLIC_BACKEND_URL`, server-side `BACKEND_SERVICE_TOKEN`.
 
 ---
 
