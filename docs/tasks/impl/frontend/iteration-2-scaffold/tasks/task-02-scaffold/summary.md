@@ -57,7 +57,7 @@
 |---------|-----------|
 | `make web-lint` | ✅ |
 | `make web-build` | ✅ |
-| `make web-dev` + login `akozhin` | ✅ → `/leaderboard` |
+| `make web-dev` + login `doctor_ivanov` | ✅ → `/leaderboard` |
 | login `ivan_p` | ✅ → `/dashboard` |
 | doctor на `/dashboard` | ✅ 307 → leaderboard |
 

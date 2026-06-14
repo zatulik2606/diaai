@@ -25,7 +25,7 @@
 }
 ```
 
-- **Demo doctor:** `@akozhin`, `telegram_id: 162684825`
+- **Demo doctor:** `@doctor_ivanov`, `display_name: Doctor Ivanov`, `telegram_id: 162684825`
 - **Patients:** 6 diabetics с `telegram_username`, food/insulin за 14 дней
 - **Dialogs/requests:** Q&A для dashboard questions и assistant history
 - **Photo analyses:** 4 записи для submissions feed

@@ -4,10 +4,10 @@
     {
       "id": "a1000001-0000-4000-8000-000000000010",
       "telegram_id": 162684825,
-      "telegram_username": "akozhin",
+      "telegram_username": "doctor_ivanov",
       "role": "doctor",
-      "display_name": "Александр Кожин",
-      "email": "akozhin@example.com",
+      "display_name": "Doctor Ivanov",
+      "email": "doctor.ivanov@example.com",
       "is_active": true
     },
     {

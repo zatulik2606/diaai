@@ -52,8 +52,8 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle>Вход в diaai</CardTitle>
           <CardDescription>
-            Telegram @username · demo: <code className="font-mono">ivan_p</code>{" "}
-            (пациент) или <code className="font-mono">akozhin</code> (доктор)
+            Demo: <code className="font-mono">ivan_p</code> (пациент) или{" "}
+            <code className="font-mono">doctor_ivanov</code> (доктор)
           </CardDescription>
         </CardHeader>
         <CardContent>

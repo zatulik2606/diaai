@@ -4,18 +4,12 @@
 
 Skills: [shadcn](../../../../.agents/skills/shadcn/SKILL.md) · [vercel-react-best-practices](../../../../.agents/skills/vercel-react-best-practices/SKILL.md) · [nextjs-app-router-patterns](../../../../.agents/skills/nextjs-app-router-patterns/SKILL.md)
 
-**Статус:** 📋 Planned → **реализация** 🚧 In Progress · [summary](summary.md)
-
----
-
-## Цель
-
-Поднять runnable Next.js-приложение в `web/` с тёмной темой tbench, входом по Telegram username (BFF), app shell с навигацией и FAB-заглушкой — без fetch dashboard/leaderboard (iter 3–4).
+**Статус:** ✅ Done · [summary](summary.md) в `web/` с тёмной темой tbench, входом по Telegram username (BFF), app shell с навигацией и FAB-заглушкой — без fetch dashboard/leaderboard (iter 3–4).
 
 ## Ценность
 
 - Web-клиент на :3000 — база для iter 3–6
-- Auth через iter 1: `POST /api/v1/web/auth/resolve`; demo `akozhin` / `162684825`
+- Auth через iter 1: `POST /api/v1/web/auth/resolve`; demo `doctor_ivanov` / `162684825`
 - Единый shell: sidebar, header, FAB; iter 3+ только подключают API
 
 ## Зависимости
@@ -122,7 +116,7 @@ web/
 
 | # | Задача | Статус | Документы |
 |---|--------|--------|-----------|
-| 02 | Каркас Next.js + layout + auth | 🚧 In Progress | [plan](tasks/task-02-scaffold/plan.md) · [summary](tasks/task-02-scaffold/summary.md) |
+| 02 | Каркас Next.js + layout + auth | ✅ Done | [plan](tasks/task-02-scaffold/plan.md) · [summary](tasks/task-02-scaffold/summary.md) |
 
 ## Фазы реализации (task 02)
 
@@ -130,12 +124,12 @@ web/
 |------|------------|--------|
 | 0 | Plan-артефакты | ✅ |
 | 1 | `create next-app` + merge toolchain | ✅ |
-| 2 | shadcn + design tokens | 📋 |
-| 3 | Auth BFF + session + middleware | 📋 |
-| 4 | Login UI | 📋 |
-| 5 | App shell + FAB + placeholders | 📋 |
-| 6 | Makefile + env + docs | 📋 |
-| 7 | lint/build/dev + summary | 📋 |
+| 2 | shadcn + design tokens | ✅ |
+| 3 | Auth BFF + session + middleware | ✅ |
+| 4 | Login UI | ✅ |
+| 5 | App shell + FAB + placeholders | ✅ |
+| 6 | Makefile + env + docs | ✅ |
+| 7 | lint/build/dev + summary | ✅ |
 
 ## Env
 
@@ -163,12 +157,12 @@ make web-install && make web-dev
 make web-lint && make web-build
 ```
 
-- `/login` → patient from seed → `/dashboard`; `akozhin` → `/leaderboard`
+- `/login` → patient from seed → `/dashboard`; `doctor_ivanov` → `/leaderboard`
 - Nav Dashboard / Leaderboard / Chat; FAB Sheet
 - Header: display_name + logout
 - Dark theme tbench-green
 
-**User-check:** localhost:3000; login patient → dashboard; `akozhin` → leaderboard; FAB; logout.
+**User-check:** localhost:3000; login patient → dashboard; `doctor_ivanov` → leaderboard; FAB; logout.
 
 ## Out of scope
 

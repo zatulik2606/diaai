@@ -8,7 +8,7 @@ import pytest
 pytestmark = pytest.mark.integration
 
 DOCTOR_TELEGRAM_ID = 162684825
-DOCTOR_USERNAME = "akozhin"
+DOCTOR_USERNAME = "doctor_ivanov"
 PATIENT_TELEGRAM_ID = 900000001
 
 
@@ -24,7 +24,7 @@ async def web_demo_data(db_session):
         telegram_id=DOCTOR_TELEGRAM_ID,
         telegram_username=DOCTOR_USERNAME,
         role="doctor",
-        display_name="Александр Кожин",
+        display_name="Doctor Ivanov",
     )
     patient = User(
         id=uuid.UUID("a1000001-0000-4000-8000-000000000001"),
@@ -76,13 +76,13 @@ async def test_auth_resolve_success(client, auth_headers, web_demo_data) -> None
     response = await client.post(
         "/api/v1/web/auth/resolve",
         headers=auth_headers,
-        json={"username": "akozhin"},
+        json={"username": DOCTOR_USERNAME},
     )
     assert response.status_code == 200
     body = response.json()
     assert body["telegram_id"] == DOCTOR_TELEGRAM_ID
     assert body["role"] == "doctor"
-    assert body["display_name"] == "Александр Кожин"
+    assert body["display_name"] == "Doctor Ivanov"
 
 
 @pytest.mark.asyncio

@@ -98,7 +98,7 @@ Normalize: `trim().replace(/^@/, '').toLowerCase()`
 - Card centered (S11), Input, Button
 - `fetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ username }) })`
 - Error state under form
-- Hint: «Demo doctor: akozhin · patient: см. seed»
+- Hint: «Demo doctor: doctor_ivanov · patient: см. seed»
 
 `app/(auth)/layout.tsx` — minimal, no sidebar.
 
@@ -195,7 +195,7 @@ make web-dev
 # BFF smoke
 curl -s -X POST http://localhost:3000/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"username":"akozhin"}' -c /tmp/diaai.cookie
+  -d '{"username":"doctor_ivanov"}' -c /tmp/diaai.cookie
 
 curl -s http://localhost:3000/dashboard -b /tmp/diaai.cookie -o /dev/null -w '%{http_code}'
 ```
@@ -205,7 +205,7 @@ curl -s http://localhost:3000/dashboard -b /tmp/diaai.cookie -o /dev/null -w '%{
 | username | role | redirect |
 |----------|------|----------|
 | *(patient from seed)* | diabetic | `/dashboard` |
-| `akozhin` | doctor | `/leaderboard` |
+| `doctor_ivanov` | doctor | `/leaderboard` |
 
 ## Skills
 
@@ -219,4 +219,4 @@ curl -s http://localhost:3000/dashboard -b /tmp/diaai.cookie -o /dev/null -w '%{
 
 **Агент:** `make web-dev` :3000; login/logout; nav; FAB; lint/build green.
 
-**Пользователь:** localhost:3000 → `akozhin` → dashboard → menu → FAB → logout.
+**Пользователь:** localhost:3000 → `doctor_ivanov` → leaderboard → menu → FAB → logout.

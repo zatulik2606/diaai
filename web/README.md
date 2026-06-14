@@ -23,7 +23,7 @@ Demo login:
 | username | роль | redirect |
 |----------|------|----------|
 | `ivan_p` | пациент | `/dashboard` |
-| `akozhin` | доктор | `/leaderboard` |
+| `doctor_ivanov` | доктор | `/leaderboard` |
 
 ## Команды
 

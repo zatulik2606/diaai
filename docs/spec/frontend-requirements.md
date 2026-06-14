@@ -254,7 +254,8 @@ Loading, empty (нет пациентов), error — аналогично dashb
 
 | Поле | Значение |
 |------|----------|
-| username | `akozhin` |
+| username | `doctor_ivanov` |
+| display_name | `Doctor Ivanov` |
 | telegram_id | `162684825` |
 | role | `doctor` |
 
