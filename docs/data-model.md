@@ -2,7 +2,7 @@
 
 Продуктовая основа: [idea.md](idea.md). Архитектура: [vision.md](vision.md).
 
-Базовый перечень сущностей **на согласование** — минимальный набор для сопровождения диабетика: пользователи (диабетик, доктор), диалоги, запросы, **анализ фото по составу (ХЕ, БЖЕ, БЖУ)**, события питания и инсулина, рекомендации, снимки прогресса, консультации.
+Базовый перечень сущностей — минимальный набор для сопровождения диабетика: пользователи (диабетик, доктор), диалоги, запросы, **анализ фото по составу (ХЕ, БЖЕ, БЖУ)**, события питания и инсулина, рекомендации, снимки прогресса, консультации. Физическая схема PostgreSQL — [schema-er.md](spec/schema-er.md) (database iter 2).
 
 ## Соответствие продуктовым сценариям
 
@@ -39,22 +39,22 @@
 
 ## Gap analysis: MVP schema → целевая модель
 
-Текущая миграция: [`001_initial_schema.py`](../alembic/versions/001_initial_schema.py). Целевая модель — [data-requirements.md](spec/data-requirements.md#mvp-data-scope).
+Текущая миграция: [`001_initial_schema.py`](../alembic/versions/001_initial_schema.py). Целевая схема — [schema-er.md](spec/schema-er.md) (database iter 2 ✅).
 
-| Доменная сущность | В `001_initial_schema` | Нужна для сценариев | Приоритет |
-|-------------------|------------------------|---------------------|-----------|
-| User (diabetic) | `users` (telegram_id, role) | D1–D7 | — |
-| Dialog | `dialogs` | D2 | — |
-| Request | `dialog_requests` (+ media JSON) | D2, D7 | — |
-| FoodEvent | `food_events` | D1, D7 | — |
-| InsulinEvent | `insulin_events` | D1 | — |
-| PhotoAnalysis | нет *(media в Request)* | D2, D7 | P1 |
-| ProgressSnapshot | нет | D3, Doc2 | P1 |
-| Recommendation | нет | D4 | P1 |
-| Consultation | нет | D5, D6, Doc3, Doc4 | P2 |
-| User.display_name, doctor role | частично (`role` string) | Doc1, web | P2 |
+| Доменная сущность | В `001_initial_schema` | Целевая таблица | Статус iter 2 |
+|-------------------|------------------------|-----------------|---------------|
+| User (diabetic) | `users` | `users` | ✅ расширение |
+| Dialog | `dialogs` | `dialogs` | ✅ as-is |
+| Request | `dialog_requests` | `dialog_requests` | ✅ as-is |
+| FoodEvent | `food_events` | `food_events` | ✅ + индексы |
+| InsulinEvent | `insulin_events` | `insulin_events` | ✅ + индексы |
+| PhotoAnalysis | нет | `photo_analyses` | ✅ спроектировано |
+| ProgressSnapshot | нет | `progress_snapshots` | ✅ спроектировано |
+| Recommendation | нет | `recommendations` | ✅ спроектировано |
+| Consultation | нет | `consultations` | ✅ спроектировано |
+| User.display_name, doctor role | частично | `users` ALTER | ✅ спроектировано |
 
-Open questions (PhotoAnalysis table vs JSON, snapshot persist) — [data-requirements.md](spec/data-requirements.md#open-questions-для-итерации-2); решение в database iter 2.
+Решения open questions iter 1: таблица `photo_analyses`, persist `progress_snapshots`, doctor в `users`, связь patient–doctor через `consultations` — [schema-er.md §1](spec/schema-er.md#1-логическая-модель).
 
 ---
 
@@ -76,161 +76,158 @@ Open questions (PhotoAnalysis table vs JSON, snapshot persist) — [data-require
 
 ## Основные сущности
 
-### Пользователь
+> **PostgreSQL-типы и ограничения** — в целевой схеме [schema-er.md](spec/schema-er.md). Ниже — доменное описание; колонка «PG (целевая)» — маппинг по skill [postgresql-table-design](../.agents/skills/postgresql-table-design/SKILL.md).
+
+### Пользователь → `users`
 
 **Назначение:** участник системы с ролью и доступом к данным.
 
-| Поле | Описание | Тип (предполагаемый) |
-|------|----------|----------------------|
-| идентификатор | уникальный ID | UUID |
-| роль | диабетик / доктор | enum |
-| имя / отображаемое имя | для интерфейса | строка |
-| контакт | Telegram ID, email и т.п. | строка |
-| дата регистрации | когда создан профиль | datetime |
-| активен | доступен ли аккаунт | boolean |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | уникальный ID | UUID | `UUID` PK |
+| роль | диабетик / доктор | enum | `TEXT NOT NULL CHECK (role IN ('diabetic','doctor'))` |
+| имя / отображаемое имя | для интерфейса | строка | `display_name TEXT` |
+| контакт | Telegram ID, email | строка | `telegram_id BIGINT` partial UNIQUE; `email TEXT` |
+| дата регистрации | когда создан профиль | datetime | `created_at TIMESTAMPTZ NOT NULL DEFAULT now()` |
+| активен | доступен ли аккаунт | boolean | `is_active BOOLEAN NOT NULL` |
 
 ---
 
-### Диалог
+### Диалог → `dialogs`
 
 **Назначение:** сессия общения диабетика с системой (бот или web); контекст для последующих ответов и фиксаций.
 
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID диалога | UUID |
-| пользователь | ссылка на диабетика | UUID |
-| канал | telegram / web | enum |
-| начало / конец | границы сессии | datetime |
-| статус | активен / завершён | enum |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID диалога | UUID | `UUID` PK |
+| пользователь | ссылка на диабетика | UUID | `user_id UUID NOT NULL` FK → users |
+| канал | telegram / web | enum | `channel TEXT NOT NULL` |
+| начало | граница сессии | datetime | `started_at TIMESTAMPTZ NOT NULL` |
+| статус | активен / завершён | enum | `status TEXT NOT NULL` |
+| конец | граница сессии | datetime | *(не persist; backlog)* |
 
 ---
 
-### Запрос
+### Запрос → `dialog_requests`
 
 **Назначение:** обращение пользователя к системе — текст, фото, вопрос; основа для анализа и ответа LLM.
 
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID запроса | UUID |
-| диалог | ссылка на сессию | UUID |
-| пользователь | кто отправил | UUID |
-| тип | текст / фото / смешанный | enum |
-| содержание | текст вопроса | текст |
-| медиа | ссылка на фото (если есть) | строка (URL) |
-| категория | ХЕ / БЖЕ / БЖУ / инсулин / общий | enum |
-| время | момент запроса | datetime |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID запроса | UUID | `UUID` PK |
+| диалог | ссылка на сессию | UUID | `dialog_id UUID NOT NULL` FK |
+| пользователь | кто отправил | UUID | `user_id UUID NOT NULL` FK |
+| тип | текст / фото / смешанный | enum | `type TEXT NOT NULL` |
+| содержание | текст вопроса | текст | `content TEXT` |
+| ответ LLM | reply ассистента | текст | `reply TEXT NOT NULL` |
+| медиа | метаданные фото | JSON | `media JSON` *(001)* / JSONB *(опц.)* |
+| время | момент запроса | datetime | `created_at TIMESTAMPTZ NOT NULL` |
+| категория | ХЕ / БЖЕ / … | enum | *(не persist; вывод LLM / backlog)* |
 
 ---
 
-### Анализ фото (состав)
+### Анализ фото → `photo_analyses`
 
-**Назначение:** результат распознавания блюда или продукта по фото — оценка ХЕ, БЖЕ и макросостава **БЖУ** (белки, жиры, углеводы). Источник: vision-модель через LLM.
+**Назначение:** результат распознавания блюда или продукта по фото — оценка ХЕ, БЖЕ и макросостава **БЖУ**. Источник: vision-модель через LLM.
 
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID анализа | UUID |
-| запрос | исходный запрос с фото | UUID |
-| пользователь | диабетик | UUID |
-| тип объекта | блюдо / продукт / этикетка | enum |
-| медиа | ссылка на фото | строка (URL) |
-| хе | хлебные единицы (оценка) | decimal, nullable |
-| бже | белково-жировые единицы (оценка) | decimal, nullable |
-| белки | граммы или доля | decimal, nullable |
-| жиры | граммы или доля | decimal, nullable |
-| углеводы | граммы или доля | decimal, nullable |
-| уверенность | насколько надёжна оценка | enum / decimal, nullable |
-| комментарий | пояснение и оговорки LLM | текст, nullable |
-| время | когда выполнен анализ | datetime |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID анализа | UUID | `UUID` PK |
+| запрос | исходный запрос с фото | UUID | `request_id UUID NOT NULL` FK |
+| пользователь | диабетик | UUID | `user_id UUID NOT NULL` FK |
+| событие питания | если зафиксировано | UUID | `food_event_id UUID` FK nullable |
+| тип объекта | блюдо / продукт / этикетка | enum | `object_type TEXT CHECK (...)` |
+| медиа | ссылка на фото | URL | в `dialog_requests.media` JSON |
+| хе, бже, БЖУ | оценки | decimal | `NUMERIC(10,2)` nullable |
+| уверенность | надёжность оценки | decimal | `confidence NUMERIC(3,2) CHECK 0..1` |
+| комментарий | оговорки LLM | текст | `comment TEXT` |
+| время | когда выполнен | datetime | `created_at TIMESTAMPTZ NOT NULL` |
 
 > Оценки справочные; при низкой уверенности система может запросить уточнение у пользователя.
 
 ---
 
-### Событие питания
+### Событие питания → `food_events`
 
-**Назначение:** фиксация приёма пищи или продукта с оценкой ХЕ, БЖЕ и при необходимости БЖУ (из текста или **анализа фото**).
+**Назначение:** фиксация приёма пищи с оценкой ХЕ, БЖЕ и при необходимости БЖУ.
 
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID события | UUID |
-| пользователь | диабетик | UUID |
-| запрос | исходный запрос (если из диалога) | UUID, nullable |
-| анализ фото | результат vision-анализа (если по фото) | UUID, nullable |
-| описание | что съедено | текст |
-| хе | хлебные единицы (оценка) | decimal |
-| бже | белково-жировые единицы (оценка) | decimal |
-| белки | БЖУ: белки | decimal, nullable |
-| жиры | БЖУ: жиры | decimal, nullable |
-| углеводы | БЖУ: углеводы | decimal, nullable |
-| источник | текст / фото блюда / фото продукта | enum |
-| время | когда зафиксировано | datetime |
-| комментарий | пояснение LLM или пользователя | текст, nullable |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID события | UUID | `UUID` PK |
+| пользователь | диабетик | UUID | `user_id UUID NOT NULL` FK |
+| запрос | если из диалога | UUID | `request_id UUID` FK nullable |
+| анализ фото | если по фото | UUID | связь через `photo_analyses.food_event_id` *(обратный FK)* |
+| описание | что съедено | текст | `description TEXT NOT NULL` |
+| хе, бже, БЖУ | оценки | decimal | `xe`, `bje` `NUMERIC(10,2) NOT NULL`; proteins/fats/carbs nullable |
+| источник | text / photo_dish / … | enum | `source TEXT NOT NULL` |
+| время | когда зафиксировано | datetime | `recorded_at TIMESTAMPTZ NOT NULL` |
+| комментарий | пояснение | текст | `comment TEXT` |
 
 ---
 
-### Событие инсулина
+### Событие инсулина → `insulin_events`
 
 **Назначение:** фиксация введения инсулина и связь с контекстом еды.
 
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID события | UUID |
-| пользователь | диабетик | UUID |
-| событие питания | связанный приём пищи (если есть) | UUID, nullable |
-| доза | количество единиц | decimal |
-| время введения | когда подколот | datetime |
-| окно действия | справочно: в течение какого времени учитывать | строка / интервал, nullable |
-| комментарий | контекст от LLM или пользователя | текст, nullable |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID события | UUID | `UUID` PK |
+| пользователь | диабетик | UUID | `user_id UUID NOT NULL` FK |
+| событие питания | связанный приём | UUID | `food_event_id UUID` FK nullable |
+| доза | количество единиц | decimal | `dose NUMERIC(10,2) NOT NULL` |
+| время введения | когда подколот | datetime | `injected_at TIMESTAMPTZ NOT NULL` |
+| время записи | когда зафиксировано | datetime | `recorded_at TIMESTAMPTZ NOT NULL` |
+| окно действия | справочно | интервал | *(не persist; backlog)* |
+| комментарий | контекст | текст | `comment TEXT` |
 
 ---
 
-### Рекомендация
+### Рекомендация → `recommendations`
 
-**Назначение:** справочный вывод системы по запросу или на основе накопленных данных (без назначения доз).
+**Назначение:** справочный вывод системы (без назначения доз).
 
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID рекомендации | UUID |
-| пользователь | кому выдана | UUID |
-| запрос | исходный запрос | UUID, nullable |
-| текст | содержание рекомендации | текст |
-| тип | питание / инсулин / динамика / прогноз | enum |
-| время | когда сформирована | datetime |
-
----
-
-### Снимок прогресса
-
-**Назначение:** фиксация состояния диабетика за период — база для отслеживания улучшений и ухудшений.
-
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID снимка | UUID |
-| пользователь | диабетик | UUID |
-| период | день / неделя / месяц | enum |
-| дата начала / конца | границы периода | date |
-| сумма хе | агрегат за период | decimal |
-| сумма бже | агрегат за период | decimal |
-| сумма белков / жиров / углеводов | агрегаты БЖУ за период | decimal, nullable |
-| сумма инсулина | агрегат за период | decimal |
-| тренд | улучшение / стабильно / ухудшение | enum |
-| комментарий | краткий вывод системы | текст, nullable |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID | UUID | `UUID` PK |
+| пользователь | кому выдана | UUID | `user_id UUID NOT NULL` FK |
+| запрос | исходный запрос | UUID | `request_id UUID` FK nullable |
+| текст | содержание | текст | `text TEXT NOT NULL` |
+| тип | nutrition / insulin / … | enum | `type TEXT CHECK (...)` |
+| время | когда сформирована | datetime | `created_at TIMESTAMPTZ NOT NULL` |
 
 ---
 
-### Консультация
+### Снимок прогресса → `progress_snapshots`
 
-**Назначение:** запись и проведение приёма у доктора (онлайн / офлайн).
+**Назначение:** фиксация состояния диабетика за период — база для динамики (D3).
 
-| Поле | Описание | Тип |
-|------|----------|-----|
-| идентификатор | ID консультации | UUID |
-| диабетик | кто записался | UUID |
-| доктор | у кого приём | UUID |
-| формат | online / offline | enum |
-| время | слот приёма | datetime |
-| статус | запланирована / проведена / отменена | enum |
-| комментарий доктора | итог приёма | текст, nullable |
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID | UUID | `UUID` PK |
+| пользователь | диабетик | UUID | `user_id UUID NOT NULL` FK |
+| период | day / week / month | enum | `period TEXT CHECK (...)` |
+| дата начала / конца | границы | date | `period_start`, `period_end DATE NOT NULL`; CHECK `start <= end` |
+| суммы хе, бже, инсулина, БЖУ | агрегаты | decimal | `sum_* NUMERIC(10,2)` |
+| тренд | improving / stable / … | enum | `trend TEXT CHECK (...)` |
+| комментарий | вывод системы | текст | `comment TEXT` |
+| время создания | persist | datetime | `created_at TIMESTAMPTZ NOT NULL` |
+
+---
+
+### Консультация → `consultations`
+
+**Назначение:** запись и проведение приёма у доктора.
+
+| Поле | Описание | Домен | PG (целевая) |
+|------|----------|-------|--------------|
+| идентификатор | ID | UUID | `UUID` PK |
+| диабетик | кто записался | UUID | `diabetic_id UUID NOT NULL` FK |
+| доктор | у кого приём | UUID | `doctor_id UUID NOT NULL` FK; CHECK `!= diabetic_id` |
+| формат | online / offline | enum | `format TEXT CHECK (...)` |
+| время | слот приёма | datetime | `scheduled_at TIMESTAMPTZ NOT NULL` |
+| статус | scheduled / completed / … | enum | `status TEXT CHECK (...)` |
+| комментарий доктора | итог приёма | текст | `doctor_comment TEXT` |
+| время создания | запись | datetime | `created_at TIMESTAMPTZ NOT NULL` |
 
 ---
 
@@ -281,20 +278,73 @@ erDiagram
 | Multi-service | единый слой данных для bot, web, backend |
 | Масштабирование | read-replica, TimescaleDB — без смены СУБД |
 
-На этапе MVP-бота (RAM, без backend) БД не используется — см. [vision.md](vision.md).
+На этапе MVP backend PostgreSQL уже используется (`001_initial_schema`); целевая схема — [schema-er.md](spec/schema-er.md).
+
+---
+
+## PostgreSQL design review
+
+Проверка по skill [postgresql-table-design](../.agents/skills/postgresql-table-design/SKILL.md) · детали физики — [schema-er.md](spec/schema-er.md) · [schema-review.md](spec/schema-review.md).
+
+### Итог
+
+| Статус | Кол-во | Суть |
+|--------|--------|------|
+| **Pass** | 18 | Типы, FK+индексы, TIMESTAMPTZ, NUMERIC, TEXT+CHECK, 3NF, JSON для media |
+| **Warn** | 5 | UUID PK; JSON→JSONB; FK ON DELETE на `001`; доменные поля без колонки; CHECK `xe >= 0` |
+| **Fix** | 0 | — |
+
+### Checklist (skill → data-model)
+
+| # | Правило skill | Статус | Комментарий |
+|---|---------------|--------|-------------|
+| 1 | PK на reference tables | **Pass** | 9 таблиц, UUID PK |
+| 2 | BIGINT IDENTITY vs UUID | **Warn** | UUID — совместимость с `001`, opaque API IDs |
+| 3 | NOT NULL семантически обязательных | **Pass** | См. колонки «PG (целевая)» выше |
+| 4 | TIMESTAMPTZ, не TIMESTAMP | **Pass** | Все event time; domain «datetime» → TIMESTAMPTZ |
+| 5 | NUMERIC для xe/bje/dose | **Pass** | `NUMERIC(10,2)`; не float/money |
+| 6 | TEXT, не VARCHAR/CHAR | **Pass** | Строки и enum-like — TEXT |
+| 7 | TEXT+CHECK, не PG ENUM | **Pass** | role, status, period, trend |
+| 8 | FK columns indexed | **Pass** | [schema-er §3.10](spec/schema-er.md#310-сводка-fk-on-delete-и-ограничения-целостности) |
+| 9 | ON DELETE явно | **Warn** | Optional FK в `001` — NO ACTION; целевое SET NULL в iter 5 |
+| 10 | Partial / composite indexes | **Pass** | Лента D1, snapshots, partial UNIQUE telegram_id |
+| 11 | JSONB для semi-structured | **Warn** | `media` — JSON в `001`; JSONB + GIN опционально |
+| 12 | Normalize (3NF) | **Pass** | PhotoAnalysis отдельно; агрегаты в progress_snapshots |
+| 13 | UNIQUE для upsert snapshots | **Pass** | `(user_id, period, period_start)` |
+| 14 | CHECK целостности | **Pass** | period bounds, diabetic≠doctor, confidence 0..1 |
+| 15 | snake_case | **Pass** | Таблицы/колонки |
+| 16 | Домен ↔ PG согласован | **Pass** | Маппинг в секции «Основные сущности» |
+| 17 | Доменные поля без колонки | **Warn** | Dialog.end, Request.category, InsulinEvent.окно — backlog |
+| 18 | CHECK xe/bje/dose ≥ 0 | **Warn** | API требует ≥ 0; DB CHECK — опционально iter 5 |
+| 19 | Роль doctor на FK | **Warn** | `consultations.doctor_id` — enforcement в приложении |
+| 20 | Связь FoodEvent↔PhotoAnalysis | **Pass** | Обратный FK `photo_analyses.food_event_id` (не дублировать) |
+
+### Доменные поля без persist (backlog)
+
+| Сущность | Поле | Причина |
+|----------|------|---------|
+| Dialog | конец сессии | достаточно `status`; `ended_at` — backlog |
+| Request | категория (ХЕ/БЖЕ/…) | классификация в LLM/reply |
+| InsulinEvent | окно действия | справочно, не для аналитики MVP |
+| User | last_activity (Doc1) | computed query, не колонка |
+
+### Warn — принятые отклонения
+
+См. [schema-review.md](spec/schema-review.md#warn-принятые-отклонения). Дополнительно для data-model: домен historically использовал абстрактные «enum/datetime» — в iter 2 заменено колонкой **PG (целевая)**.
 
 ---
 
 ## Что вне scope этого документа
 
 - Детали endpoint'ов — [api-contract.md](api/api-contract.md) · [docs/api/](api/)
-- детали интеграций — см. [integrations.md](integrations.md)
+- Физическая схема PostgreSQL — [schema-er.md](spec/schema-er.md); review — [schema-review.md](spec/schema-review.md)
+- детали интеграций — [integrations.md](integrations.md)
 
 ---
 
-## SQL-схема MVP (task-05)
+## SQL-схема MVP (`001`)
 
-Миграция: [`alembic/versions/001_initial_schema.py`](../alembic/versions/001_initial_schema.py)
+Миграция: [`alembic/versions/001_initial_schema.py`](../alembic/versions/001_initial_schema.py). Для новых фич — целевая схема iter 2 ниже.
 
 | Таблица | Назначение | Ключевые FK |
 |---------|------------|-------------|
@@ -304,4 +354,20 @@ erDiagram
 | `food_events` | событие питания | `user_id`, optional `request_id` |
 | `insulin_events` | событие инсулина | `user_id`, optional `food_event_id` |
 
-PhotoAnalysis, Recommendation, ProgressSnapshot — post-MVP (iteration 4+).
+---
+
+## SQL-схема целевая (database iter 2)
+
+Полная спецификация: [schema-er.md](spec/schema-er.md) · review: [schema-review.md](spec/schema-review.md). Impl миграции `002_*` — database iter 5.
+
+| Таблица | Назначение | Ключевые FK / индексы |
+|---------|------------|------------------------|
+| `users` | диабетик / доктор | `display_name`, `email`; partial UNIQUE `telegram_id` |
+| `dialogs` | сессия бота/web | `user_id` |
+| `dialog_requests` | запрос + reply LLM, media JSON | `dialog_id`, `user_id` |
+| `food_events` | событие питания | `user_id`, `request_id`; `(user_id, recorded_at DESC)` |
+| `insulin_events` | событие инсулина | `user_id`, `food_event_id`; `(user_id, injected_at DESC)` |
+| `photo_analyses` | vision-анализ фото (D7) | `user_id`, `request_id`, `food_event_id` |
+| `progress_snapshots` | агрегаты за период (D3) | `user_id`, UNIQUE `(user_id, period, period_start)` |
+| `recommendations` | справочные рекомендации (D4) | `user_id`, optional `request_id` |
+| `consultations` | приём у доктора (D5–D6) | `diabetic_id`, `doctor_id` |

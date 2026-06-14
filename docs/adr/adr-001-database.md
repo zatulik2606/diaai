@@ -19,7 +19,7 @@
 - снимков прогресса и рекомендаций;
 - консультаций.
 
-**Текущее состояние:** MVP-бот хранит историю в RAM; БД подключается с появлением backend — см. [vision.md](../vision.md).
+**Текущее состояние:** backend использует PostgreSQL (`001_initial_schema`: users, dialogs, events). Целевая физическая схема — 9 таблиц, [schema-er.md](../spec/schema-er.md) (database iter 2).
 
 **Требования к СУБД:**
 
@@ -124,11 +124,39 @@ flowchart LR
 
 ### Что не входит в это решение
 
-- ORM / query builder, миграционный инструмент — отдельные ADR или tasklist backend;
-- конкретная схема таблиц — [data-model.md](../data-model.md), детализация при реализации backend.
+- ORM / query builder, миграционный инструмент — database iter 3 ([tasklist-database.md](../tasks/tasklist-database.md));
+- детали endpoint'ов — [api-contract.md](../api/api-contract.md).
+
+## Целевая физическая схема (database iter 2)
+
+Детальная спецификация: [schema-er.md](../spec/schema-er.md) · review: [schema-review.md](../spec/schema-review.md).
+
+| Аспект | Выбор |
+|--------|--------|
+| Таблицы | 9: `users`, `dialogs`, `dialog_requests`, `food_events`, `insulin_events`, `photo_analyses`, `progress_snapshots`, `recommendations`, `consultations` |
+| PK / FK | `UUID`; все FK колонки проиндексированы |
+| Время | `TIMESTAMPTZ` для событий; `DATE` для границ периода |
+| Числа | `NUMERIC(10,2)` для ХЕ/БЖЕ/доз/агрегатов |
+| Enum-like | `TEXT` + `CHECK`, не PG ENUM |
+| Semi-structured | `dialog_requests.media` (JSON/JSONB) — метаданные фото; структурированный анализ — `photo_analyses` |
+| Целостность | FK + CHECK (role, status, period, trend); UNIQUE на снимках прогресса; partial UNIQUE на `telegram_id` |
+| Миграции | MVP `001` → целевая `002` — impl database iter 5 |
+
+```mermaid
+erDiagram
+    users ||--o{ dialogs : user_id
+    users ||--o{ food_events : user_id
+    users ||--o{ photo_analyses : user_id
+    users ||--o{ progress_snapshots : user_id
+    users ||--o{ consultations : diabetic_id
+    dialog_requests ||--o| photo_analyses : request_id
+    food_events ||--o| photo_analyses : food_event_id
+```
 
 ## Связанные документы
 
 - [idea.md](../idea.md) — продуктовая логика
 - [vision.md](../vision.md) — архитектура системы
 - [data-model.md](../data-model.md) — доменные сущности
+- [schema-er.md](../spec/schema-er.md) — ER и физическая схема PostgreSQL
+- [schema-review.md](../spec/schema-review.md) — design review по PostgreSQL best practices

@@ -11,7 +11,7 @@
 | Итерация | Задачи | Статус | Документы |
 |----------|--------|--------|-----------|
 | 1 Сценарии и требования | 01 | ✅ Done | [plan](iteration-1-user-scenarios/plan.md) · [summary](iteration-1-user-scenarios/summary.md) |
-| 2 Проектирование схемы | 02 | 📋 Next | [plan](iteration-2-schema-design/plan.md) |
+| 2 Проектирование схемы | 02 | 📋 Next | [plan](iteration-2-schema-design/plan.md) · [summary](iteration-2-schema-design/summary.md) |
 | 3 ADR и практика | 03 | 📋 Planned | [plan](iteration-3-data-access-adr/plan.md) |
 | 4 Инфра и seed | 04 | 📋 Planned | [plan](iteration-4-db-infra-seed/plan.md) |
 | 5 ORM и backend | 05 | 📋 Planned | [plan](iteration-5-orm-repos/plan.md) |

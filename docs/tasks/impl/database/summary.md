@@ -1,22 +1,28 @@
 # Database: сводка области
 
-> **Статус:** 🚧 In Progress (1 / 5 итераций)
+> **Статус:** 🚧 In Progress (**2 / 5** итераций)
 
 ## Прогресс
 
-| Итерация | Статус |
-|----------|--------|
-| 1 Сценарии и требования | ✅ Done |
-| 2 Проектирование схемы | 📋 Next |
-| 3–5 | 📋 Planned |
+| Итерация | Задачи | Статус | Документы |
+|----------|--------|--------|-----------|
+| 1 Сценарии и требования | 01 | ✅ Done | [plan](iteration-1-user-scenarios/plan.md) · [summary](iteration-1-user-scenarios/summary.md) |
+| 2 Проектирование схемы | 02 | ✅ Done | [plan](iteration-2-schema-design/plan.md) · [summary](iteration-2-schema-design/summary.md) |
+| 3 ADR и практика | 03 | 📋 Next | [plan](iteration-3-data-access-adr/plan.md) |
+| 4 Инфра и seed | 04 | 📋 Planned | [plan](iteration-4-db-infra-seed/plan.md) |
+| 5 ORM и backend | 05 | 📋 Planned | [plan](iteration-5-orm-repos/plan.md) |
 
-## Итерация 1 (закрыта)
+## Итерация 2 (закрыта)
 
-- [user-scenarios.md](../../../spec/user-scenarios.md), [data-requirements.md](../../../spec/data-requirements.md)
-- Gap analysis в [data-model.md](../../../data-model.md)
+| Критерий | Результат |
+|----------|-----------|
+| ER + физическая схема | [schema-er.md](../../../spec/schema-er.md) |
+| PG design review | [schema-review.md](../../../spec/schema-review.md) |
+| Целевая SQL в data-model | [data-model.md](../../../data-model.md) |
+| Черновик DDL 002 | appendix в schema-er (impl — iter 5) |
 
-Детали: [iteration-1 summary](iteration-1-user-scenarios/summary.md)
+[iteration-2 summary](iteration-2-schema-design/summary.md)
 
 ## Следующий шаг
 
-[Итерация 2 — schema design](iteration-2-schema-design/plan.md)
+[Итерация 3 — ADR и практика доступа к БД](iteration-3-data-access-adr/plan.md)
