@@ -650,9 +650,24 @@ components:
           items:
             $ref: "#/components/schemas/MatrixRow"
 
+    LeaderboardProduct:
+      type: object
+      required: [name, xe, bje]
+      properties:
+        name:
+          type: string
+        xe:
+          type: number
+        bje:
+          type: number
+        bje_medal:
+          type: string
+          nullable: true
+          enum: [gold, silver, bronze, fourth, fifth]
+
     LeaderboardTableRow:
       type: object
-      required: [rank, patient, progress_pct, metrics]
+      required: [rank, patient, progress_pct, products]
       properties:
         rank:
           type: integer
@@ -661,8 +676,14 @@ components:
           $ref: "#/components/schemas/PatientRef"
         progress_pct:
           type: number
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeaderboardProduct"
         metrics:
           type: object
+          deprecated: true
+          description: Legacy iter 1 — удаляется в iter 4
           properties:
             xe:
               type: number
@@ -673,6 +694,8 @@ components:
         medal:
           type: string
           nullable: true
+          deprecated: true
+          description: Legacy iter 1 — топ-3 за место пациента
           enum: [gold, silver, bronze]
 
     ScatterPoint:

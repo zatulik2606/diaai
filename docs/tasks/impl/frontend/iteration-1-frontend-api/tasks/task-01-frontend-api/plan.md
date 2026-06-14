@@ -61,4 +61,4 @@ make lint && make test          # 60 passed
 make backend-run                # curl smoke 8 endpoints
 ```
 
-Demo: `username=akozhin`, `doctor_telegram_id=162684825`.
+Demo: `username=doctor_ivanov`, `doctor_telegram_id=162684825`.

@@ -15,7 +15,7 @@ Backend отдаёт все DTO для dashboard, leaderboard, chat history и l
 ## Ценность
 
 - Контракты iter 0 становятся runnable API
-- Demo doctor `@akozhin` и когорта пациентов в seed
+- Demo doctor `@doctor_ivanov` и когорта пациентов в seed
 - Contract tests фиксируют схему для Next.js iter 2+
 
 ## Зависимости
@@ -87,7 +87,7 @@ flowchart TB
 - [x] Repos: cohort aggregations, `web_submission` (UNION pagination)
 - [x] Services: `web_auth`, `web_doctor`, `web_leaderboard`, `web_chat`
 - [x] Routers `backend/api/v1/web/*` + register in v1 router
-- [x] Seed v3: `@akozhin`, 6 diabetics, dialogs, photo_analyses, snapshots
+- [x] Seed v3: `@doctor_ivanov`, 6 diabetics, dialogs, photo_analyses, snapshots
 - [x] `backend/tests/test_web_api.py` (8 cases)
 - [x] Docs: README, api-contracts, frontend-contract impl ✅
 - [x] Skills review: fastapi-templates, modern-python, postgresql-table-design, sharp-edges
@@ -131,7 +131,7 @@ flowchart TB
 | photo_analyses | 4 |
 | progress_snapshots | 18 |
 
-Demo doctor: `@akozhin`, `telegram_id: 162684825`, `display_name: Александр Кожин`.
+Demo doctor: `@doctor_ivanov`, `telegram_id: 162684825`, `display_name: Doctor Ivanov`.
 
 ## Решения
 
@@ -160,7 +160,7 @@ Demo doctor: `@akozhin`, `telegram_id: 162684825`, `display_name: Алексан
 - [x] Миграция `003` applies
 - [x] Seed idempotent (+0 на повтор)
 - [x] 8 web endpoints 200 + schema
-- [x] Doctor akozhin в PG
+- [x] Doctor `doctor_ivanov` в PG
 - [x] `make test` — 60 passed
 - [x] `make lint` green
 
@@ -175,7 +175,7 @@ export DOC=162684825
 
 curl -s -X POST "$BASE/api/v1/web/auth/resolve" \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"username":"akozhin"}'
+  -d '{"username":"doctor_ivanov"}'
 
 curl -s "$BASE/api/v1/web/doctor/dashboard/summary?doctor_telegram_id=$DOC" \
   -H "Authorization: Bearer $TOKEN"

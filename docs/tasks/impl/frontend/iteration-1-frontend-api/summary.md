@@ -34,7 +34,7 @@
 | 7 | GET | `/api/v1/web/leaderboard` |
 | 8 | GET | `/api/v1/web/assistant/history` |
 
-Demo doctor: `username=akozhin`, `doctor_telegram_id=162684825`.
+Demo doctor: `username=doctor_ivanov`, `doctor_telegram_id=162684825`.
 
 ## Seed v3 (demo counts)
 
@@ -80,7 +80,7 @@ Dual 422 format — unchanged (post-MVP).
 | `make lint` / `make format` | ✅ |
 | `make test` | ✅ **60 passed** |
 | curl smoke 8 endpoints + 401/403/404 | ✅ |
-| Doctor akozhin в PG | ✅ |
+| Doctor `doctor_ivanov` в PG | ✅ |
 
 ## User-check
 
@@ -94,7 +94,7 @@ export DOC=162684825
 
 curl -s -X POST "$BASE/api/v1/web/auth/resolve" \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"username":"akozhin"}'
+  -d '{"username":"doctor_ivanov"}'
 
 curl -s "$BASE/api/v1/web/doctor/dashboard/summary?doctor_telegram_id=$DOC" \
   -H "Authorization: Bearer $TOKEN"

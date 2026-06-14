@@ -11,3 +11,10 @@ async def require_doctor(
     db: AsyncSession = Depends(get_db),
 ) -> User:
     return await UserRepository(db).require_doctor(doctor_telegram_id)
+
+
+async def require_diabetic(
+    patient_telegram_id: int,
+    db: AsyncSession = Depends(get_db),
+) -> User:
+    return await UserRepository(db).require_diabetic(patient_telegram_id)

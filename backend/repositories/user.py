@@ -48,6 +48,16 @@ class UserRepository:
             )
         return user
 
+    async def require_diabetic(self, telegram_id: int) -> User:
+        user = await self.require_by_telegram_id(telegram_id)
+        if user.role != "diabetic":
+            raise AppError(
+                code="FORBIDDEN",
+                message="Diabetic role required",
+                status_code=403,
+            )
+        return user
+
     async def get_or_create(self, telegram_id: int) -> User:
         user = await self.get_by_telegram_id(telegram_id)
         if user is not None:

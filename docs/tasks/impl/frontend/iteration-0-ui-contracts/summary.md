@@ -75,4 +75,4 @@
 
 ## Следующий шаг
 
-[Итерация 1 — API для frontend](../iteration-1-frontend-api/plan.md): реализация `/api/v1/web/*`, doctor `@akozhin` (`telegram_id: 162684825`), demo seed для dashboard/leaderboard.
+[Итерация 1 — API для frontend](../iteration-1-frontend-api/plan.md): реализация `/api/v1/web/*`, doctor `@doctor_ivanov` (`telegram_id: 162684825`), demo seed для dashboard/leaderboard.

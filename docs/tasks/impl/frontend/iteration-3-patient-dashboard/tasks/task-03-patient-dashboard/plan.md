@@ -2,7 +2,7 @@
 
 Итерация: [iteration-3-patient-dashboard](../../plan.md)
 
-**Статус:** 📋 Planned · [summary](summary.md)
+**Статус:** ✅ Done · [summary](summary.md)
 
 ---
 
@@ -143,7 +143,7 @@ open http://localhost:3000/dashboard
 | username | telegram_id (seed) | ожидание |
 |----------|-------------------|----------|
 | `ivan_p` | из seed v3 | KPI > 0, questions в таблице |
-| `akozhin` | 162684825 | middleware → `/leaderboard` |
+| `doctor_ivanov` | 162684825 | middleware → `/leaderboard` |
 
 ## Skills
 

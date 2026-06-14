@@ -73,8 +73,13 @@
 | GET | `/api/v1/web/doctor/dashboard/progress-matrix` | Bearer | 200 | 4 | матрица пациенты × периоды |
 | GET | `/api/v1/web/leaderboard` | Bearer | 200 | 2 | таблица + scatter |
 | GET | `/api/v1/web/assistant/history` | Bearer | 200 | 3 | история чата |
+| GET | `/api/v1/web/patient/dashboard/summary` | Bearer | 200 | 1 | patient KPI + delta |
+| GET | `/api/v1/web/patient/dashboard/activity` | Bearer | 200 | 1 | активность пациента |
+| GET | `/api/v1/web/patient/dashboard/questions` | Bearer | 200 | 1 | вопросы пациента |
+| GET | `/api/v1/web/patient/dashboard/submissions` | Bearer | 200 | 1 | фиксации пациента |
+| GET | `/api/v1/web/patient/dashboard/progress-matrix` | Bearer | 200 | 4 | метрики × периоды |
 
-Doctor dashboard/leaderboard: обязательный query `doctor_telegram_id`. Списки: `limit` (default 20, max 100), `offset` (default 0), ответ `{ items, total, limit, offset }`.
+Doctor dashboard/leaderboard: query `doctor_telegram_id`. Patient dashboard: query `patient_telegram_id`. Списки: `limit` (default 20, max 100), `offset` (default 0), ответ `{ items, total, limit, offset }`.
 
 Полные параметры и структуры ответов — [frontend-contract.md](frontend-contract.md).
 
@@ -363,7 +368,7 @@ GET /api/v1/events/food?telegram_id=123456789&from=2026-06-01T00:00:00Z&to=2026-
 | 3 | Response: `user_id`, `telegram_id`, `role`, `display_name` |
 | 4 | Сессия на клиенте (cookie/localStorage, iter 2) |
 
-Demo doctor (seed): `username=akozhin`, `telegram_id=162684825`, `role=doctor`.
+Demo doctor (seed): `username=doctor_ivanov`, `telegram_id=162684825`, `role=doctor`.
 
 `BACKEND_SERVICE_TOKEN` **не** попадает в браузер.
 
@@ -371,7 +376,7 @@ Demo doctor (seed): `username=akozhin`, `telegram_id=162684825`, `role=doctor`.
 
 | | |
 |---|---|
-| Body | `{ "username": "akozhin" }` — string, без `@`, lowercase |
+| Body | `{ "username": "doctor_ivanov" }` — string, без `@`, lowercase |
 | Response 200 | `user_id` (uuid), `telegram_id` (int64), `role` (`diabetic`\|`doctor`), `display_name` |
 | Errors | 401, 404, 422, 503 |
 
@@ -419,7 +424,7 @@ Response 200: `{ period, columns[{ id, label }], rows[{ patient, cells[] }] }`; 
 
 Query: `doctor_telegram_id`, `period?` (`30d`), `metric?`, `metric_x?`, `metric_y?` — метрики: `xe`, `bje`, `insulin_dose`, `activity_score`.
 
-Response 200: `{ period, metric, table[], scatter[] }`; table row: `rank`, `patient`, `progress_pct`, `metrics`, `medal?`; scatter point: `patient_id`, `display_name`, `x`, `y`.
+Response 200: `{ period, metric, table[], scatter[] }`; table row: `rank`, `patient`, `progress_pct`, `products[]` (`name`, `xe`, `bje`, `bje_medal?`); scatter point: `patient_id`, `display_name`, `x`, `y`. Legacy iter 1: `metrics`, `medal?` — удаляется в iter 4.
 
 ### GET `/api/v1/web/assistant/history`
 

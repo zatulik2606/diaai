@@ -18,7 +18,7 @@
 | S4 | KPI и числа | `--font-mono`, `text-3xl` value, `text-sm` delta | зона 1 |
 | S5 | Карточки | `--card`, border `1px solid hsl(var(--border))`, `border-radius: var(--radius)`, `p-6` | зона 1 |
 | S6 | Графики | `--chart-1` primary, `--chart-2` secondary; подписи осей `--muted-foreground` | зона 1 |
-| S7 | Медали топ-3 | gold `#FFD700`, silver `#C0C0C0`, bronze `#CD7F32` | зона 2 |
+| S7 | Медали топ-5 БЖЕ (продукты) | gold `#FFD700`, silver `#C0C0C0`, bronze `#CD7F32`, 4th `#9CA3AF`, 5th `#78716F` | зона 2 |
 | S8 | Progress bar | track `hsl(var(--muted))`, fill `hsl(var(--primary))`, height 8px | зона 2 |
 | S9 | FAB чат | 56×56px, `rounded-full`, `shadow-lg`, fixed bottom-right 1.5rem | зона 3 |
 | S10 | Heatmap ячейки | шкала 0–33 / 34–66 / 67–100 → см. § Heatmap | зона 4 |
@@ -116,7 +116,7 @@
 | `Card` | dashboard KPI | с delta badge |
 | `Table` | questions, leaderboard | sticky header |
 | `Tabs` | leaderboard toggle | Table / Scatter |
-| `Badge` | metrics icons | ХЕ, БЖЕ, insulin |
+| `Badge` | product chips | иконка продукта + ХЕ; медаль БЖЕ overlay |
 | `Chart` | activity, scatter | recharts wrapper |
 | `Dialog` / `Sheet` | FAB chat | bottom-right sheet preferred |
 | `Skeleton` | loading states | KPI, chart, table |

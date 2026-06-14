@@ -69,11 +69,11 @@ flowchart LR
 ## Состав работ (task 00)
 
 - [x] **Зона 1 — dashboard:** 4 KPI + delta; chart 14d; questions; submissions; matrix (ссылка на зону 4)
-- [x] **Зона 2 — leaderboard:** table / scatter toggle; топ-3 медали
+- [x] **Зона 2 — leaderboard:** table / scatter toggle; продукты + ХЕ; медали топ-5 БЖЕ на продукты
 - [x] **Зона 3 — FAB chat:** overlay, history + send
 - [x] **Зона 4 — matrix:** пациенты × периоды/метрики, tooltip
 - [x] **Стиль:** tbench dark, design tokens S1–S13
-- [x] **Auth:** username → `telegram_id` / role; demo doctor `@akozhin`
+- [x] **Auth:** username → `telegram_id` / role; demo doctor `@doctor_ivanov`
 - [x] **API:** 8 web endpoint'ов + reuse assistant; openapi tag `web`
 - [x] **Сверка:** user-scenarios, data-requirements, api v1
 - [x] **Review:** api-design-principles → [api-contract-review.md](../../../../api/api-contract-review.md)
@@ -130,4 +130,4 @@ flowchart LR
 
 ## Следующая итерация
 
-[iteration-1-frontend-api](../iteration-1-frontend-api/plan.md) — реализация `/api/v1/web/*`, seed `@akozhin`, demo data.
+[iteration-1-frontend-api](../iteration-1-frontend-api/plan.md) — реализация `/api/v1/web/*`, seed `@doctor_ivanov`, demo data.

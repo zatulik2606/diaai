@@ -4,7 +4,7 @@ REST-расширения backend для web-клиента. Machine-readable: [
 
 Опирается на [api-contract.md](api-contract.md) · [conventions.md](conventions.md) · [frontend-requirements.md](../spec/frontend-requirements.md) · [data-model.md](../data-model.md)
 
-**Статус:** контракт iter 0 ✅ · реализация iter 1 ✅.
+**Статус:** контракт iter 0 ✅ · doctor API iter 1 ✅ · patient dashboard iter 3 ✅.
 
 ---
 
@@ -16,7 +16,7 @@ REST-расширения backend для web-клиента. Machine-readable: [
 | Префикс web endpoint'ов | `/api/v1/web/` |
 | Формат | JSON, `Content-Type: application/json` |
 | Auth | `Authorization: Bearer <BACKEND_SERVICE_TOKEN>` (BFF → backend) |
-| Пользователь web | `telegram_id` / `doctor_telegram_id` в query или body |
+| Пользователь web | `telegram_id` / `doctor_telegram_id` / `patient_telegram_id` в query или body |
 
 **Версионирование:** non-breaking additions в `/api/v1/` per [conventions.md](conventions.md). Bot endpoint'ы v1 не меняются.
 
@@ -41,6 +41,11 @@ REST-расширения backend для web-клиента. Machine-readable: [
 | 7 | GET | `/api/v1/web/leaderboard` | `doctor_telegram_id`, `period?`, `metric?`, `metric_x?`, `metric_y?` | `period`, `metric`, `table[]`, `scatter[]` | 200 |
 | 8 | GET | `/api/v1/web/assistant/history` | `telegram_id`, `limit?`, `offset?` | `items[]`, `total`, `limit`, `offset` | 200 |
 | 9 | POST | `/api/v1/assistant/messages` | body: `telegram_id`, `text?`, `image_base64?` | `dialog_id`, `request_id`, `reply` | 200 |
+| 10 | GET | `/api/v1/web/patient/dashboard/summary` | `patient_telegram_id`, `period_days?` | `period_days`, `kpis[]` | 200 |
+| 11 | GET | `/api/v1/web/patient/dashboard/activity` | `patient_telegram_id`, `days?` | `days`, `series[]` | 200 |
+| 12 | GET | `/api/v1/web/patient/dashboard/questions` | `patient_telegram_id`, `limit?`, `offset?` | `items[]`, `total`, `limit`, `offset` | 200 |
+| 13 | GET | `/api/v1/web/patient/dashboard/submissions` | `patient_telegram_id`, `limit?`, `offset?` | `items[]`, `total`, `limit`, `offset` | 200 |
+| 14 | GET | `/api/v1/web/patient/dashboard/progress-matrix` | `patient_telegram_id`, `period?` | `period`, `columns[]`, `rows[]` (metric rows) | 200 |
 
 ---
 
@@ -109,7 +114,7 @@ Response wrapper:
 | `username` | string | да | без `@`, lowercase |
 
 ```json
-{ "username": "akozhin" }
+{ "username": "doctor_ivanov" }
 ```
 
 **Response 200 — структура:**
@@ -520,7 +525,7 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 
 ### GET `/api/v1/web/leaderboard`
 
-Рейтинг + scatter. **Зона 2.**
+Рейтинг + scatter. **Зона 2.** Таблица: rank, progress, продукты с ХЕ и медалями топ-5 по БЖЕ.
 
 | | |
 |---|---|
@@ -534,7 +539,7 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 |-------|-----|-------|---------|----------|
 | `doctor_telegram_id` | int64 | да | — | Telegram ID доктора |
 | `period` | string | нет | `30d` | `7d`, `30d`, `90d` |
-| `metric` | string | нет | `xe` | sort key для table |
+| `metric` | string | нет | `xe` | sort key для table (рейтинг пациентов) |
 | `metric_x` | string | нет | `xe` | ось X scatter |
 | `metric_y` | string | нет | `insulin_dose` | ось Y scatter |
 
@@ -550,8 +555,11 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 | `table[].rank` | integer | ≥ 1 |
 | `table[].patient` | object | `user_id`, `display_name` |
 | `table[].progress_pct` | number | 0–100 |
-| `table[].metrics` | object | `xe`, `bje`, `insulin_dose` |
-| `table[].medal` | string \| null | `gold` \| `silver` \| `bronze` for rank 1–3 |
+| `table[].products` | array | продукты пациента за период |
+| `table[].products[].name` | string | название (из `food_events.description`, агрегат) |
+| `table[].products[].xe` | number | сумма ХЕ по продукту за период |
+| `table[].products[].bje` | number | сумма БЖЕ по продукту за период |
+| `table[].products[].bje_medal` | string \| null | `gold` \| `silver` \| `bronze` \| `fourth` \| `fifth` — если продукт в топ-5 когорты по БЖЕ |
 | `scatter` | array | |
 | `scatter[].patient_id` | uuid | |
 | `scatter[].display_name` | string | |
@@ -559,6 +567,8 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 | `scatter[].y` | number | |
 
 **Errors:** 401, 403, 422, 503
+
+> **Миграция (iter 4):** iter 1 backend может отдавать legacy-поля `table[].metrics` и `table[].medal` (топ-3 за место пациента). UI iter 4 использует только `products` + `bje_medal`; legacy удаляется вместе с backend-обновлением iter 4.
 
 **Response 200:**
 
@@ -574,12 +584,20 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
         "display_name": "Мария С."
       },
       "progress_pct": 92,
-      "metrics": {
-        "xe": 120.5,
-        "bje": 35.0,
-        "insulin_dose": 45.0
-      },
-      "medal": "gold"
+      "products": [
+        {
+          "name": "Овсянка",
+          "xe": 24.5,
+          "bje": 18.0,
+          "bje_medal": "gold"
+        },
+        {
+          "name": "Яблоко",
+          "xe": 8.0,
+          "bje": 2.5,
+          "bje_medal": null
+        }
+      ]
     },
     {
       "rank": 2,
@@ -588,13 +606,20 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
         "display_name": "Иван П."
       },
       "progress_pct": 78,
-      "metrics": {
-        "xe": 98.0,
-        "bje": 28.0,
-        "insulin_dose": 38.0
-      },
-      "medal": "silver"
-    }
+      "products": [
+        {
+          "name": "Овсянка",
+          "xe": 12.0,
+          "bje": 9.0,
+          "bje_medal": "gold"
+        },
+        {
+          "name": "Творог",
+          "xe": 6.5,
+          "bje": 14.0,
+          "bje_medal": "silver"
+        }
+      ]
   ],
   "scatter": [
     {
@@ -611,7 +636,8 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 |------|-----|
 | `rank` | computed order by `metric` |
 | `progress_pct` | vs period goal from `progress_snapshots` |
-| `medal` | `gold`/`silver`/`bronze` for rank 1–3, else null |
+| `products.*` | `food_events` grouped by `description` per `user_id` in window |
+| `bje_medal` | топ-5 продуктов когорты по сумме `bje` за период → `gold`…`fifth` |
 | `scatter.*` | same cohort, axes from `metric_x`, `metric_y` |
 
 ---
@@ -727,6 +753,64 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 
 ---
 
+## Patient dashboard (iter 3)
+
+Все endpoint'ы требуют `patient_telegram_id` query param — залогиненный пациент с `role=diabetic`.
+
+### GET `/api/v1/web/patient/dashboard/summary`
+
+KPI ids: `total_xe`, `questions_count`, `food_events_count`, `insulin_total`.
+
+```json
+{
+  "period_days": 7,
+  "kpis": [
+    {
+      "id": "total_xe",
+      "label": "Сумма ХЕ",
+      "value": 12.5,
+      "delta": 2.0,
+      "delta_pct": 19.0,
+      "trend": "up"
+    }
+  ]
+}
+```
+
+**Errors:** 401, 403 (non-diabetic), 404, 422, 503
+
+### GET `/api/v1/web/patient/dashboard/activity`
+
+Тот же формат, что doctor activity: `{ "days": 14, "series": [{ "date", "requests_count", "food_events_count" }] }`.
+
+### GET `/api/v1/web/patient/dashboard/questions`
+
+Items без поля `patient`: `{ "id", "content", "reply", "created_at" }`.
+
+### GET `/api/v1/web/patient/dashboard/submissions`
+
+Items без поля `patient`: `{ "id", "type", "title", "xe", "bje", "confidence", "recorded_at", "detail_url" }`.
+
+### GET `/api/v1/web/patient/dashboard/progress-matrix`
+
+Rows = метрики (`xe`, `bje`, `insulin`), columns = периоды:
+
+```json
+{
+  "period": "week",
+  "columns": [{ "id": "2026-W22", "label": "W22" }],
+  "rows": [
+    {
+      "metric_id": "xe",
+      "label": "ХЕ",
+      "cells": [{ "column_id": "2026-W22", "value": 72.0, "completion_pct": 85.0, "snapshot_date": "..." }]
+    }
+  ]
+}
+```
+
+---
+
 ## Smoke examples (iter 1)
 
 ```bash
@@ -734,7 +818,7 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 curl -s -X POST http://127.0.0.1:8000/api/v1/web/auth/resolve \
   -H "Authorization: Bearer $BACKEND_SERVICE_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"username":"akozhin"}'
+  -d '{"username":"doctor_ivanov"}'
 
 # Dashboard summary
 curl -s "http://127.0.0.1:8000/api/v1/web/doctor/dashboard/summary?doctor_telegram_id=162684825" \
@@ -753,6 +837,10 @@ curl -s -X POST http://127.0.0.1:8000/api/v1/assistant/messages \
   -H "Authorization: Bearer $BACKEND_SERVICE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"telegram_id":123456789,"text":"Сколько ХЕ в яблоке?"}'
+
+# Patient dashboard (iter 3)
+curl -s "http://127.0.0.1:8000/api/v1/web/patient/dashboard/summary?patient_telegram_id=900000001" \
+  -H "Authorization: Bearer $BACKEND_SERVICE_TOKEN"
 ```
 
 ---

@@ -11,7 +11,7 @@ export default function LeaderboardPage() {
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
         <CardDescription>
-          Таблица и scatter plot рейтинга — iter 4.
+          Таблица (продукты, ХЕ, топ-5 БЖЕ) и scatter plot — iter 4.
         </CardDescription>
       </CardHeader>
     </Card>

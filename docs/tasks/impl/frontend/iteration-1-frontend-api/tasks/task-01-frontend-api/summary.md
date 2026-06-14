@@ -13,7 +13,7 @@
 - Services: `web_auth`, `web_doctor`, `web_leaderboard`, `web_chat` + `web_utils`
 - Repos: cohort aggregations, `WebSubmissionRepository` (SQL UNION pagination)
 - DI: `backend/api/v1/web/service_deps.py` (`get_web_*_service`)
-- Seed v3: doctor `@akozhin`, 6 patients, dialogs, photo_analyses, snapshots
+- Seed v3: doctor `@doctor_ivanov`, 6 patients, dialogs, photo_analyses, snapshots
 - Contract tests: `backend/tests/test_web_api.py` (8 cases)
 - Docs: `frontend-contract.md`, `api-contract.md`, `backend/README.md`, `data/README.md`
 

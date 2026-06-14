@@ -41,3 +41,10 @@ Demo login:
 - Backend: `POST /api/v1/web/auth/resolve` + `BACKEND_SERVICE_TOKEN` (только server-side)
 
 Подробнее: [docs/integrations.md](../docs/integrations.md) · [frontend-contract.md](../docs/api/frontend-contract.md)
+
+## Dashboard smoke (iter 3)
+
+```bash
+make web-dev
+# login ivan_p → /dashboard — KPI, chart, questions, submissions, matrix
+```

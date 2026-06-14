@@ -4,7 +4,7 @@
 
 Skills: [shadcn](../../../../.agents/skills/shadcn/SKILL.md) · [vercel-react-best-practices](../../../../.agents/skills/vercel-react-best-practices/SKILL.md) · [nextjs-app-router-patterns](../../../../.agents/skills/nextjs-app-router-patterns/SKILL.md)
 
-**Статус:** 📋 Planned · [summary](summary.md) *(после завершения)*
+**Статус:** ✅ Done · [summary](summary.md)
 
 ---
 
@@ -165,7 +165,7 @@ make web-lint && make web-build
 
 - Login пациента из seed → `/dashboard` заполнен
 - KPI и график отражают его активность
-- Doctor (`akozhin`) по-прежнему редиректится на `/leaderboard`
+- Doctor (`doctor_ivanov`) по-прежнему редиректится на `/leaderboard`
 
 ## Out of scope
 
@@ -197,4 +197,4 @@ make web-lint && make web-build
 |----------|------|-------|
 | `ivan_p` | diabetic | `/dashboard` |
 | `maria_s` | diabetic | `/dashboard` |
-| `akozhin` | doctor | redirect → `/leaderboard` |
+| `doctor_ivanov` | doctor | redirect → `/leaderboard` |

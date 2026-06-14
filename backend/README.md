@@ -119,13 +119,13 @@ curl -s "$BASE/api/v1/events/food?telegram_id=123456789" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-**Web dashboard (demo doctor `@akozhin`, telegram_id `162684825`):**
+**Web dashboard (demo doctor `@doctor_ivanov`, telegram_id `162684825`):**
 
 ```bash
 curl -s "$BASE/api/v1/web/auth/resolve" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"username": "akozhin"}'
+  -d '{"username": "doctor_ivanov"}'
 
 curl -s "$BASE/api/v1/web/doctor/dashboard/summary?doctor_telegram_id=162684825" \
   -H "Authorization: Bearer $TOKEN"
