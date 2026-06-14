@@ -4,7 +4,7 @@
 
 ## Сделано
 
-- **[`docs/spec/user-scenarios.md`](../../../../../../spec/user-scenarios.md)** — 7 сценариев диабетика (D1–D7), 4 доктора (Doc1–Doc4); narrative «цель → видит → делает → результат»
+- **[`docs/spec/user-scenarios.md`](../../../../../../spec/user-scenarios.md)** — 7 сценариев пациента с диабетом (D1–D7), 4 доктора (Doc1–Doc4); narrative «цель → видит → делает → результат»
 - **[`docs/spec/data-requirements.md`](../../../../../../spec/data-requirements.md)** — read/write по сценариям, MVP scope, матрица сценарий → сущность, согласование с api-contract v1
 - **[`docs/spec/README.md`](../../../../../../spec/README.md)** — индекс spec-документов
 - **[`docs/data-model.md`](../../../../../../data-model.md)** — раздел «Требования из сценариев», gap analysis MVP schema
@@ -13,7 +13,7 @@
 
 ## Решения
 
-- Продуктовые роли: **диабетик** и **доктор** (не назначение доз инсулина)
+- Продуктовые роли: **пациент с диабетом** и **доктор** (не назначение доз инсулина)
 - API v1 **не расширяется** в рамках database iter 1; D3–D7 / Doc* — требования к данным для backend iter 4 и web iter 5
 - Must add до web/analytics: ProgressSnapshot, Recommendation, PhotoAnalysis, Consultation, расширение `users`
 

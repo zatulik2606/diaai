@@ -4,7 +4,7 @@
 
 ## Цель
 
-Описать сценарии диабетика (D1–D7) и доктора (Doc1–Doc4); вывести матрицу read/write и gap-analysis MVP schema.
+Описать сценарии пациента с диабетом (D1–D7) и доктора (Doc1–Doc4); вывести матрицу read/write и gap-analysis MVP schema.
 
 ## Что делаем
 

@@ -8,18 +8,18 @@
 
 ## Обзор
 
-Web-клиент (`web/`) — тонкий клиент backend REST API. MVP фокус: **роль доктора** (dashboard, leaderboard); **роль диабетика** — глобальный чат (D2) и post-MVP экраны D3–D6.
+Web-клиент (`web/`) — тонкий клиент backend REST API. MVP фокус: **роль пациента с диабетом** (`/dashboard`, FAB, D1/D3); **роль доктора** — leaderboard (D3) и post-MVP когорта (Doc1–Doc2).
 
 ### Маппинг UI → домен diaai
 
 | # | Зона UI (исходное ТЗ) | Маршрут / размещение | Роль | Сценарии | API (см. [frontend-contract.md](../api/frontend-contract.md)) |
 |---|------------------------|----------------------|------|----------|------------------------------------------------------------------|
-| 1 | Панель преподавателя → **панель доктора** | `/dashboard` | doctor | Doc1, Doc2 | `GET …/dashboard/summary`, `…/activity`, `…/questions`, `…/submissions` |
+| 1 | Панель → **панель пациента с диабетом** | `/dashboard` | diabetic | D1, D3 | patient dashboard API *(iter 3; gap: iter 1 — `/doctor/dashboard/*`)* |
 | 2 | **Лидерboard** | `/leaderboard` | doctor | D3 | `GET …/leaderboard` |
 | 3 | **Глобальный чат** (FAB) | overlay на всех страницах | doctor, diabetic | D2 | `GET …/assistant/history`, `POST /api/v1/assistant/messages` |
-| 4 | Студенты × уроки → **пациенты × периоды/метрики** | блок на `/dashboard` | doctor | Doc2, D3 | `GET …/dashboard/progress-matrix` |
+| 4 | Периоды × метрики | блок на `/dashboard` | diabetic | D3 | progress matrix *(patient-scoped)* |
 
-Терминология в UI: **доктор** (не «преподаватель»), **пациенты** (не «students»), **периоды/метрики** (не «уроки»).
+Терминология в UI: **доктор** (не «преподаватель»), **пациент с диабетом** (не «диабетик»), **пациенты** в контексте доктора, **периоды/метрики** (не «уроки»).
 
 **Стиль:** единая тёмная тема по [frontend-design-system.md](frontend-design-system.md) — обязательна для всех четырёх зон.
 
@@ -27,16 +27,16 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 
 | Роль | MVP экраны | Post-MVP |
 |------|------------|----------|
-| `doctor` | `/dashboard`, `/leaderboard`, FAB chat | Doc3–Doc4 (консультации) |
-| `diabetic` | FAB chat | D3–D6 (динамика, рекомендации, консультации) |
+| `diabetic` | `/dashboard`, FAB chat | D4–D6 (рекомендации, консультации) |
+| `doctor` | `/leaderboard`, FAB chat | Doc1–Doc4 (когорта, консультации) |
 
 ---
 
 ## Зона 4 — Матрица прогресса (блок на `/dashboard`)
 
-**Цель (Doc2, D3):** обзор прогресса когорты: пациенты × периоды или метрики.
+**Цель (D3):** личный прогресс пациента с диабетом: периоды × метрики (ХЕ, БЖЕ, инсулин).
 
-Отдельная функциональная зона UI (исходное ТЗ «студенты × уроки»); физически — правый нижний блок dashboard, но контракт и данные — отдельный endpoint.
+Отдельная функциональная зона UI; физически — правый нижний блок dashboard пациента.
 
 ### Wireframe (блок)
 
@@ -44,22 +44,22 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 ┌─────────────────────────────────────────┐
 │ Progress matrix          [week ▼]       │
 ├──────────┬──────┬──────┬──────┬─────────┤
-│ Patient  │ W22  │ W23  │ W24  │ W25     │
+│ Metric   │ W22  │ W23  │ W24  │ W25     │
 ├──────────┼──────┼──────┼──────┼─────────┤
-│ Иван П.  │ 72██ │ 85██ │ 60██ │  —      │
-│ Мария С. │ 90██ │ 88██ │ 92██ │ 95██    │
+│ ХЕ       │ 72██ │ 85██ │ 60██ │  —      │
+│ БЖЕ      │ 90██ │ 88██ │ 92██ │ 95██    │
 └──────────┴──────┴──────┴──────┴─────────┘
   hover → дата snapshot + xe/bje/insulin
 ```
 
 ### Поведение
 
-- **Строки:** пациенты (`users.role=diabetic`, когорта доктора)
-- **Столбцы:** периоды (`week`, `month`) или метрики (`xe`, `bje`, `insulin`) — query `columns`
+- **Строки:** метрики (`xe`, `bje`, `insulin`) или периоды — query `columns`
+- **Столбцы:** периоды (`week`, `month`) для **текущего пользователя**
 - **Ячейка:** `score` / `completion_pct` (0–100); цвет по шкале из design system
-- **Tooltip (hover):** `snapshot_date`, `metrics.xe`, `metrics.bje`, `metrics.insulin_dose`
+- **Tooltip (hover):** `snapshot_date`, значения метрик
 - **Empty:** «Нет snapshots за период»
-- **API:** `GET /api/v1/web/doctor/dashboard/progress-matrix`
+- **API:** patient-scoped progress matrix *(iter 3; см. gap в frontend-contract)*
 
 ### Стиль (обязательно)
 
@@ -70,9 +70,9 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 
 ---
 
-## Экран 1 — Панель доктора (`/dashboard`) — зона 1
+## Экран 1 — Панель пациента с диабетом (`/dashboard`) — зона 1
 
-**Цель (Doc1 + Doc2):** обзор когорты пациентов, KPI, активность, вопросы, фиксации, матрица прогресса.
+**Цель (D1 + D3):** личная аналитика: KPI, активность, свои вопросы ассистенту, фиксации, матрица прогресса.
 
 ### Стиль (обязательно)
 
@@ -92,10 +92,10 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 │  Δ vs prev    Δ vs prev    Δ vs prev    Δ vs prev               │
 ├──────────────────────────────┬──────────────────────────────────┤
 │ Activity chart (14 days)     │ Recent questions (table)         │
-│ line: requests + food_events │ patient · time · Q · A           │
+│ line: requests + food_events │ time · Q · A                     │
 ├──────────────────────────────┼──────────────────────────────────┤
 │ Recent submissions (list)    │ Progress matrix (heatmap/table)  │
-│ click → detail link          │ rows=patients · cols=periods     │
+│ click → detail link          │ rows=metrics · cols=periods      │
 └──────────────────────────────┴──────────────────────────────────┘
                                                       [FAB chat 💬]
 ```
@@ -106,10 +106,10 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 
 | KPI | Описание | Источник PG |
 |-----|----------|-------------|
-| Активные пациенты | `role=diabetic` с событиями за 7д | `users`, `food_events`, `dialog_requests` |
-| Сумма ХЕ за 7д | агрегат по когорте | `food_events.xe` |
-| Вопросов за 7д | текстовые запросы к ассистенту | `dialog_requests` type=text |
+| Сумма ХЕ за 7д | личный агрегат | `food_events.xe` (filter `user_id`) |
+| Вопросов за 7д | запросы к ассистенту | `dialog_requests` |
 | Событий питания за 7д | записи в дневник | `food_events` |
+| Инсулин за 7д | сумма доз | `insulin_events` |
 
 Каждая карточка: `value`, `delta` (число и %), `trend` (`up` | `down` | `flat`).
 
@@ -118,13 +118,12 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 - Тип: line chart (dual series или stacked area)
 - Ось X: календарные дни
 - Серии: `requests_count`, `food_events_count` по дням
-- Источник: агрегат `dialog_requests.created_at`, `food_events.recorded_at`
+- Источник: агрегат по **текущему** `user_id` / `telegram_id`
 
 ### Таблица вопросов
 
 | Колонка | Поле API |
 |---------|----------|
-| Пациент | `patient.display_name` |
 | Время | `created_at` |
 | Вопрос | `content` |
 | Ответ | `reply` |
@@ -137,10 +136,10 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 
 | Элемент | Содержание | Действие по клику |
 |---------|------------|-------------------|
-| Food event | описание, ХЕ/БЖЕ, время | ссылка на деталь пациента / событие |
+| Food event | описание, ХЕ/БЖЕ, время | ссылка на деталь события |
 | Photo analysis | превью, confidence, ХЕ | ссылка на D7-деталь |
 
-Источник: `food_events`, `photo_analyses` (последние N по когорте).
+Источник: `food_events`, `photo_analyses` (последние N **текущего пользователя**).
 
 ### Матрица прогресса
 
@@ -158,7 +157,7 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 
 ## Экран 2 — Лидерboard (`/leaderboard`) — зона 2
 
-**Цель:** рейтинг прогресса диабетиков по выбранной метрике и периоду.
+**Цель:** рейтинг прогресса пациентов с диабетом по выбранной метрике и периоду.
 
 ### Стиль (обязательно)
 
@@ -235,7 +234,7 @@ Loading, empty (нет пациентов), error — аналогично dashb
 | text | `content` / `reply` |
 | timestamp | `created_at` |
 
-Для диабетика: `telegram_id` из сессии. Для доктора в MVP: чат от своего `telegram_id` (demo) или read-only просмотр — **iter 5** уточняет UX.
+Для пациента с диабетом: `telegram_id` из сессии. Для доктора в MVP: чат от своего `telegram_id` (demo) или read-only просмотр — **iter 5** уточняет UX.
 
 ---
 
@@ -249,7 +248,7 @@ Loading, empty (нет пациентов), error — аналогично dashb
 2. Next.js Route Handler (BFF) → `POST /api/v1/web/auth/resolve` с Bearer `BACKEND_SERVICE_TOKEN`
 3. Backend резолвит username → `user_id`, `telegram_id`, `role`, `display_name`
 4. Сессия в cookie / localStorage (iter 2): `{ user_id, telegram_id, role, display_name }`
-5. Redirect: `doctor` → `/dashboard`; `diabetic` → `/` или chat
+5. Redirect: `diabetic` → `/dashboard`; `doctor` → `/leaderboard`
 
 ### Demo doctor (seed iter 1)
 

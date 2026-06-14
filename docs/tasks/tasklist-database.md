@@ -62,7 +62,7 @@ make test                     # 52 passed (backend + bot)
 | plan.md / область | Этот tasklist | Зависимости |
 |-------------------|---------------|-------------|
 | [Итерация 4 — аналитика](../plan.md#итерация-4--аналитика-и-динамика-состояния) | итерации 2, 5 — таблицы `progress_snapshots`, агрегаты | [tasklist-backend](tasklist-backend.md) 09–12 |
-| [Итерация 5 — web](../plan.md#итерация-5--веб-интерфейс-диабетикдоктор) | итерация 1 — сценарии UI диабетика/доктора | [tasklist-web.md](tasklist-web.md) |
+| [Итерация 5 — web](../plan.md#итерация-5--веб-интерфейс-пациент-с-диабетом--доктор) | итерация 1 — сценарии UI пациента с диабетом/доктора | [tasklist-web.md](tasklist-web.md) |
 | Backend MVP ✅ | миграция `001_initial_schema` — база для расширения | [iteration-2-core summary](impl/backend/iteration-2-core/summary.md) |
 | ADR-003 ✅ | SQLAlchemy async + Alembic + repos | [database-access.md](../tech/database-access.md) |
 | Seed + `make db-*` ✅ | iter 4 — one-command окружение | [iteration-4 summary](impl/database/iteration-4-db-infra-seed/summary.md) |
@@ -94,13 +94,13 @@ make test                     # 52 passed (backend + bot)
 
 ### Цель итерации
 
-Зафиксировать продуктовые сценарии диабетика и доктора и вывести минимальный набор сущностей, полей и связей для web и аналитики.
+Зафиксировать продуктовые сценарии пациента с диабетом и доктора и вывести минимальный набор сущностей, полей и связей для web и аналитики.
 
 ### Задача 01
 
 #### Состав работ
 
-- [x] Описать **5–7 базовых сценариев диабетика**: дневник питания/инсулина, вопрос ассистенту, динамика за период, рекомендации, запись к доктору, просмотр истории консультаций
+- [x] Описать **5–7 базовых сценариев пациента с диабетом**: дневник питания/инсулина, вопрос ассистенту, динамика за период, рекомендации, запись к доктору, просмотр истории консультаций
 - [x] Описать **3–4 сценария доктора**: список пациентов, обзор динамики пациента, консультация (статус, комментарий), справочные заметки без назначения доз
 - [x] Для каждого сценария — таблица «экран / действие → данные (read) → сохранение (write)»
 - [x] Сверить с [idea.md](../idea.md), [vision.md](../vision.md#роли-и-сценарии), [api-contract.md](../api/api-contract.md)
@@ -110,7 +110,7 @@ make test                     # 52 passed (backend + bot)
 
 | Файл | Что обновить |
 |------|--------------|
-| `docs/spec/user-scenarios.md` | **создано** — сценарии диабетика и доктора |
+| `docs/spec/user-scenarios.md` | **создано** — сценарии пациента с диабетом и доктора |
 | `docs/spec/data-requirements.md` | **создано** — матрица read/write по ролям |
 | `docs/data-model.md` | раздел «Требования из сценариев», gap analysis |
 | `docs/spec/README.md` | **создано** — индекс spec |
@@ -433,7 +433,7 @@ Self-check ✅ · User-check 📋 — [iteration-5 summary](impl/database/iterat
 | [database-access.md](../tech/database-access.md) | практический guide (миграции, seed, `db-*`) |
 | [data/progress-import.v1.json](../../data/progress-import.v1.json) | эталонный seed v2 (iter 4–5) |
 | [tasklist-backend.md](tasklist-backend.md) | API и аналитика (09–12) |
-| [tasklist-web.md](tasklist-web.md) | frontend диабетик/доктор |
+| [tasklist-web.md](tasklist-web.md) | frontend пациент с диабетом / доктор |
 | [spec/README.md](../spec/README.md) | индекс spec-документов |
 | [impl/database/summary.md](impl/database/summary.md) | сводка области database |
 | [templates/workflow.md](../templates/workflow.md) | процесс plan/summary |

@@ -30,7 +30,7 @@ Skills: [api-design-principles](../../../../.agents/skills/api-design-principles
 
 | # | Зона UI (ТЗ) | Маршрут / UI | Сценарии | API |
 |---|--------------|--------------|----------|-----|
-| 1 | Панель доктора | `/dashboard` | Doc1, Doc2 | `GET /api/v1/web/doctor/dashboard/*` |
+| 1 | Панель пациента с диабетом | `/dashboard` | D1, D3 | patient dashboard API *(iter 3)* |
 | 2 | Лидерboard | `/leaderboard` | D3 | `GET /api/v1/web/leaderboard` |
 | 3 | Глобальный чат (FAB) | overlay | D2 | `GET …/assistant/history`, `POST /api/v1/assistant/messages` |
 | 4 | Матрица прогресса | блок на `/dashboard` | Doc2, D3 | `GET …/progress-matrix` |
