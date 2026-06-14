@@ -29,7 +29,7 @@
       "proteins": 8.0,
       "fats": 4.0,
       "carbs": 45.0,
-      "source": "manual",
+      "source": "text",
       "comment": null,
       "recorded_at": "2026-05-01T08:15:00+00:00"
     },
@@ -43,7 +43,7 @@
       "proteins": 35.0,
       "fats": 8.0,
       "carbs": 55.0,
-      "source": "manual",
+      "source": "text",
       "comment": "Обед дома",
       "recorded_at": "2026-05-01T13:00:00+00:00"
     },
@@ -57,7 +57,7 @@
       "proteins": 18.0,
       "fats": 10.0,
       "carbs": 12.0,
-      "source": "manual",
+      "source": "text",
       "comment": null,
       "recorded_at": "2026-05-01T16:30:00+00:00"
     },
@@ -71,7 +71,7 @@
       "proteins": 14.0,
       "fats": 12.0,
       "carbs": 28.0,
-      "source": "manual",
+      "source": "text",
       "comment": null,
       "recorded_at": "2026-05-02T08:00:00+00:00"
     },
@@ -85,7 +85,7 @@
       "proteins": 4.0,
       "fats": 3.0,
       "carbs": 18.0,
-      "source": "manual",
+      "source": "text",
       "comment": null,
       "recorded_at": "2026-05-02T12:30:00+00:00"
     },
@@ -99,7 +99,7 @@
       "proteins": 25.0,
       "fats": 6.0,
       "carbs": 10.0,
-      "source": "manual",
+      "source": "text",
       "comment": "Ужин",
       "recorded_at": "2026-05-02T19:00:00+00:00"
     },
@@ -113,7 +113,7 @@
       "proteins": 12.0,
       "fats": 5.0,
       "carbs": 22.0,
-      "source": "manual",
+      "source": "text",
       "comment": null,
       "recorded_at": "2026-05-03T07:45:00+00:00"
     },
@@ -127,7 +127,7 @@
       "proteins": 15.0,
       "fats": 9.0,
       "carbs": 70.0,
-      "source": "manual",
+      "source": "text",
       "comment": "Обед в кафе",
       "recorded_at": "2026-05-03T13:15:00+00:00"
     },
@@ -141,7 +141,7 @@
       "proteins": 3.0,
       "fats": 8.0,
       "carbs": 15.0,
-      "source": "manual",
+      "source": "text",
       "comment": "Перекус",
       "recorded_at": "2026-05-04T10:00:00+00:00"
     },
@@ -155,7 +155,7 @@
       "proteins": 30.0,
       "fats": 7.0,
       "carbs": 50.0,
-      "source": "manual",
+      "source": "text",
       "comment": null,
       "recorded_at": "2026-05-04T18:30:00+00:00"
     }

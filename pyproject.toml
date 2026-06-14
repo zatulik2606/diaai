@@ -40,6 +40,11 @@ dev = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["backend/tests", "tests"]
+addopts = ["--strict-markers"]
+markers = [
+    "integration: HTTP API tests with in-memory DB",
+    "unit: isolated tests without full HTTP stack",
+]
 
 [tool.ruff]
 line-length = 100

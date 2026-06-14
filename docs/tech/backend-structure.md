@@ -6,7 +6,7 @@
 
 Каталог `backend/` **реализован** (backend task-03–08 ✅). Слой данных — **database iter 5** ✅: миграции `001` + `002`, 9 таблиц, 10 ORM-моделей, 10 repositories, 5 services.
 
-**Тесты:** `make test` — **51** (36 backend + 15 bot).
+**Тесты:** `make test` — **52** (37 backend + 15 bot). Маркеры: `integration` (HTTP+DB), `unit` (repos, metadata).
 
 ## Фактическое дерево
 
@@ -105,7 +105,7 @@ alembic/                      # корень репо
 | Pydantic schemas отдельно от routes | `backend/schemas/` |
 | Service / repository слои | thin repos без BaseRepository (ADR-003) |
 | Session-scoped repos | `Repository(session)` — корректнее async, чем singleton из шаблона |
-| Testing | httpx `AsyncClient`, `ASGITransport`, `dependency_overrides`; **51** test |
+| Testing | httpx `AsyncClient`, `dependency_overrides`; markers `integration`/`unit`; **52** test |
 | App factory | `create_app()` для tests |
 | Photo persist через service | `assistant_service` → `PhotoAnalysisRepository` на `photo`/`mixed` |
 

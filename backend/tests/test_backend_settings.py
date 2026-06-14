@@ -2,6 +2,8 @@ import pytest
 
 from backend.config import Settings, validate_service_token
 
+pytestmark = pytest.mark.unit
+
 
 def test_validate_service_token_rejects_change_me() -> None:
     settings = Settings(backend_service_token="change-me")

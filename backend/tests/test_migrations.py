@@ -1,5 +1,7 @@
 """Nine-table metadata after migration 002 models."""
 
+import pytest
+
 from backend.database import Base
 from backend.models import (  # noqa: F401
     Consultation,
@@ -24,6 +26,9 @@ EXPECTED_TABLES = {
     "recommendations",
     "consultations",
 }
+
+
+pytestmark = pytest.mark.unit
 
 
 def test_metadata_has_nine_tables() -> None:

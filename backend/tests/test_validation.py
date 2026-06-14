@@ -2,6 +2,8 @@ import base64
 
 import pytest
 
+pytestmark = pytest.mark.integration
+
 
 @pytest.mark.asyncio
 async def test_assistant_missing_telegram_id_422(client, auth_headers) -> None:

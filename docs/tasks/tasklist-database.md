@@ -12,34 +12,37 @@
 
 ## Базовая инфраструктура (зависимость)
 
-Bootstrap PostgreSQL (compose, Alembic, миграция `001`, `DATABASE_URL`) создан в **Backend MVP** — [iteration-2-core](impl/backend/iteration-2-core/summary.md) ([tasklist-backend](tasklist-backend.md), задачи 03–05). Область **database** документирует практику (ит. 3), операции и seed (ит. 4), целевую схему `002_*` (ит. 5).
+Bootstrap PostgreSQL (compose, Alembic, миграции `001` + `002`, `DATABASE_URL`) создан в **Backend MVP** и завершён в области **database** — [iteration-2-core](impl/backend/iteration-2-core/summary.md) · [iteration-5 summary](impl/database/iteration-5-orm-repos/summary.md).
 
 | Компонент | Владелец / итерация | Артефакт | Статус |
 |-----------|---------------------|----------|--------|
 | `docker-compose.yml` | Backend iter 2 | [`docker-compose.yml`](../../docker-compose.yml) — сервис `postgres`, порт **5433**, volume, healthcheck | ✅ |
 | Сервис PostgreSQL | Backend iter 2 · database iter 4 (`make db-up`) | `POSTGRES_USER/PASSWORD/DB=diaai`; wait — `pg_isready` в Makefile | ✅ |
-| Настройка Alembic | Backend iter 2 · database iter 3 (guide) | [`alembic.ini`](../../alembic.ini), [`alembic/env.py`](../../alembic/env.py) — async, URL из `DATABASE_URL` | ✅ |
+| Настройка Alembic | Backend iter 2 · database iter 3 (guide) | [`alembic.ini`](../../alembic.ini), [`alembic/env.py`](../../alembic/env.py) — async, URL из `DATABASE_URL`, 10 моделей | ✅ |
 | `DATABASE_URL` | Backend iter 2 · database iter 4 (docs) | [`.env.example`](../../.env.example), [`backend/config.py`](../../backend/config.py) | ✅ |
-| Начальная миграция `001_*` | Backend iter 2 · database iter 2 (diff) | [`alembic/versions/001_initial_schema.py`](../../alembic/versions/001_initial_schema.py) | ✅ |
-| Seed-данные | Database iter 4 | [`data/progress-import.v1.json`](../../data/progress-import.v1.json), [`scripts/db/seed_from_progress.py`](../../scripts/db/seed_from_progress.py) | ✅ |
-| Применение миграций | Database iter 3–4 | `make backend-migrate` / `make db-migrate`; в `make db-reset` — автоматически | ✅ |
+| Миграция `001_*` | Backend iter 2 · database iter 2 (diff) | [`alembic/versions/001_initial_schema.py`](../../alembic/versions/001_initial_schema.py) — 5 таблиц | ✅ |
+| Миграция `002_*` | Database iter 5 | [`alembic/versions/002_full_data_layer.py`](../../alembic/versions/002_full_data_layer.py) — 9 таблиц | ✅ |
+| ORM / repos | Database iter 5 | [`backend/models/`](../../backend/models/), [`backend/repositories/`](../../backend/repositories/) | ✅ |
+| Seed-данные | Database iter 4–5 | [`data/progress-import.v1.json`](../../data/progress-import.v1.json) v2, [`scripts/db/seed_from_progress.py`](../../scripts/db/seed_from_progress.py) | ✅ |
+| Применение миграций | Database iter 3–5 | `make backend-migrate` / `make db-migrate`; в `make db-reset` — автоматически | ✅ |
 
 **Локальный прогон (проверка результата):**
 
 ```bash
 cp .env.example .env          # DATABASE_URL уже задан
-make db-reset                 # PG + migrate 001 + seed
-make db-inspect               # counts: users, food_events, insulin_events
-make db-shell                 # SELECT count(*) FROM food_events;
-make backend-test             # 30 passed (sqlite, без running PG)
+make db-reset                 # PG + migrate 001→002 + seed v2
+make db-inspect               # 9 tables; progress_snapshots:2, consultations:1
+make db-shell                 # SELECT count(*) FROM photo_analyses;
+make backend-test             # 37 passed (sqlite, без running PG)
+make test                     # 52 passed (backend + bot)
 ```
 
 Подробнее: [database-access.md](../tech/database-access.md) § «Локальное окружение и seed» · [backend/README.md](../../backend/README.md) · [README.md](../../README.md).
 
 > **Skills:** на этапах, где уместно, подключать skills для дополнительных проверок:
-> - **итерация 2** — [postgresql-table-design](../../.agents/skills/postgresql-table-design/SKILL.md) (review схемы)
-> - **итерация 5** — [fastapi-templates](../../.agents/skills/fastapi-templates/SKILL.md) (интеграция БД в backend)
-> - **итерация 5** — [python-testing-patterns](../../.agents/skills/python-testing-patterns/SKILL.md) *(если добавляются тесты migrations/repos/E2E)*  
+> - **итерация 2** — [postgresql-table-design](../../.agents/skills/postgresql-table-design/SKILL.md) (review схемы) ✅
+> - **итерация 5** — [fastapi-templates](../../.agents/skills/fastapi-templates/SKILL.md) (интеграция БД в backend) ✅
+> - **итерация 5** — [python-testing-patterns](../../.agents/skills/python-testing-patterns/SKILL.md) (тесты migrations/repos) ✅  
 > Подбор других skills — через `/find-skills`.
 
 ## Итерации
@@ -63,6 +66,7 @@ make backend-test             # 30 passed (sqlite, без running PG)
 | Backend MVP ✅ | миграция `001_initial_schema` — база для расширения | [iteration-2-core summary](impl/backend/iteration-2-core/summary.md) |
 | ADR-003 ✅ | SQLAlchemy async + Alembic + repos | [database-access.md](../tech/database-access.md) |
 | Seed + `make db-*` ✅ | iter 4 — one-command окружение | [iteration-4 summary](impl/database/iteration-4-db-infra-seed/summary.md) |
+| Data layer `002_*` ✅ | iter 5 — 9 таблиц, ORM/repos | [iteration-5 summary](impl/database/iteration-5-orm-repos/summary.md) |
 
 ## Легенда статусов
 
@@ -350,26 +354,28 @@ Self-check ✅ · User-check 📋 — [iteration-4 summary](impl/database/iterat
 - [x] `backend/repositories/` — CRUD/list/filter; async session
 - [x] Services: `assistant_service` *(photo_analysis persist)*; `progress_service`, `consultation_service`
 - [x] Нет in-memory store для доменных данных (backend на PG)
-- [x] Тесты: `test_migrations.py`, `test_repositories_extended.py`, `conftest.py`
-- [x] Прогон: `make db-reset && make test` — 51 passed
+- [x] Тесты: `test_migrations.py`, `test_repositories_extended.py`, `test_assistant.py` (photo/text); markers `integration`/`unit`
+- [x] Skills review: fastapi-templates ✅, python-testing-patterns ✅
+- [x] Прогон: `make db-reset && make test` — 52 passed
 
 #### Skills
 
-| Skill | Когда | Фокус проверки |
-|-------|-------|----------------|
-| [fastapi-templates](../../.agents/skills/fastapi-templates/SKILL.md) | интеграция ORM/repos в backend | слои models → repos → services → API deps; async session lifecycle |
-| [python-testing-patterns](../../.agents/skills/python-testing-patterns/SKILL.md) | доп. тесты migrations/repos/E2E | fixtures, test DB, transaction rollback, pytest-asyncio |
+| Skill | Статус | Результат |
+|-------|--------|-----------|
+| [fastapi-templates](../../.agents/skills/fastapi-templates/SKILL.md) | ✅ | слои models → repos → services; [backend-structure.md](../tech/backend-structure.md) |
+| [python-testing-patterns](../../.agents/skills/python-testing-patterns/SKILL.md) | ✅ | `db_session_factory`, markers, isolation |
 
 #### Актуализация документации
 
-| Файл | Что обновить |
-|------|--------------|
-| `docs/data-model.md` | SQL-схема (фактическая после `002_*`) |
-| `docs/api/api-contract.md` | persisted fields *(если менялись)* |
-| `docs/tasks/tasklist-backend.md` | зависимость для задач 09–12 |
-| `docs/plan.md` | готовность data layer для итераций 4–5 |
-| `docs/tasks/impl/database/summary.md` | актуализировать — сводка области |
-| `backend/README.md` | новые таблицы / миграция `002_*` |
+| Файл | Статус |
+|------|--------|
+| `docs/data-model.md` | ✅ SQL после `002_*` |
+| `docs/spec/schema-er.md` | ✅ ссылка на `002_full_data_layer.py` |
+| `docs/tasks/tasklist-backend.md` | ✅ dependency iter 5 для 09–12 |
+| `docs/tasks/impl/database/summary.md` | ✅ область 5/5 |
+| `docs/tech/backend-structure.md` | ✅ iter 5, 9 tables, 52 tests |
+| `backend/README.md` | ✅ миграция `002`, новые таблицы |
+| `docs/api/api-contract.md` | — без изменений (v1) |
 
 #### Make-команды
 
@@ -382,18 +388,18 @@ Self-check ✅ · User-check 📋 — [iteration-4 summary](impl/database/iterat
 | `make db-inspect` | проверка записей после curl E2E |
 | `make backend-run` | manual E2E user-check |
 
-Self-check: `make db-reset && make test` — green; migrate up/down на чистой БД.
+Self-check ✅: `make db-reset && make test` — 52 passed; `make backend-test` — 37; migrate up/down OK; persistence после restart backend OK.
 
 #### Артефакты
 
-- `alembic/versions/002_*.py`, `backend/models/*`, `backend/repositories/*`, tests
-- обновления services, docs (см. таблицу выше)
+- [`002_full_data_layer.py`](../../alembic/versions/002_full_data_layer.py), `backend/models/*`, `backend/repositories/*`, services, tests
+- seed v2, docs (см. таблицу выше)
 
 ### Definition of Done — итерация 5
 
-**Self-check (агент):** ✅ `make db-reset && make test` — 51 passed; repos tested; photo → `photo_analyses`; migrate up/down OK.
+**Self-check (агент):** ✅ `make db-reset && make test` — 52 passed; repos tested; photo → `photo_analyses`; migrate up/down OK; PG persistence OK.
 
-**User-check (пользователь):** 📋 [task-05 summary](impl/database/iteration-5-orm-repos/tasks/task-05-orm-repos/summary.md)
+**User-check (пользователь):** 📋 events + restart ✅; photo assistant + LLM — [task-05 summary](impl/database/iteration-5-orm-repos/tasks/task-05-orm-repos/summary.md)
 
 ### Документы
 
@@ -413,7 +419,7 @@ Self-check ✅ · User-check 📋 — [iteration-5 summary](impl/database/iterat
 | 2 | ER + PG review | ✅ `schema-er.md`, `schema-review.md` *(postgresql-table-design)* |
 | 3 | ADR + guide | ✅ `adr-003`, `docs/tech/database-access.md` |
 | 4 | One-command окружение | ✅ `make db-reset`, `db-inspect`, `db-shell`; seed 2/10/5 |
-| 5 | Backend на полной схеме | ✅ `make test` 51; 9 tables; `002_*` |
+| 5 | Backend на полной схеме | ✅ `make test` 52; 9 tables; `002_*`; skills review ✅ |
 
 ## Связанные документы
 
@@ -425,7 +431,7 @@ Self-check ✅ · User-check 📋 — [iteration-5 summary](impl/database/iterat
 | [adr-002-backend-stack.md](../adr/adr-002-backend-stack.md) | FastAPI + SQLAlchemy + Alembic |
 | [adr-003-data-access-layer.md](../adr/adr-003-data-access-layer.md) | SQLAlchemy async + Alembic + repos |
 | [database-access.md](../tech/database-access.md) | практический guide (миграции, seed, `db-*`) |
-| [data/progress-import.v1.json](../../data/progress-import.v1.json) | эталонный seed (iter 4) |
+| [data/progress-import.v1.json](../../data/progress-import.v1.json) | эталонный seed v2 (iter 4–5) |
 | [tasklist-backend.md](tasklist-backend.md) | API и аналитика (09–12) |
 | [tasklist-web.md](tasklist-web.md) | frontend диабетик/доктор |
 | [spec/README.md](../spec/README.md) | индекс spec-документов |

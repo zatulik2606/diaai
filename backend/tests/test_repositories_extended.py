@@ -1,70 +1,47 @@
 from datetime import UTC, date, datetime
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.database import Base
-from backend.models import (  # noqa: F401
-    Consultation,
-    Dialog,
-    DialogRequest,
-    FoodEvent,
-    InsulinEvent,
-    PhotoAnalysis,
-    ProgressSnapshot,
-    Recommendation,
-    User,
-)
+from backend.models.dialog import Dialog
+from backend.models.request import DialogRequest
 from backend.repositories.photo_analysis import PhotoAnalysisRepository
 from backend.repositories.user import UserRepository
 from backend.services.consultation_service import ConsultationService
 from backend.services.progress_service import ProgressService
 
-TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
-
-
-@pytest.fixture
-async def session() -> AsyncSession:
-    engine = create_async_engine(TEST_DATABASE_URL)
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-    session_factory = async_sessionmaker(engine, expire_on_commit=False)
-    async with session_factory() as db_session:
-        yield db_session
-
-    await engine.dispose()
+pytestmark = pytest.mark.unit
 
 
 @pytest.mark.asyncio
-async def test_user_create_doctor(session: AsyncSession) -> None:
-    repo = UserRepository(session)
+async def test_user_create_doctor(db_session: AsyncSession) -> None:
+    repo = UserRepository(db_session)
     doctor = await repo.create_doctor(display_name="Dr. Test", email="dr@test.example")
-    await session.commit()
+    await db_session.commit()
     assert doctor.role == "doctor"
     assert doctor.display_name == "Dr. Test"
     assert doctor.telegram_id is None
 
 
 @pytest.mark.asyncio
-async def test_photo_analysis_repository(session: AsyncSession) -> None:
-    users = UserRepository(session)
+async def test_photo_analysis_repository(db_session: AsyncSession) -> None:
+    users = UserRepository(db_session)
     diabetic = await users.get_or_create(111)
-    await session.commit()
+    await db_session.commit()
 
-    repo = PhotoAnalysisRepository(session)
+    repo = PhotoAnalysisRepository(db_session)
 
     dialog = Dialog(user_id=diabetic.id)
-    session.add(dialog)
-    await session.flush()
+    db_session.add(dialog)
+    await db_session.flush()
     req = DialogRequest(
         dialog_id=dialog.id,
         user_id=diabetic.id,
         type="photo",
         reply="reply",
     )
-    session.add(req)
-    await session.flush()
+    db_session.add(req)
+    await db_session.flush()
 
     analysis = await repo.create(
         user_id=diabetic.id,
@@ -72,7 +49,7 @@ async def test_photo_analysis_repository(session: AsyncSession) -> None:
         object_type="dish",
         comment="test",
     )
-    await session.commit()
+    await db_session.commit()
 
     found = await repo.get_by_request_id(req.id)
     assert found is not None
@@ -80,12 +57,12 @@ async def test_photo_analysis_repository(session: AsyncSession) -> None:
 
 
 @pytest.mark.asyncio
-async def test_progress_snapshot_service(session: AsyncSession) -> None:
-    users = UserRepository(session)
+async def test_progress_snapshot_service(db_session: AsyncSession) -> None:
+    users = UserRepository(db_session)
     user = await users.get_or_create(222)
-    await session.commit()
+    await db_session.commit()
 
-    service = ProgressService(session)
+    service = ProgressService(db_session)
     snapshot = await service.create_snapshot(
         user_id=user.id,
         period="week",
@@ -96,7 +73,7 @@ async def test_progress_snapshot_service(session: AsyncSession) -> None:
         sum_insulin=20.0,
         trend="stable",
     )
-    await session.commit()
+    await db_session.commit()
 
     listed = await service.list_snapshots(user.id)
     assert len(listed) == 1
@@ -104,20 +81,20 @@ async def test_progress_snapshot_service(session: AsyncSession) -> None:
 
 
 @pytest.mark.asyncio
-async def test_consultation_service(session: AsyncSession) -> None:
-    users = UserRepository(session)
+async def test_consultation_service(db_session: AsyncSession) -> None:
+    users = UserRepository(db_session)
     diabetic = await users.get_or_create(333)
     doctor = await users.create_doctor(display_name="Doc")
-    await session.commit()
+    await db_session.commit()
 
-    service = ConsultationService(session)
+    service = ConsultationService(db_session)
     consultation = await service.create(
         diabetic_id=diabetic.id,
         doctor_id=doctor.id,
         format="online",
         scheduled_at=datetime(2026, 6, 1, 10, 0, tzinfo=UTC),
     )
-    await session.commit()
+    await db_session.commit()
 
     for_doctor = await service.list_for_doctor(doctor.id)
     assert len(for_doctor) == 1

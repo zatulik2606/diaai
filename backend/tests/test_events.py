@@ -1,5 +1,7 @@
 import pytest
 
+pytestmark = pytest.mark.integration
+
 
 @pytest.mark.asyncio
 async def test_create_food_returns_201(client, auth_headers, food_event_payload) -> None:

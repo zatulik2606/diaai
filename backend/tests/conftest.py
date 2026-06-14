@@ -54,11 +54,9 @@ async def db_engine():
 
 
 @pytest.fixture
-async def client(app, db_engine):
-    session_factory = async_sessionmaker(db_engine, expire_on_commit=False)
-
+async def client(app, db_session_factory):
     async def override_get_db():
-        async with session_factory() as session:
+        async with db_session_factory() as session:
             try:
                 yield session
                 await session.commit()
@@ -77,9 +75,13 @@ async def client(app, db_engine):
 
 
 @pytest.fixture
-async def db_session(db_engine):
-    session_factory = async_sessionmaker(db_engine, expire_on_commit=False)
-    async with session_factory() as session:
+def db_session_factory(db_engine):
+    return async_sessionmaker(db_engine, expire_on_commit=False)
+
+
+@pytest.fixture
+async def db_session(db_session_factory):
+    async with db_session_factory() as session:
         yield session
 
 
