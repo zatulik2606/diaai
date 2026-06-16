@@ -38,12 +38,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(target);
   }
 
-  if (session?.role === "diabetic" && pathname.startsWith("/leaderboard")) {
-    const target = request.nextUrl.clone();
-    target.pathname = "/dashboard";
-    return NextResponse.redirect(target);
-  }
-
   if (pathname === "/") {
     const target = request.nextUrl.clone();
     target.pathname = session

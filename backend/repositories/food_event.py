@@ -188,3 +188,43 @@ class FoodEventRepository:
             row[0]: {"xe": float(row[1]), "bje": float(row[2]), "food_count": float(row[3])}
             for row in result.all()
         }
+
+    async def products_by_user(
+        self,
+        user_ids: list[UUID],
+        from_dt: datetime,
+        to_dt: datetime,
+        *,
+        limit_per_user: int = 20,
+    ) -> dict[UUID, list[dict[str, float | str]]]:
+        if not user_ids:
+            return {}
+        name_expr = func.trim(FoodEvent.description)
+        result = await self._session.execute(
+            select(
+                FoodEvent.user_id,
+                name_expr,
+                func.coalesce(func.sum(FoodEvent.xe), 0),
+                func.coalesce(func.sum(FoodEvent.bje), 0),
+            )
+            .where(
+                FoodEvent.user_id.in_(user_ids),
+                FoodEvent.recorded_at >= from_dt,
+                FoodEvent.recorded_at < to_dt,
+            )
+            .group_by(FoodEvent.user_id, name_expr)
+            .order_by(FoodEvent.user_id, func.sum(FoodEvent.xe).desc())
+        )
+        by_user: dict[UUID, list[dict[str, float | str]]] = {uid: [] for uid in user_ids}
+        for row in result.all():
+            user_id = row[0]
+            if len(by_user[user_id]) >= limit_per_user:
+                continue
+            by_user[user_id].append(
+                {
+                    "name": str(row[1]),
+                    "xe": float(row[2]),
+                    "bje": float(row[3]),
+                }
+            )
+        return by_user

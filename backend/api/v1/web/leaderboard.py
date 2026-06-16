@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 
 from backend.api.deps import verify_service_token
-from backend.api.v1.web.deps import require_doctor
+from backend.api.v1.web.deps import require_leaderboard_viewer
 from backend.api.v1.web.service_deps import get_web_leaderboard_service
 from backend.models.user import User
 from backend.schemas.web import LeaderboardPeriod, LeaderboardResponse, MetricKey
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/leaderboard", tags=["web"])
 
 @router.get("", response_model=LeaderboardResponse)
 async def get_leaderboard(
-    _doctor: User = Depends(require_doctor),
+    _viewer: User = Depends(require_leaderboard_viewer),
     period: LeaderboardPeriod = Query(default="30d"),
     metric: MetricKey = Query(default="xe"),
     metric_x: MetricKey = Query(default="xe"),

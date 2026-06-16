@@ -1,19 +1,40 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { redirect } from "next/navigation";
 
-export default function LeaderboardPage() {
+import { LeaderboardTabs } from "@/components/leaderboard/leaderboard-tabs";
+import { fetchLeaderboard } from "@/lib/backend-client";
+import { getSession } from "@/lib/session";
+
+export default async function LeaderboardPage() {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+  if (session.telegram_id == null) {
+    throw new Error("Telegram ID не найден в сессии");
+  }
+
+  const data = await fetchLeaderboard(session.telegram_id, session.role);
+  const myRow =
+    session.role === "diabetic"
+      ? data.table.find((row) => row.patient.user_id === session.user_id)
+      : undefined;
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Leaderboard</CardTitle>
-        <CardDescription>
-          Таблица (продукты, ХЕ, топ-5 БЖЕ) и scatter plot — iter 4.
-        </CardDescription>
-      </CardHeader>
-    </Card>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Лидерборд</h1>
+        <p className="text-sm text-muted-foreground">
+          {session.display_name ?? session.user_id}
+          {myRow ? ` · ваше место: #${myRow.rank}` : ""}
+        </p>
+      </div>
+
+      <LeaderboardTabs
+        data={data}
+        metricX="xe"
+        metricY="insulin_dose"
+        currentUserId={session.user_id}
+      />
+    </div>
   );
 }

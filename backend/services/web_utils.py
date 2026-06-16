@@ -2,7 +2,7 @@
 
 from datetime import UTC, date, datetime, timedelta
 
-from backend.schemas.web import Medal, Trend
+from backend.schemas.web import BjeMedal, Medal, Trend
 
 
 def clamp_limit(limit: int, *, default: int = 20, maximum: int = 100) -> int:
@@ -67,4 +67,18 @@ def medal_for_rank(rank: int) -> Medal | None:
         return "silver"
     if rank == 3:
         return "bronze"
+    return None
+
+
+def bje_medal_for_rank(rank: int) -> BjeMedal | None:
+    if rank == 1:
+        return "gold"
+    if rank == 2:
+        return "silver"
+    if rank == 3:
+        return "bronze"
+    if rank == 4:
+        return "fourth"
+    if rank == 5:
+        return "fifth"
     return None

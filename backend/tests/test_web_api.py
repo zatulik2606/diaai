@@ -156,7 +156,7 @@ async def test_doctor_forbidden_for_diabetic(client, auth_headers, web_demo_data
 
 
 @pytest.mark.asyncio
-async def test_leaderboard_medals(client, auth_headers, web_demo_data) -> None:
+async def test_leaderboard_products(client, auth_headers, web_demo_data) -> None:
     response = await client.get(
         "/api/v1/web/leaderboard",
         headers=auth_headers,
@@ -167,9 +167,35 @@ async def test_leaderboard_medals(client, auth_headers, web_demo_data) -> None:
     assert body["period"] == "30d"
     assert len(body["table"]) >= 1
     assert body["table"][0]["rank"] == 1
-    if len(body["table"]) >= 3:
-        medals = [row["medal"] for row in body["table"][:3]]
-        assert medals == ["gold", "silver", "bronze"]
+    first_row = body["table"][0]
+    assert "metrics" not in first_row
+    assert "medal" not in first_row
+    assert len(first_row["products"]) >= 1
+    product = first_row["products"][0]
+    assert "name" in product
+    assert "xe" in product
+    assert "bje" in product
+    all_products = [p for row in body["table"] for p in row["products"]]
+    medals = [p["bje_medal"] for p in all_products if p.get("bje_medal")]
+    assert len(medals) >= 1
+    assert medals[0] in ("gold", "silver", "bronze", "fourth", "fifth")
+    assert len(body["scatter"]) >= 1
+
+
+@pytest.mark.asyncio
+async def test_leaderboard_patient_access(client, auth_headers, web_demo_data) -> None:
+    response = await client.get(
+        "/api/v1/web/leaderboard",
+        headers=auth_headers,
+        params={"patient_telegram_id": PATIENT_TELEGRAM_ID},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["table"]) >= 1
+    assert any(
+        row["patient"]["display_name"] == "Иван П."
+        for row in body["table"]
+    )
 
 
 @pytest.mark.asyncio

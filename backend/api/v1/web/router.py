@@ -1,6 +1,12 @@
 from fastapi import APIRouter
 
-from backend.api.v1.web import assistant_history, auth, doctor_dashboard, leaderboard, patient_dashboard
+from backend.api.v1.web import (
+    assistant_history,
+    auth,
+    doctor_dashboard,
+    leaderboard,
+    patient_dashboard,
+)
 
 router = APIRouter(prefix="/web")
 router.include_router(auth.router)

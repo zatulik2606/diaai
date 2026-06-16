@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
     href: "/leaderboard",
     label: "Leaderboard",
     icon: Trophy,
-    roles: ["doctor"],
+    roles: ["doctor", "diabetic"],
   },
   {
     href: "/chat",

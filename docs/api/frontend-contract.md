@@ -537,7 +537,8 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 
 | Param | Тип | Обяз. | Default | Описание |
 |-------|-----|-------|---------|----------|
-| `doctor_telegram_id` | int64 | да | — | Telegram ID доктора |
+| `doctor_telegram_id` | int64 | один из двух | — | Telegram ID доктора |
+| `patient_telegram_id` | int64 | один из двух | — | Telegram ID пациента (тот же рейтинг когорты) |
 | `period` | string | нет | `30d` | `7d`, `30d`, `90d` |
 | `metric` | string | нет | `xe` | sort key для table (рейтинг пациентов) |
 | `metric_x` | string | нет | `xe` | ось X scatter |
@@ -567,8 +568,6 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 | `scatter[].y` | number | |
 
 **Errors:** 401, 403, 422, 503
-
-> **Миграция (iter 4):** iter 1 backend может отдавать legacy-поля `table[].metrics` и `table[].medal` (топ-3 за место пациента). UI iter 4 использует только `products` + `bje_medal`; legacy удаляется вместе с backend-обновлением iter 4.
 
 **Response 200:**
 

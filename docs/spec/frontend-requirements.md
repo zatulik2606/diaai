@@ -15,7 +15,7 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 | # | Зона UI (исходное ТЗ) | Маршрут / размещение | Роль | Сценарии | API (см. [frontend-contract.md](../api/frontend-contract.md)) |
 |---|------------------------|----------------------|------|----------|------------------------------------------------------------------|
 | 1 | Панель → **панель пациента с диабетом** | `/dashboard` | diabetic | D1, D3 | patient dashboard API *(iter 3; gap: iter 1 — `/doctor/dashboard/*`)* |
-| 2 | **Лидерboard** | `/leaderboard` | doctor | D3 | `GET …/leaderboard` |
+| 2 | **Лидерboard** | `/leaderboard` | doctor, diabetic | D3 | `GET …/leaderboard` |
 | 3 | **Глобальный чат** (FAB) | overlay на всех страницах | doctor, diabetic | D2 | `GET …/assistant/history`, `POST /api/v1/assistant/messages` |
 | 4 | Периоды × метрики | блок на `/dashboard` | diabetic | D3 | progress matrix *(patient-scoped)* |
 
@@ -27,7 +27,7 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 
 | Роль | MVP экраны | Post-MVP |
 |------|------------|----------|
-| `diabetic` | `/dashboard`, FAB chat | D4–D6 (рекомендации, консультации) |
+| `diabetic` | `/dashboard`, `/leaderboard`, FAB chat | D4–D6 (рекомендации, консультации) |
 | `doctor` | `/leaderboard`, FAB chat | Doc1–Doc4 (когорта, консультации) |
 
 ---
@@ -191,7 +191,7 @@ Web-клиент (`web/`) — тонкий клиент backend REST API. MVP ф
 
 | Колонка | Описание |
 |---------|----------|
-| Rank | место в рейтинге (число, без медалей за место) |
+| Rank | место в рейтинге (число); для текущего пациента — подсветка строки |
 | Patient | `display_name` |
 | Progress | progress bar (% к цели периода) |
 | Products | иконки потреблённых продуктов за период + суммарное количество ХЕ по каждому; медаль 🥇–5️⃣ если продукт в топ-5 когорты по БЖЕ |

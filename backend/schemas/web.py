@@ -11,6 +11,7 @@ KpiId = Literal["active_patients", "total_xe", "questions_count", "food_events_c
 SubmissionType = Literal["food_event", "photo_analysis"]
 MessageRole = Literal["user", "assistant"]
 Medal = Literal["gold", "silver", "bronze"]
+BjeMedal = Literal["gold", "silver", "bronze", "fourth", "fifth"]
 MatrixPeriod = Literal["week", "month"]
 LeaderboardPeriod = Literal["7d", "30d", "90d"]
 MetricKey = Literal["xe", "bje", "insulin_dose", "activity_score"]
@@ -150,18 +151,18 @@ class ProgressMatrixResponse(BaseModel):
 # --- Leaderboard ---
 
 
-class LeaderboardMetrics(BaseModel):
+class LeaderboardProduct(BaseModel):
+    name: str
     xe: float
     bje: float
-    insulin_dose: float
+    bje_medal: BjeMedal | None = None
 
 
 class LeaderboardTableRow(BaseModel):
     rank: int
     patient: SubmissionPatient
     progress_pct: float
-    metrics: LeaderboardMetrics
-    medal: Medal | None = None
+    products: list[LeaderboardProduct]
 
 
 class LeaderboardScatterPoint(BaseModel):

@@ -680,23 +680,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LeaderboardProduct"
-        metrics:
-          type: object
-          deprecated: true
-          description: Legacy iter 1 — удаляется в iter 4
-          properties:
-            xe:
-              type: number
-            bje:
-              type: number
-            insulin_dose:
-              type: number
-        medal:
-          type: string
-          nullable: true
-          deprecated: true
-          description: Legacy iter 1 — топ-3 за место пациента
-          enum: [gold, silver, bronze]
 
     ScatterPoint:
       type: object

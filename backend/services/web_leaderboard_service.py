@@ -9,8 +9,9 @@ from backend.repositories.progress_snapshot import ProgressSnapshotRepository
 from backend.repositories.request import RequestRepository
 from backend.repositories.user import UserRepository
 from backend.schemas.web import (
-    LeaderboardMetrics,
+    BjeMedal,
     LeaderboardPeriod,
+    LeaderboardProduct,
     LeaderboardResponse,
     LeaderboardScatterPoint,
     LeaderboardTableRow,
@@ -18,11 +19,32 @@ from backend.schemas.web import (
     SubmissionPatient,
 )
 from backend.services.web_utils import (
+    bje_medal_for_rank,
     leaderboard_days,
-    medal_for_rank,
     period_window_days,
     snapshot_score,
 )
+
+
+def _normalize_product_key(name: str) -> str:
+    return name.strip().lower()
+
+
+def _cohort_bje_medals(
+    products_by_user: dict[UUID, list[dict[str, float | str]]],
+) -> dict[str, BjeMedal]:
+    totals: dict[str, float] = {}
+    for products in products_by_user.values():
+        for item in products:
+            key = _normalize_product_key(str(item["name"]))
+            totals[key] = totals.get(key, 0.0) + float(item["bje"])
+    ranked = sorted(totals.items(), key=lambda pair: pair[1], reverse=True)[:5]
+    medals: dict[str, BjeMedal] = {}
+    for rank, (key, _) in enumerate(ranked, start=1):
+        medal = bje_medal_for_rank(rank)
+        if medal is not None:
+            medals[key] = medal
+    return medals
 
 
 class WebLeaderboardService:
@@ -65,6 +87,8 @@ class WebLeaderboardService:
         from_dt, to_dt, _, _ = period_window_days(days)
 
         food_by_user = await self._food.aggregate_by_user(user_ids, from_dt, to_dt)
+        products_by_user = await self._food.products_by_user(user_ids, from_dt, to_dt)
+        bje_medals = _cohort_bje_medals(products_by_user)
         insulin_by_user = await self._insulin.sum_dose_by_user(user_ids, from_dt, to_dt)
         requests_by_user = await self._requests.count_by_user(user_ids, from_dt, to_dt)
         snapshots = await self._snapshots.list_for_users(user_ids, period="week")
@@ -72,16 +96,11 @@ class WebLeaderboardService:
         for snap in snapshots:
             latest_snapshot[snap.user_id] = float(snap.sum_xe)
 
-        rows_data: list[tuple[User, float, LeaderboardMetrics, float]] = []
+        rows_data: list[tuple[User, float, float]] = []
         for patient in patients:
             food = food_by_user.get(patient.id, {"xe": 0.0, "bje": 0.0, "food_count": 0.0})
             insulin = insulin_by_user.get(patient.id, 0.0)
             req_count = requests_by_user.get(patient.id, 0)
-            metrics = LeaderboardMetrics(
-                xe=food.get("xe", 0.0),
-                bje=food.get("bje", 0.0),
-                insulin_dose=insulin,
-            )
             sort_value = self._metric_value(
                 metric,
                 food=food,
@@ -89,16 +108,26 @@ class WebLeaderboardService:
                 requests=req_count,
             )
             progress_pct = float(snapshot_score(latest_snapshot.get(patient.id, 0.0)))
-            rows_data.append((patient, sort_value, metrics, progress_pct))
+            rows_data.append((patient, sort_value, progress_pct))
 
         rows_data.sort(key=lambda row: row[1], reverse=True)
 
         table: list[LeaderboardTableRow] = []
         scatter: list[LeaderboardScatterPoint] = []
-        for rank, (patient, _, metrics, progress_pct) in enumerate(rows_data, start=1):
+        for rank, (patient, _, progress_pct) in enumerate(rows_data, start=1):
             food = food_by_user.get(patient.id, {"xe": 0.0, "bje": 0.0, "food_count": 0.0})
             insulin = insulin_by_user.get(patient.id, 0.0)
             req_count = requests_by_user.get(patient.id, 0)
+            raw_products = products_by_user.get(patient.id, [])
+            products = [
+                LeaderboardProduct(
+                    name=str(item["name"]),
+                    xe=float(item["xe"]),
+                    bje=float(item["bje"]),
+                    bje_medal=bje_medals.get(_normalize_product_key(str(item["name"]))),
+                )
+                for item in raw_products
+            ]
             table.append(
                 LeaderboardTableRow(
                     rank=rank,
@@ -107,8 +136,7 @@ class WebLeaderboardService:
                         display_name=patient.display_name,
                     ),
                     progress_pct=progress_pct,
-                    metrics=metrics,
-                    medal=medal_for_rank(rank),
+                    products=products,
                 )
             )
             scatter.append(

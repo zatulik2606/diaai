@@ -424,7 +424,7 @@ Response 200: `{ period, columns[{ id, label }], rows[{ patient, cells[] }] }`; 
 
 Query: `doctor_telegram_id`, `period?` (`30d`), `metric?`, `metric_x?`, `metric_y?` — метрики: `xe`, `bje`, `insulin_dose`, `activity_score`.
 
-Response 200: `{ period, metric, table[], scatter[] }`; table row: `rank`, `patient`, `progress_pct`, `products[]` (`name`, `xe`, `bje`, `bje_medal?`); scatter point: `patient_id`, `display_name`, `x`, `y`. Legacy iter 1: `metrics`, `medal?` — удаляется в iter 4.
+Response 200: `{ period, metric, table[], scatter[] }`; table row: `rank`, `patient`, `progress_pct`, `products[]` (`name`, `xe`, `bje`, `bje_medal?`); scatter point: `patient_id`, `display_name`, `x`, `y`.
 
 ### GET `/api/v1/web/assistant/history`
 

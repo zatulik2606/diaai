@@ -4,18 +4,19 @@
 
 Skills: [shadcn](../../../../.agents/skills/shadcn/SKILL.md) · [vercel-react-best-practices](../../../../.agents/skills/vercel-react-best-practices/SKILL.md) · [nextjs-app-router-patterns](../../../../.agents/skills/nextjs-app-router-patterns/SKILL.md)
 
-**Статус:** 📋 Next · [summary](summary.md)
+**Статус:** ✅ Done · [summary](summary.md)
 
 ---
 
 ## Цель
 
-Страница `/leaderboard` для роли `doctor`: переключатель таблица / scatter plot; таблица рейтинга пациентов с иконками продуктов, количеством ХЕ и медалями топ-5 по БЖЕ на продукты (D3).
+Страница `/leaderboard` для ролей **doctor** и **diabetic**: переключатель таблица / scatter plot; таблица рейтинга когорты с продуктами, ХЕ и медалями топ-5 по БЖЕ; у пациента — подсветка своей строки и место в рейтинге (D3).
 
 ## Ценность
 
-- Первый data-driven экран web-клиента для доктора
-- Закрывает gap iter 1: legacy leaderboard DTO → продуктовый контракт + UI
+- Data-driven экран рейтинга когорты для доктора и пациента
+- Закрыт gap iter 1: legacy leaderboard DTO → продуктовый контракт + UI
+- Явный блок «Топ-5 по БЖЕ» и эмодзи-медали на чипах продуктов
 - Scatter plot для сравнения метрик когорты
 
 ## Зависимости
@@ -23,25 +24,24 @@ Skills: [shadcn](../../../../.agents/skills/shadcn/SKILL.md) · [vercel-react-be
 | Область | Статус | Нужно iter 4 |
 |---------|--------|--------------|
 | Frontend iter 0 (spec, design system) | ✅ | зона 2 — продукты + топ-5 БЖЕ |
-| Frontend iter 1 (web API, seed v3) | ✅ | `GET /leaderboard` (legacy → extend) |
+| Frontend iter 1 (web API, seed v3) | ✅ | `GET /leaderboard` |
 | Frontend iter 2 (scaffold, auth BFF) | ✅ | `/leaderboard` placeholder, session |
-| Frontend iter 3 (patient dashboard) | ✅ | паттерн RSC + components |
-| Backend running + seed | ✅ | `food_events.description` в seed |
+| Frontend iter 3 (patient dashboard) | ✅ | паттерн RSC + `patientFetch` |
+| Backend running + seed | ✅ | `food_events.description` |
 
 **Зона работ:** `web/` + **backend leaderboard DTO** + docs. **Не** FAB-чат, **не** doctor cohort dashboard (Doc1).
 
 ## Gap analysis (iter 1 → iter 4)
 
-| Блок | Сейчас | Целевое iter 4 | Действие |
-|------|--------|----------------|----------|
-| `/leaderboard` page | Card-placeholder «iter 4» | table + scatter | replace placeholder |
-| `table[].metrics` + `table[].medal` | топ-3 за место, badges ХЕ/БЖЕ/insulin | удалить | backend + contract |
-| `table[].products` | нет | `name`, `xe`, `bje`, `bje_medal?` | `WebLeaderboardService` + repo |
-| `bje_medal` | нет | топ-5 продуктов когорты по БЖЕ | aggregate `food_events` |
-| `backend-client.ts` | нет fetch leaderboard | `fetchLeaderboard()` | extend `lib/` |
-| UI components | нет | table, product chips, scatter | `components/leaderboard/*` |
-| Loading/error/empty | нет | skeleton + retry | UI states |
-| Contract docs | legacy `metrics`/`medal` | `products` + `bje_medal` | уже в spec; sync impl |
+| Блок | Было | Стало | Статус |
+|------|------|-------|--------|
+| `/leaderboard` page | placeholder | table + scatter + top-5 legend | ✅ |
+| `table[].metrics` + `table[].medal` | топ-3 за rank | удалено | ✅ |
+| `table[].products` | нет | `name`, `xe`, `bje`, `bje_medal?` | ✅ |
+| Auth API | только `doctor_telegram_id` | + `patient_telegram_id` | ✅ |
+| Доступ diabetic | redirect → `/dashboard` | `/leaderboard` в nav + API | ✅ |
+| Медали в UI | badge «БЖЕ» | 🥇–5️⃣ + блок топ-5 | ✅ |
+| Подсветка пациента | нет | строка + «ваше место: #N» | ✅ |
 
 ## Архитектура
 
@@ -52,19 +52,21 @@ flowchart LR
   end
   subgraph next [Next.js]
     Page["leaderboard/page.tsx RSC"]
-    Client["lib/backend-client.ts"]
+    Client["fetchLeaderboard(role)"]
     Session["getSession()"]
   end
-  subgraph backend [Backend]
-    API["GET /api/v1/web/leaderboard"]
+  subgraph backend [FastAPI]
+    API["GET /leaderboard"]
+    Auth["require_leaderboard_viewer"]
     Svc["WebLeaderboardService"]
-    PG["PostgreSQL food_events"]
+    PG["food_events"]
   end
   LB --> Page
   Page --> Session
   Page --> Client
-  Client -->|"Bearer + doctor_telegram_id"| API
-  API --> Svc
+  Client -->|"doctor_telegram_id OR patient_telegram_id"| API
+  API --> Auth
+  Auth --> Svc
   Svc --> PG
 ```
 
@@ -72,130 +74,118 @@ flowchart LR
 
 | # | Решение | Обоснование |
 |---|---------|-------------|
-| 1 | Продукт = `food_events.description` (normalized) | нет отдельной таблицы продуктов на MVP |
-| 2 | Медали только на продукты (топ-5 БЖЕ когорты) | не на rank пациента; см. [frontend-requirements § Экран 2](../../../../spec/frontend-requirements.md) |
-| 3 | Scatter без изменений | оси `metric_x` / `metric_y` из API |
-| 4 | Tabs Table/Scatter — client component | переключение без full reload |
-| 5 | Иконки продуктов — slug/heuristic по `name` | без CDN assets на MVP |
-| 6 | BFF server-only fetch | `BACKEND_SERVICE_TOKEN` не в browser |
-| 7 | Удалить legacy `metrics`/`medal` из response | breaking внутри web API; UI iter 4 ещё не в prod |
+| 1 | Продукт = `food_events.description` (trim + group) | нет таблицы продуктов на MVP |
+| 2 | Медали на продукты (топ-5 БЖЕ когорты), не на rank | spec зона 2 |
+| 3 | Один endpoint, два query-параметра auth | KISS; тот же DTO когорты |
+| 4 | `BjeTop5Legend` — агрегат на клиенте из `table[]` | без отдельного API |
+| 5 | Эмодзи 🥇🥈🥉4️⃣5️⃣ на `ProductChip` | заметнее, чем текст «БЖЕ» |
+| 6 | Пациент: highlight строки `currentUserId` | ориентация в рейтинге |
+| 7 | Tabs/scatter — client components | без hydration issues |
 
-## Целевой endpoint (backend, iter 4)
+## Целевой endpoint
 
-| Method | Path | Query | Response |
-|--------|------|-------|----------|
-| GET | `/api/v1/web/leaderboard` | `doctor_telegram_id`, `period?`, `metric?`, `metric_x?`, `metric_y?` | `period`, `metric`, `table[]`, `scatter[]` |
+| Method | Path | Query (auth) | Response |
+|--------|------|--------------|----------|
+| GET | `/api/v1/web/leaderboard` | `doctor_telegram_id` **или** `patient_telegram_id` + `period?`, `metric?`, `metric_x?`, `metric_y?` | `period`, `metric`, `table[]`, `scatter[]` |
 
-**Table row (iter 4):** `rank`, `patient`, `progress_pct`, `products[]` (`name`, `xe`, `bje`, `bje_medal?`).
+**Table row:** `rank`, `patient`, `progress_pct`, `products[]` (`name`, `xe`, `bje`, `bje_medal?`).
 
-*Детали JSON — [frontend-contract.md § Leaderboard](../../../../api/frontend-contract.md).*
+*Детали — [frontend-contract.md § Leaderboard](../../../../api/frontend-contract.md).*
 
-## Целевая структура `web/`
+## Структура `web/` (факт)
 
 ```
 web/
 ├── app/(app)/leaderboard/
-│   ├── page.tsx                    # RSC: fetch + layout
-│   ├── loading.tsx                 # skeleton
-│   └── error.tsx                   # retry
+│   ├── page.tsx
+│   ├── loading.tsx
+│   └── error.tsx
 ├── components/leaderboard/
-│   ├── leaderboard-tabs.tsx        # Table / Scatter (client)
-│   ├── leaderboard-table.tsx
-│   ├── product-chip.tsx            # icon + xe + bje medal overlay
-│   └── leaderboard-scatter.tsx     # client (recharts)
+│   ├── bje-top5-legend.tsx       # блок топ-5 БЖЕ когорты
+│   ├── leaderboard-tabs.tsx
+│   ├── leaderboard-table.tsx     # highlight currentUserId
+│   ├── product-chip.tsx          # emoji + 🥇–5️⃣
+│   └── leaderboard-scatter.tsx
 ├── lib/
-│   ├── backend-client.ts           # + fetchLeaderboard()
-│   └── types/leaderboard.ts        # DTO types
+│   ├── leaderboard-utils.ts      # aggregateTop5Bje, MEDAL_EMOJI
+│   ├── types/leaderboard.ts
+│   └── backend-client.ts         # fetchLeaderboard(id, role)
+├── components/ui/
+│   ├── tabs.tsx, progress.tsx, badge.tsx, tooltip.tsx
+├── middleware.ts                 # diabetic НЕ редиректится с /leaderboard
+└── components/app-sidebar.tsx    # Leaderboard для doctor + diabetic
 ```
 
-## Backend (iter 4 scope)
+## Backend (факт)
 
 ```
 backend/
+├── api/v1/web/deps.py              # require_leaderboard_viewer
+├── api/v1/web/leaderboard.py
 ├── schemas/web.py                    # LeaderboardProduct, BjeMedal
 ├── repositories/food_event.py        # products_by_user()
 ├── services/web_leaderboard_service.py
 ├── services/web_utils.py             # bje_medal_for_rank(1..5)
-└── tests/test_web_api.py
+└── tests/test_web_api.py             # test_leaderboard_products, test_leaderboard_patient_access
 ```
-
-Паттерн: расширить `WebLeaderboardService`; cohort top-5 BJE считается один раз по всем `food_events` diabetics за период.
 
 ## Задачи
 
 | # | Задача | Статус | Документы |
 |---|--------|--------|-----------|
-| 04 | Лидерборд UI + backend DTO | 📋 Next | [plan](tasks/task-04-leaderboard/plan.md) · [summary](tasks/task-04-leaderboard/summary.md) |
+| 04 | Лидерборд UI + backend DTO | ✅ Done | [plan](tasks/task-04-leaderboard/plan.md) · [summary](tasks/task-04-leaderboard/summary.md) |
 
 ## Фазы реализации (task 04)
 
-| Фаза | Содержание | Зона |
-|------|------------|------|
-| 0 | Plan task 04 + gap backend | docs |
-| 1 | Leaderboard DTO + repo + service + tests | backend |
-| 2 | Types + `fetchLeaderboard()` | web/lib |
-| 3 | Product chips + leaderboard table | web/components |
-| 4 | Scatter chart + tabs toggle | web/components |
-| 5 | Leaderboard page + loading/error | web/app |
-| 6 | lint/build + smoke + summary | verify |
+| Фаза | Содержание | Статус |
+|------|------------|--------|
+| 1 | Backend DTO + repo + service + tests | ✅ |
+| 2 | Types + `fetchLeaderboard(id, role)` | ✅ |
+| 3 | UI: table, chips, scatter, tabs | ✅ |
+| 4 | Top-5 legend + emoji medals | ✅ |
+| 5 | Patient access (API, middleware, nav, highlight) | ✅ |
+| 6 | lint/build + docs + summary | ✅ |
 
-## Env
+## Definition of Done
 
-Без новых переменных — `web/.env.local`: `BACKEND_URL`, `BACKEND_SERVICE_TOKEN` (iter 2).
+**Self-check:**
+
+- [x] API: `products[]` + `bje_medal`; legacy `metrics`/`medal` удалены
+- [x] `patient_telegram_id` и `doctor_telegram_id` → 200
+- [x] `/leaderboard` table + scatter + top-5 legend
+- [x] `make backend-test` (53 tests) + `make web-build` green
+
+**User-check:**
+
+- [x] `doctor_ivanov` → `/leaderboard`: таблица, медали, scatter
+- [x] `ivan_p` → `/leaderboard`: тот же рейтинг, подсветка строки, «ваше место: #N»
 
 ## Make-команды
 
 ```bash
-make db-reset && make backend-run    # :8000
-make web-dev                           # :3000
-make backend-test                      # test_web_api leaderboard
+make db-reset && make backend-run
+make web-dev
+make backend-test
 make web-lint && make web-build
 ```
-
-## Definition of Done
-
-**Self-check (агент):**
-
-- API возвращает `products[]` с `bje_medal` для топ-5 БЖЕ когорты; legacy `metrics`/`medal` удалены
-- `/leaderboard` рендерит table и scatter на live API
-- TypeScript strict; `make web-build` green; loading/empty/error states
-- Переключение Table/Scatter без remount bugs
-
-**User-check (пользователь):**
-
-- Login `doctor_ivanov` → `/leaderboard` заполнен
-- Иконки продуктов и ХЕ видны в таблице
-- Топ-5 по БЖЕ отмечены медалями на продуктах
-- Scatter с hover/tooltip по осям метрик
-- `ivan_p` на `/leaderboard` → redirect `/dashboard`
-
-## Out of scope
-
-- Фильтр по отдельному продукту
-- Экспорт CSV / print
-- Doctor cohort dashboard (Doc1) — post-MVP
-- FAB / полный чат (iter 5–6)
-
-## Риски
-
-| Риск | Mitigation |
-|------|------------|
-| `description` не нормализован в seed | trim + lowercase при group by |
-| Много уникальных продуктов в строке | limit top-N по xe на пациента (MVP: все, если < 20) |
-| Scatter hydration mismatch | `"use client"` только для recharts wrapper |
-| Breaking change legacy DTO | iter 4 UI + backend в одном PR; контракт уже обновлён |
-
-## Skills (при реализации)
-
-| Skill | Фокус |
-|-------|-------|
-| shadcn | Tabs, Table, Badge, Progress |
-| vercel-react-best-practices | chart performance, RSC fetch |
-| nextjs-app-router-patterns | loading.tsx, error.tsx |
 
 ## Demo credentials
 
 | username | role | экран |
 |----------|------|-------|
-| `doctor_ivanov` | doctor | `/leaderboard` |
-| `ivan_p` | diabetic | redirect → `/dashboard` |
+| `doctor_ivanov` | doctor | `/leaderboard` (default после login) |
+| `ivan_p` | diabetic | `/dashboard` (default) · `/leaderboard` в nav |
+
+## Out of scope
+
+- Period/metric URL sync, фильтр по продукту, CSV export
+- Doctor cohort dashboard (Doc1)
+- FAB / полный чат (iter 5–6)
+
+## Отклонения от исходного плана
+
+| Отклонение | Причина |
+|------------|---------|
+| Лидерборд для `diabetic` | запрос пользователя; тот же DTO когорты |
+| `BjeTop5Legend` + emoji medals | UX: медали не были заметны |
+| Period/metric selectors | MVP: фиксированные 30d / xe |

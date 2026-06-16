@@ -219,9 +219,7 @@ class WebPatientService:
                 column_id=column_id,
                 value=round(value, 1),
                 completion_pct=pct,
-                snapshot_date=datetime.combine(
-                    snap.period_end, datetime.min.time(), tzinfo=UTC
-                ),
+                snapshot_date=datetime.combine(snap.period_end, datetime.min.time(), tzinfo=UTC),
             )
 
         rows: list[PatientMetricRow] = []
@@ -230,9 +228,7 @@ class WebPatientService:
                 cell_for_metric(metric_id, snapshot_index.get(column.id), column.id)
                 for column in columns
             ]
-            rows.append(
-                PatientMetricRow(metric_id=metric_id, label=label, cells=cells)
-            )
+            rows.append(PatientMetricRow(metric_id=metric_id, label=label, cells=cells))
 
         return PatientProgressMatrixResponse(
             period=period,
