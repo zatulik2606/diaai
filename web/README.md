@@ -37,6 +37,7 @@ Demo login:
 ## Архитектура auth
 
 - BFF: `POST /api/auth/login`, `POST /api/auth/logout`
+- BFF чат: `GET /api/assistant/history`, `POST /api/assistant/messages`
 - Cookie `diaai_session` (httpOnly)
 - Backend: `POST /api/v1/web/auth/resolve` + `BACKEND_SERVICE_TOKEN` (только server-side)
 
@@ -47,4 +48,13 @@ Demo login:
 ```bash
 make web-dev
 # login ivan_p → /dashboard — KPI, chart, questions, submissions, matrix
+```
+
+## FAB chat smoke (iter 5)
+
+```bash
+make web-dev
+# login ivan_p → FAB (правый нижний угол) или /chat — одна история
+# отправить вопрос → ответ (нужен OPENROUTER_API_KEY в корневом .env)
+# сообщение из FAB видно на /chat и наоборот (общий AssistantChatProvider)
 ```

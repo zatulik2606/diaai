@@ -1,6 +1,6 @@
 # Frontend: сводка области
 
-**Прогресс:** **5 / 10** итераций ✅ · **5 / 10** задач ✅ · iter 5 📋 Next
+**Прогресс:** **6 / 10** итераций ✅ · **6 / 10** задач ✅ · iter 6 📋 Next
 
 | Итерация | Статус | Summary |
 |----------|--------|---------|
@@ -9,8 +9,9 @@
 | 2 Каркас frontend | ✅ | [iteration-2-scaffold/summary.md](iteration-2-scaffold/summary.md) |
 | 3 Панель пациента | ✅ | [iteration-3-patient-dashboard/summary.md](iteration-3-patient-dashboard/summary.md) |
 | 4 Лидерборд | ✅ | [iteration-4-leaderboard/summary.md](iteration-4-leaderboard/summary.md) |
-| 5 Чат с ассистентом | 📋 Next | [iteration-5-assistant-chat/plan.md](iteration-5-assistant-chat/plan.md) |
+| 5 Чат с ассистентом (FAB) | ✅ | [iteration-5-assistant-chat/summary.md](iteration-5-assistant-chat/summary.md) |
+| 6 Чат в основной области | 📋 Next | [iteration-6-main-chat/plan.md](iteration-6-main-chat/plan.md) |
 
-**Маршруты web:** `/login` · `/dashboard` (diabetic) · `/leaderboard` (doctor, diabetic) · FAB (scaffold, iter 5).
+**Маршруты web:** `/login` · `/dashboard` · `/leaderboard` · `/chat` · FAB chat.
 
-**Следующая работа:** [iteration-5-assistant-chat/plan.md](iteration-5-assistant-chat/plan.md) — FAB / чат с ассистентом.
+**Следующая работа:** [iteration-6-main-chat/plan.md](iteration-6-main-chat/plan.md) — polish `/chat` (error boundary, UX).
