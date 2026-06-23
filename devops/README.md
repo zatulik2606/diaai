@@ -53,6 +53,8 @@ docker build -f devops/docker/web/Dockerfile -t diaai-web:local web/
 
 CI: [devops/ci/README.md](ci/README.md) · `make stack-up-registry`
 
+Guide GHCR: [docs/devops/ghcr-stack.md](../docs/devops/ghcr-stack.md)
+
 ## Compose
 
 - **Один файл:** `docker-compose.yml` в корне

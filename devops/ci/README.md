@@ -82,4 +82,4 @@ make stack-up-registry
 
 Один файл: [`docker-compose.yml`](../../docker-compose.yml).
 
-Guide: [docs/devops/docker-compose-local.md](../../docs/devops/docker-compose-local.md)
+Guide: [docs/devops/docker-compose-local.md](../../docs/devops/docker-compose-local.md) · **GHCR:** [docs/devops/ghcr-stack.md](../../docs/devops/ghcr-stack.md)

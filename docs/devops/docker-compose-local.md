@@ -72,28 +72,15 @@ Demo login: `ivan_p` → `/dashboard`, `doctor_ivanov` → `/leaderboard`.
 
 ### Registry mode (GHCR)
 
-После CI push образов в GHCR — без локальной сборки:
+Полная инструкция: **[ghcr-stack.md](ghcr-stack.md)**
 
 ```bash
-# login (private packages)
-echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
-
-make stack-pull-registry      # pull backend + web
-make stack-up-registry        # up без build (--pull missing)
+make stack-pull-registry
+make stack-up-registry
 make stack-health
 ```
 
-Переопределение tag/owner: `IMAGE_TAG=sha-abc1234 GHCR_OWNER=zatulik2606 make stack-up-registry`
-
-Smoke без GHCR (локальные теги):
-
-```bash
-docker tag diaai-backend:local ghcr.io/zatulik2606/diaai-backend:main
-docker tag diaai-web:local ghcr.io/zatulik2606/diaai-web:main
-make stack-up-registry
-```
-
-Подробнее: [devops/ci/README.md](../../devops/ci/README.md)
+Кратко: [devops/ci/README.md](../../devops/ci/README.md)
 
 ### Только PostgreSQL (host dev)
 
