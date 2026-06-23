@@ -641,6 +641,50 @@ Filter: `dialog_requests.type` in (`text`, `mixed`).
 
 ---
 
+## Analytics query (Text-to-SQL, iter 9)
+
+### POST `/api/v1/web/analytics/query`
+
+Ad-hoc вопрос по данным БД. **Patient dashboard + doctor leaderboard.**
+
+| | |
+|---|---|
+| **Method** | `POST` |
+| **Path** | `/api/v1/web/analytics/query` |
+| **Auth** | `Authorization: Bearer` |
+
+**Query:** `patient_telegram_id` (diabetic) **или** `doctor_telegram_id` (doctor) — как leaderboard.
+
+**Request:**
+
+```json
+{ "question": "Сколько ХЕ я съел за последние 7 дней?" }
+```
+
+**Response 200:**
+
+```json
+{
+  "answer": "Результат: 42.5.",
+  "columns": ["total_xe"],
+  "rows": [[42.5]],
+  "chart_hint": "scalar"
+}
+```
+
+| `chart_hint` | UI |
+|--------------|-----|
+| `scalar` | текст ответа |
+| `bar` | bar chart + таблица |
+| `line` | line chart (future) |
+| `table` | таблица |
+
+**BFF:** `POST /api/analytics/query` (session cookie) → proxy выше.
+
+Guardrails: [adr-004-text-to-sql.md](../adr/adr-004-text-to-sql.md) · scenarios: [text-to-sql-scenarios.md](../spec/text-to-sql-scenarios.md) · architecture: [text-to-sql-architecture.md](../spec/text-to-sql-architecture.md)
+
+---
+
 ## Assistant history (FAB chat)
 
 ### GET `/api/v1/web/assistant/history`

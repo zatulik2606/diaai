@@ -224,6 +224,8 @@ Loading, empty (нет пациентов), error — аналогично dashb
 - **FAB** (floating action button) — bottom-right на всех authenticated-страницах
 - Клик → виджет чата (Dialog/Sheet): история сообщений + input
 - Отправка текста → `POST /api/v1/assistant/messages`
+- **Голосовой ввод (iter 8):** mic в input → Web Speech API или BFF transcribe → текст в поле → send (тот же endpoint)
+- **Озвучивание ответов (iter 8, опционально):** toggle «Озвучивать ответы» → `speechSynthesis`
 - История → `GET /api/v1/web/assistant/history`
 - Фото в чате — **iter 5+** (post-MVP для FAB)
 
@@ -286,6 +288,7 @@ Loading, empty (нет пациентов), error — аналогично dashb
 | Questions table | Doc2, D2 | DialogRequest, User | — |
 | Submissions feed | D1, D7 | FoodEvent, PhotoAnalysis | — |
 | Progress matrix | Doc2, D3 | ProgressSnapshot, User | — |
+| Data query (NL) | D3 | FoodEvent, InsulinEvent, ProgressSnapshot, User | — |
 | Leaderboard | D3 | ProgressSnapshot, FoodEvent, InsulinEvent | — |
 | FAB chat | D2 | Dialog, DialogRequest | Dialog, Request (via API) |
 | Login | — | User | — |
@@ -296,8 +299,8 @@ Loading, empty (нет пациентов), error — аналогично dashb
 
 - D5/D6 консультации (запись, история) — отдельные итерации
 - JWT, RBAC, OAuth
-- Голосовой режим — iter 8
-- Text-to-SQL — iter 9
+- Голосовой режим — iter 8 ✅
+- Text-to-SQL — iter 9 ✅
 - Diabetic dashboard D3–D4 — post-MVP web screens
 
 ---

@@ -192,10 +192,7 @@ async def test_leaderboard_patient_access(client, auth_headers, web_demo_data) -
     assert response.status_code == 200
     body = response.json()
     assert len(body["table"]) >= 1
-    assert any(
-        row["patient"]["display_name"] == "Иван П."
-        for row in body["table"]
-    )
+    assert any(row["patient"]["display_name"] == "Иван П." for row in body["table"])
 
 
 @pytest.mark.asyncio

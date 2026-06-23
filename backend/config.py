@@ -17,6 +17,12 @@ class Settings(BaseSettings):
     llm_model: str = "openrouter/auto"
     llm_max_history: int = 10
     llm_timeout_seconds: float = 30.0
+    stt_model: str = "openai/whisper-large-v3"
+    stt_timeout_seconds: float = 60.0
+    analytics_query_model: str = "openrouter/auto"
+    analytics_query_timeout_seconds: float = 5.0
+    analytics_query_row_limit: int = 100
+    analytics_query_llm_timeout_seconds: float = 30.0
 
 
 def validate_service_token(settings: Settings) -> None:

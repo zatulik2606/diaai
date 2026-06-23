@@ -68,6 +68,38 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
 
+  /api/v1/media/transcribe:
+    post:
+      summary: Speech-to-text for voice messages
+      tags: [media]
+      parameters:
+        - $ref: "#/components/parameters/XRequestId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranscribeRequest"
+      responses:
+        "200":
+          description: Transcribed text
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscribeResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "413":
+          description: Audio payload too large
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "502":
+          $ref: "#/components/responses/LlmUnavailable"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
   /api/v1/events/food:
     post:
       summary: Scenario B — record food event
@@ -360,6 +392,35 @@ paths:
         "422":
           $ref: "#/components/responses/ValidationError"
 
+  /api/v1/web/analytics/query:
+    post:
+      summary: Natural language analytics query (read-only Text-to-SQL)
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/DoctorTelegramId"
+        - $ref: "#/components/parameters/PatientTelegramId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyticsQueryRequest"
+      responses:
+        "200":
+          description: Query result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsQueryResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "504":
+          description: Query timeout
+
   /api/v1/web/assistant/history:
     get:
       summary: Assistant chat history for web FAB
@@ -403,7 +464,14 @@ components:
     DoctorTelegramId:
       name: doctor_telegram_id
       in: query
-      required: true
+      required: false
+      schema:
+        type: integer
+        format: int64
+    PatientTelegramId:
+      name: patient_telegram_id
+      in: query
+      required: false
       schema:
         type: integer
         format: int64
@@ -769,6 +837,58 @@ components:
           format: uuid
         reply:
           type: string
+
+    AnalyticsQueryRequest:
+      type: object
+      required: [question]
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 2000
+
+    AnalyticsQueryResponse:
+      type: object
+      required: [answer, columns, rows, chart_hint]
+      properties:
+        answer:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              oneOf:
+                - type: string
+                - type: number
+                - type: "null"
+        chart_hint:
+          type: string
+          enum: [scalar, bar, line, table]
+
+    TranscribeRequest:
+      type: object
+      required: [audio_base64]
+      properties:
+        audio_base64:
+          type: string
+          minLength: 1
+          description: Base64 audio; decoded size must not exceed 5 MB
+        media_type:
+          type: string
+          default: audio/ogg
+
+    TranscribeResponse:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+          minLength: 1
 
     FoodEventCreate:
       type: object

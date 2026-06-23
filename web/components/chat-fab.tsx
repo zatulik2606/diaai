@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { AssistantChatPanel } from "@/components/assistant/assistant-chat-panel";
@@ -15,7 +16,12 @@ import {
 } from "@/components/ui/sheet";
 
 export function ChatFab() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  if (pathname === "/chat") {
+    return null;
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

@@ -94,7 +94,50 @@ Env (`web/.env.local`): `BACKEND_URL`, `BACKEND_SERVICE_TOKEN`. Опционал
 
 Компонент: **`backend`** (сценарий A). Бот не вызывает OpenRouter напрямую.
 
-Инструкция по ключам: [how-to-get-tokens.md](how-to-get-tokens.md).
+Env: `OPENROUTER_API_KEY`, `LLM_MODEL`, `STT_MODEL` (default `openai/whisper-large-v3`), `STT_TIMEOUT_SECONDS`.
+
+---
+
+### Speech-to-text (OpenRouter Whisper)
+
+| | |
+|---|---|
+| **Сервис** | OpenRouter audio API (`STT_MODEL`, default `openai/whisper-large-v3`) |
+| **Назначение** | распознавание голоса: Telegram voice → text; web fallback (MediaRecorder → BFF) |
+| **Направление** | out (audio) → in (transcript) |
+| **Протокол** | Backend → `POST https://openrouter.ai/api/v1/audio/transcriptions` (JSON: `input_audio.data` base64, `format`); клиенты → `POST /api/v1/media/transcribe` |
+| **Критичность** | **iter 8** (bot voice; web fallback) |
+
+Компонент: **`backend`** (`TranscribeService`). Клиенты: `bot`, `web` BFF `/api/assistant/transcribe`. Ключ `OPENROUTER_API_KEY` только на backend.
+
+---
+
+### Web Speech API (browser)
+
+| | |
+|---|---|
+| **Сервис** | Browser built-in `SpeechRecognition` / `speechSynthesis` |
+| **Назначение** | primary STT/TTS в web-чате без backend roundtrip |
+| **Направление** | local only |
+| **Протокол** | browser API |
+| **Критичность** | **iter 8 web** (Chrome/Edge primary; Safari — fallback transcribe) |
+
+Огранения: [voice-limitations.md](spec/voice-limitations.md).
+
+---
+
+### Text-to-SQL analytics (backend)
+
+| | |
+|---|---|
+| **Сервис** | OpenRouter LLM → guarded SELECT → PostgreSQL |
+| **Назначение** | ad-hoc вопросы по данным в web UI «Вопрос по данным» |
+| **Протокол** | `POST /api/v1/web/analytics/query` (BFF `/api/analytics/query`) |
+| **Критичность** | **iter 9** |
+
+ADR: [adr-004-text-to-sql.md](adr/adr-004-text-to-sql.md) · architecture: [text-to-sql-architecture.md](spec/text-to-sql-architecture.md). Env: `ANALYTICS_QUERY_MODEL`, `ANALYTICS_QUERY_TIMEOUT_SECONDS`, `ANALYTICS_QUERY_ROW_LIMIT`.
+
+Инструкция по ключам OpenRouter: [how-to-get-tokens.md](how-to-get-tokens.md).
 
 ---
 

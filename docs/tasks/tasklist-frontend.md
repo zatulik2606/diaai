@@ -15,11 +15,11 @@
 | Глобальный чат (FAB) + `/chat` | Диалог с **ассистентом** (D2): FAB на всех страницах + пункт меню Chat |
 | Матрица «студенты × уроки» | **Пациенты × периоды/метрики** (`progress_snapshots`) |
 
-**Текущее состояние:** spec UI ✅ (iter 0) · backend web API ✅ (iter 1) · web scaffold ✅ (iter 2) · patient dashboard ✅ (iter 3) · leaderboard ✅ (iter 4) · **чат (FAB + `/chat`)** ✅ (iter 5).
+**Текущее состояние:** spec UI ✅ (iter 0) · backend web API ✅ (iter 1) · web scaffold ✅ (iter 2) · patient dashboard ✅ (iter 3) · leaderboard ✅ (iter 4) · чат FAB ✅ (iter 5) · **`/chat` polish** ✅ (iter 6) · **quality review** ✅ (iter 7) · **voice chat** ✅ (iter 8) · **Text-to-SQL** ✅ (iter 9).
 
-**Прогресс:** **6 / 10** итераций ✅ · **6 / 10** задач ✅ · **следующая:** iter 6 — [polish чата](impl/frontend/iteration-6-main-chat/plan.md) · [plan области](impl/frontend/plan.md) · [summary области](impl/frontend/summary.md)
+**Прогресс:** **10 / 10** итераций ✅ · **10 / 10** задач ✅ · **область frontend завершена** · [plan области](impl/frontend/plan.md) · [summary области](impl/frontend/summary.md)
 
-**Маршруты web:** `/login` · `/dashboard` (diabetic) · `/leaderboard` (doctor, diabetic) · `/chat` · FAB.
+**Маршруты web:** `/login` · `/dashboard` (diabetic) · `/leaderboard` (doctor, diabetic) · `/chat` · FAB (скрыт на `/chat`).
 
 **Зависимости:**
 
@@ -96,10 +96,10 @@ web/
 | 3 | Панель пациента с диабетом | 03 | ✅ Done | [plan](impl/frontend/iteration-3-patient-dashboard/plan.md) · [summary](impl/frontend/iteration-3-patient-dashboard/summary.md) |
 | 4 | Лидерборд | 04 | ✅ Done | [plan](impl/frontend/iteration-4-leaderboard/plan.md) · [summary](impl/frontend/iteration-4-leaderboard/summary.md) |
 | 5 | Чат с ассистентом | 05 | ✅ Done | [plan](impl/frontend/iteration-5-assistant-chat/plan.md) · [summary](impl/frontend/iteration-5-assistant-chat/summary.md) |
-| 6 | Чат в основной области (polish) | 06 | 📋 Next | [plan](impl/frontend/iteration-6-main-chat/plan.md) |
-| 7 | Ревью качества | 07 | 📋 Planned | [plan](impl/frontend/iteration-7-quality-review/plan.md) |
-| 8 | Голосовой режим | 08 | 📋 Planned | [plan](impl/frontend/iteration-8-voice-chat/plan.md) |
-| 9 | Text-to-SQL | 09 | 📋 Planned | [plan](impl/frontend/iteration-9-text-to-sql/plan.md) |
+| 6 | Чат в основной области (polish) | 06 | ✅ Done | [plan](impl/frontend/iteration-6-main-chat/plan.md) · [summary](impl/frontend/iteration-6-main-chat/summary.md) |
+| 7 | Ревью качества | 07 | ✅ Done | [plan](impl/frontend/iteration-7-quality-review/plan.md) · [summary](impl/frontend/iteration-7-quality-review/summary.md) |
+| 8 | Голосовой режим | 08 | ✅ Done | [plan](impl/frontend/iteration-8-voice-chat/plan.md) · [summary](impl/frontend/iteration-8-voice-chat/summary.md) |
+| 9 | Text-to-SQL | 09 | ✅ Done | [plan](impl/frontend/iteration-9-text-to-sql/plan.md) · [summary](impl/frontend/iteration-9-text-to-sql/summary.md) |
 
 ## Связь с plan.md
 
@@ -124,10 +124,10 @@ web/
 | 03 | Панель пациента с диабетом (`/dashboard`) | ✅ Done | [план](impl/frontend/iteration-3-patient-dashboard/plan.md) · [summary](impl/frontend/iteration-3-patient-dashboard/tasks/task-03-patient-dashboard/summary.md) |
 | 04 | Лидерборд | ✅ Done | [план](impl/frontend/iteration-4-leaderboard/tasks/task-04-leaderboard/plan.md) · [summary](impl/frontend/iteration-4-leaderboard/tasks/task-04-leaderboard/summary.md) |
 | 05 | Чат с ассистентом (FAB / страница) | ✅ Done | [план](impl/frontend/iteration-5-assistant-chat/tasks/task-05-assistant-chat/plan.md) · [summary](impl/frontend/iteration-5-assistant-chat/tasks/task-05-assistant-chat/summary.md) |
-| 06 | Чат в меню «Чат» (polish) | 📋 Next | [план](impl/frontend/iteration-6-main-chat/tasks/task-06-main-chat/plan.md) |
-| 07 | Ревью качества frontend | 📋 Planned | [план](impl/frontend/iteration-7-quality-review/tasks/task-07-quality-review/plan.md) |
-| 08 | Голосовой режим (web + bot) | 📋 Planned | [план](impl/frontend/iteration-8-voice-chat/tasks/task-08-voice-chat/plan.md) |
-| 09 | Text-to-SQL по данным БД | 📋 Planned | [план](impl/frontend/iteration-9-text-to-sql/tasks/task-09-text-to-sql/plan.md) |
+| 06 | Чат в меню «Чат» (polish) | ✅ Done | [план](impl/frontend/iteration-6-main-chat/tasks/task-06-main-chat/plan.md) · [summary](impl/frontend/iteration-6-main-chat/tasks/task-06-main-chat/summary.md) |
+| 07 | Ревью качества frontend | ✅ Done | [план](impl/frontend/iteration-7-quality-review/tasks/task-07-quality-review/plan.md) · [summary](impl/frontend/iteration-7-quality-review/tasks/task-07-quality-review/summary.md) |
+| 08 | Голосовой режим (web + bot) | ✅ Done | [план](impl/frontend/iteration-8-voice-chat/tasks/task-08-voice-chat/plan.md) · [summary](impl/frontend/iteration-8-voice-chat/tasks/task-08-voice-chat/summary.md) |
+| 09 | Text-to-SQL по данным БД | ✅ Done | [план](impl/frontend/iteration-9-text-to-sql/tasks/task-09-text-to-sql/plan.md) · [summary](impl/frontend/iteration-9-text-to-sql/tasks/task-09-text-to-sql/summary.md) |
 
 Итерации выполняются **последовательно** (0 → 9).
 
@@ -422,43 +422,37 @@ FAB-виджет и страница `/chat`: история, отправка, 
 
 ---
 
-## Итерация 6: Чат в основной области (polish) 📋 Next
+## Итерация 6: Чат в основной области (polish) ✅
 
-→ [iteration-6-main-chat/plan.md](impl/frontend/iteration-6-main-chat/plan.md)
+→ [iteration-6-main-chat/plan.md](impl/frontend/iteration-6-main-chat/plan.md) · [summary](impl/frontend/iteration-6-main-chat/summary.md)
 
 ### Цель
 
-Закрыть остаток iter 6: **ядро уже в iter 5** (`/chat`, `AssistantChatProvider`, FAB sync). Здесь — error boundary, UX polish.
+Polish `/chat`: error boundary, скрытие FAB, layout. Ядро — iter 5.
 
-### Подготовка (из iter 5) ✅
+### Задача 06 ✅
 
-- [x] Route `/chat` — `ChatView` + `AssistantChatPanel variant="page"`
-- [x] Shared components с FAB — `AssistantChatPanel`
-- [x] Единая история — `AssistantChatProvider` в layout
-- [x] Nav **Chat** → `/chat` (doctor + diabetic)
+#### Состав работ
 
-### Задача 06
-
-#### Состав работ (остаток)
-
-- [ ] `app/(app)/chat/error.tsx` — retry, сообщение про backend
-- [ ] Скрыть FAB на `pathname === '/chat'` (UX)
-- [ ] Mobile layout smoke
-- [ ] `summary.md` iter 6 + tasklist 7/10
+- [x] Route `/chat` — из iter 5
+- [x] Shared components + единая история — `AssistantChatProvider`
+- [x] `chat/error.tsx` + RSC guard `telegram_id`
+- [x] FAB скрыт на `/chat`
+- [x] Layout flex `min-h-0`
 
 #### Definition of Done
 
-**Self-check (агент):** regression FAB ↔ `/chat`; `make web-build` green.
+**Self-check (агент):** FAB ↔ `/chat` regression; `make web-build` green; smoke `/chat` 200, history, send.
 
-**User-check (пользователь):** сообщение из FAB видно на `/chat`; error state при остановленном backend.
+**User-check (пользователь):** ✅ `/chat` без FAB; FAB send → `/chat` — то же сообщение.
 
 ### Документы
 
-- 📋 [План итерации](impl/frontend/iteration-6-main-chat/plan.md) · [task-06 plan](impl/frontend/iteration-6-main-chat/tasks/task-06-main-chat/plan.md)
+- ✅ [План итерации](impl/frontend/iteration-6-main-chat/plan.md) · [summary](impl/frontend/iteration-6-main-chat/summary.md) · [task-06 plan](impl/frontend/iteration-6-main-chat/tasks/task-06-main-chat/plan.md) · [task-06 summary](impl/frontend/iteration-6-main-chat/tasks/task-06-main-chat/summary.md)
 
 ---
 
-## Итерация 7: Ревью качества frontend 📋
+## Итерация 7: Ревью качества frontend ✅
 
 → [iteration-7-quality-review/plan.md](impl/frontend/iteration-7-quality-review/plan.md)
 
@@ -470,12 +464,12 @@ FAB-виджет и страница `/chat`: история, отправка, 
 
 #### Состав работ
 
-- [ ] Audit: [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md)
-- [ ] Audit: [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md)
-- [ ] Audit: [shadcn](../.agents/skills/shadcn/SKILL.md) — consistency, a11y
-- [ ] Fix критичных (data fetching, rerenders, bundle)
-- [ ] `make web-lint` + `make web-build` green
-- [ ] Отчёт pass/warn/fix в `docs/tech/frontend-review.md`
+- [x] Audit: [vercel-react-best-practices](../.agents/skills/vercel-react-best-practices/SKILL.md)
+- [x] Audit: [nextjs-app-router-patterns](../.agents/skills/nextjs-app-router-patterns/SKILL.md)
+- [x] Audit: [shadcn](../.agents/skills/shadcn/SKILL.md) — consistency, a11y
+- [x] Fix критичных (data fetching, rerenders, bundle)
+- [x] `make web-lint` + `make web-build` green
+- [x] Отчёт pass/warn/fix в `docs/tech/frontend-review.md`
 
 #### Definition of Done
 
@@ -485,11 +479,11 @@ FAB-виджет и страница `/chat`: история, отправка, 
 
 ### Документы
 
-- 📋 [План итерации](impl/frontend/iteration-7-quality-review/plan.md) · [task-07 plan](impl/frontend/iteration-7-quality-review/plan.md)
+- ✅ [План итерации](impl/frontend/iteration-7-quality-review/plan.md) · [summary](impl/frontend/iteration-7-quality-review/summary.md) · [task-07 plan](impl/frontend/iteration-7-quality-review/tasks/task-07-quality-review/plan.md) · [task-07 summary](impl/frontend/iteration-7-quality-review/tasks/task-07-quality-review/summary.md) · [frontend-review.md](../tech/frontend-review.md)
 
 ---
 
-## Итерация 8: Голосовой режим чата 📋
+## Итерация 8: Голосовой режим чата ✅
 
 → [iteration-8-voice-chat/plan.md](impl/frontend/iteration-8-voice-chat/plan.md)
 
@@ -501,10 +495,12 @@ FAB-виджет и страница `/chat`: история, отправка, 
 
 #### Состав работ
 
-- [ ] Web: Web Speech API или STT/TTS; UI mic button
-- [ ] Bot: voice message handler → backend assistant
-- [ ] Fallback на текст при ошибке распознавания
-- [ ] Документировать ограничения браузера / Telegram
+- [x] **Выбор реализации web:** Web Speech API (primary) + MediaRecorder→backend (fallback); TTS client-only
+- [x] **Ограничения браузеров** — [voice-limitations.md](../spec/voice-limitations.md)
+- [x] **Аудио на backend:** batch base64 (`POST /media/transcribe`); streaming — out of scope
+- [x] **Согласование с API чата:** send/history без изменений; STT — отдельный endpoint до send
+- [x] **Bot:** `F.voice` → transcribe → `POST /assistant/messages`
+- [x] Fallback на текст при ошибке STT
 
 #### Актуализация документации
 
@@ -515,50 +511,51 @@ FAB-виджет и страница `/chat`: история, отправка, 
 
 #### Definition of Done
 
-**Self-check (агент):** web voice → текст → assistant → ответ; bot voice roundtrip.
+**Self-check (агент):** web voice → текст → assistant → ответ; bot voice roundtrip; `POST /media/transcribe` → 200 (OpenRouter JSON STT).
 
-**User-check (пользователь):** записать голос в web; отправить voice в Telegram bot.
+**User-check (пользователь):** записать голос в web; отправить voice в Telegram bot (после фикса 502 — повторный smoke).
 
 ### Документы
 
-- 📋 [План итерации](impl/frontend/iteration-8-voice-chat/plan.md) · [task-08 plan](impl/frontend/iteration-8-voice-chat/tasks/task-08-voice-chat/plan.md)
+- ✅ [План итерации](impl/frontend/iteration-8-voice-chat/plan.md) · [summary](impl/frontend/iteration-8-voice-chat/summary.md) · [task-08 plan](impl/frontend/iteration-8-voice-chat/tasks/task-08-voice-chat/plan.md) · [task-08 summary](impl/frontend/iteration-8-voice-chat/tasks/task-08-voice-chat/summary.md) · [voice-limitations.md](../spec/voice-limitations.md)
 
 ---
 
-## Итерация 9: Text-to-SQL 📋
+## Итерация 9: Text-to-SQL ✅
 
 → [iteration-9-text-to-sql/plan.md](impl/frontend/iteration-9-text-to-sql/plan.md)
 
 ### Цель
 
-Ответы на вопросы по данным БД; проработка архитектуры и реализация.
+Ответы на вопросы по данным БД; guarded Text-to-SQL + web UI.
 
 ### Задача 09
 
 #### Состав работ
 
-- [ ] ADR / spec: варианты (LLM → SQL → read-only; guardrails, allowlist tables)
-- [ ] Backend endpoint или tool `query_analytics` в assistant
-- [ ] Frontend: UI «вопрос по данным» + таблица/график
-- [ ] Тест-сценарии (golden questions)
-- [ ] **Out of scope:** write SQL, destructive queries
+- [x] **ADR / spec:** [adr-004-text-to-sql.md](../adr/adr-004-text-to-sql.md), [text-to-sql-scenarios.md](../spec/text-to-sql-scenarios.md), [text-to-sql-architecture.md](../spec/text-to-sql-architecture.md)
+- [x] **Backend:** `POST /web/analytics/query` — LLM → SqlGuard → read-only SELECT
+- [x] **Frontend:** `DataQueryPanel` на `/dashboard` и `/leaderboard` + BFF
+- [x] **Тест-сценарии:** golden 3 + guardrail negatives
+- [x] **Out of scope:** write SQL, assistant tool, bot
 
 #### Актуализация документации
 
 | Файл | Что обновить |
 |------|--------------|
-| `docs/adr/adr-NNN-text-to-sql.md` | **создать** |
-| `docs/spec/text-to-sql-scenarios.md` | **создать** |
+| `docs/adr/adr-004-text-to-sql.md` | ✅ |
+| `docs/spec/text-to-sql-scenarios.md` | ✅ |
+| `docs/spec/text-to-sql-architecture.md` | ✅ |
 
 #### Definition of Done
 
-**Self-check (агент):** ADR принят; 3+ сценария на seed; SQL только SELECT; timeouts.
+**Self-check (агент):** ADR принят; 3+ сценария; SQL только SELECT; `make test` 84+.
 
 **User-check (пользователь):** «сколько ХЕ за неделю у пациента X» — осмысленный ответ из PG.
 
 ### Документы
 
-- 📋 [План итерации](impl/frontend/iteration-9-text-to-sql/plan.md) · [task-09 plan](impl/frontend/iteration-9-text-to-sql/tasks/task-09-text-to-sql/plan.md)
+- ✅ [План итерации](impl/frontend/iteration-9-text-to-sql/plan.md) · [summary](impl/frontend/iteration-9-text-to-sql/summary.md) · [task-09 plan](impl/frontend/iteration-9-text-to-sql/tasks/task-09-text-to-sql/plan.md) · [task-09 summary](impl/frontend/iteration-9-text-to-sql/tasks/task-09-text-to-sql/summary.md) · [adr-004](../adr/adr-004-text-to-sql.md) · [architecture](../spec/text-to-sql-architecture.md)
 
 ---
 
@@ -572,10 +569,10 @@ FAB-виджет и страница `/chat`: история, отправка, 
 | 3 | Панель пациента с диабетом | live API, patient dashboard UI | ✅ `/dashboard` + `/patient/dashboard/*` |
 | 4 | Leaderboard | table/scatter, продукты+ХЕ, топ-5 БЖЕ, doctor+diabetic | ✅ `/leaderboard` + products DTO + patient row highlight |
 | 5 | FAB + `/chat` chat | history + send via BFF, shared provider | ✅ `/chat` + FAB + `AssistantChatProvider` |
-| 6 | Chat polish | error.tsx, FAB UX на `/chat` | 📋 iter 6 |
-| 7 | Quality review | `frontend-review.md` |
-| 8 | Voice | web + bot smoke |
-| 9 | Text-to-SQL | ADR + 3 scenarios |
+| 6 | Chat polish | error.tsx, FAB hidden on `/chat`, flex layout | ✅ smoke `/chat` + BFF |
+| 7 | Quality review | `frontend-review.md` | ✅ iter 7 |
+| 8 | Voice | web + bot smoke | ✅ iter 8 |
+| 9 | Text-to-SQL | ADR + 3 scenarios | ✅ iter 9 |
 
 ## Связанные документы
 

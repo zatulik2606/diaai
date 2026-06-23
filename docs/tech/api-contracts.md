@@ -9,7 +9,7 @@
 - **Версия:** v1 (`/api/v1/…`)
 - **Клиент MVP:** Telegram-бот → backend (service token); Next.js BFF → web routes
 - **Сценарии:** A — вопрос ассистенту; B — фиксация питания и инсулина; Web — dashboard, leaderboard, auth, history
-- **Вне scope v1:** JWT/web-session на backend, CRUD консультаций, `/api/v1/analytics/*`
+- **Вне scope v1:** JWT/web-session на backend, CRUD консультаций, `/api/v1/analytics/progress` (backend iter 4)
 
 ## Базовый URL и версионирование
 
@@ -27,6 +27,8 @@
 |--------|------|------------|---------|------|
 | GET | `/health` | health check | 200 | нет |
 | POST | `/api/v1/assistant/messages` | сценарий A — вопрос ассистенту | 200 | Bearer |
+| POST | `/api/v1/media/transcribe` | STT: audio → text (bot voice, web fallback) | 200 | Bearer |
+| POST | `/api/v1/web/analytics/query` | NL → read-only SQL → answer + rows (iter 9) | 200 | Bearer |
 | POST | `/api/v1/events/food` | создать событие питания | 201 | Bearer |
 | GET | `/api/v1/events/food` | список событий питания (optional MVP) | 200 | Bearer |
 | POST | `/api/v1/events/insulin` | создать событие инсулина | 201 | Bearer |
@@ -129,13 +131,15 @@ Web DTO: [frontend-contract.md](../api/frontend-contract.md).
 
 ## Contract tests (task-04–08 ✅)
 
-Реализация: `backend/tests/` + `tests/` — **60** тестов (`make test`: 45 backend + 15 bot).
+Реализация: `backend/tests/` + `tests/` — **74** теста (`make test`).
 
 | Группа | Файл | Коды |
 |--------|------|------|
 | Auth | `test_auth.py` | 401, health 200 + version |
 | Validation | `test_validation.py` | 422 |
 | Сценарий A | `test_assistant.py` | 200, 400, headers |
+| Media STT | `test_media_transcribe.py` | 200, 401, 422 |
+| Analytics query | `test_analytics_query.py` | golden 3, guardrails, 401, 422 |
 | Сценарий B | `test_events.py`, `test_events_domain.py` | 201/200, 403/404 |
 | Web API | `test_web_api.py` | 200 auth/dashboard/leaderboard/history; 403 non-doctor; 404 auth |
 

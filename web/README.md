@@ -50,11 +50,11 @@ make web-dev
 # login ivan_p → /dashboard — KPI, chart, questions, submissions, matrix
 ```
 
-## FAB chat smoke (iter 5)
+## FAB + `/chat` smoke (iter 5–6)
 
 ```bash
-make web-dev
-# login ivan_p → FAB (правый нижний угол) или /chat — одна история
-# отправить вопрос → ответ (нужен OPENROUTER_API_KEY в корневом .env)
-# сообщение из FAB видно на /chat и наоборот (общий AssistantChatProvider)
+make db-reset && make backend-run && make web-dev
+# ivan_p → FAB или sidebar Chat → history + send
+# /chat — FAB скрыт; та же история через AssistantChatProvider
+# нужен OPENROUTER_API_KEY для ответа LLM
 ```

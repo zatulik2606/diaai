@@ -22,7 +22,7 @@ export default async function AppLayout({
         <AppHeader user={session} />
         <div className="flex flex-1">
           <AppSidebar role={session.role} />
-          <main className="flex-1 p-6">{children}</main>
+          <main className="flex min-h-0 flex-1 flex-col p-6">{children}</main>
         </div>
         <ChatFab />
       </div>

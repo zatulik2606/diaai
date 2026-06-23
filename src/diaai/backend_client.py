@@ -86,3 +86,48 @@ class BackendClient:
 
         logger.warning("Backend unexpected status=%s", response.status_code)
         raise BackendClientError(_UNAVAILABLE_MSG)
+
+    async def transcribe_audio(
+        self,
+        audio_base64: str,
+        *,
+        media_type: str = "audio/ogg",
+    ) -> str:
+        headers = {
+            "Authorization": f"Bearer {self._service_token}",
+            "X-Request-Id": str(uuid4()),
+        }
+        payload = {
+            "audio_base64": audio_base64,
+            "media_type": media_type,
+        }
+
+        try:
+            response = await self._client.post(
+                "/api/v1/media/transcribe",
+                json=payload,
+                headers=headers,
+            )
+        except httpx.RequestError as exc:
+            logger.warning("Backend transcribe failed: %s", exc.__class__.__name__)
+            raise BackendClientError(_UNAVAILABLE_MSG) from exc
+
+        if response.status_code == 200:
+            data = response.json()
+            text = data.get("text")
+            if isinstance(text, str) and text.strip():
+                return text.strip()
+            raise BackendClientError("Не удалось распознать. Отправьте текстом.")
+
+        if response.status_code in (422, 400):
+            raise BackendClientError("Не удалось распознать. Отправьте текстом.")
+
+        if response.status_code in (502, 503):
+            raise BackendClientError(_UNAVAILABLE_MSG)
+
+        if response.status_code in (401, 403):
+            logger.warning("Backend auth failed status=%s", response.status_code)
+            raise BackendClientError(_CONFIG_MSG)
+
+        logger.warning("Backend transcribe unexpected status=%s", response.status_code)
+        raise BackendClientError(_UNAVAILABLE_MSG)

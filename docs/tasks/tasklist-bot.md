@@ -18,6 +18,7 @@
 |----------|----------|------|--------|-----------|
 | 1 | MVP Telegram-бота | Диалог, ХЕ/БЖЕ/БЖУ, фото, история в RAM | ✅ Done | [план](impl/bot/iteration-1-mvp/plan.md) · [summary](impl/bot/iteration-1-mvp/summary.md) |
 | 3 | Миграция на backend | Бот как тонкий клиент, без локального состояния | ✅ Done | [backend task-07](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
+| 4 | Голосовые сообщения | Voice → STT → assistant | ✅ Done | [frontend iter 8](../tasks/impl/frontend/iteration-8-voice-chat/plan.md) |
 
 ---
 
@@ -77,3 +78,25 @@
 
 - 📋 [План backend task-07](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md)
 - 📝 [Summary backend task-07](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md)
+
+---
+
+## Итерация 4: Голосовые сообщения ✅
+
+Реализовано в рамках [frontend iteration-8-voice-chat](../tasks/impl/frontend/iteration-8-voice-chat/plan.md).
+
+### Цель
+
+Voice message в Telegram → STT через backend → ответ ассистента.
+
+### Критерии завершения
+
+- [x] `F.voice` handler в `handlers.py`
+- [x] `backend_client.transcribe_audio`
+- [x] fallback «Отправьте текстом»
+
+### Артефакты
+
+- `src/diaai/handlers.py` — voice handler
+- `src/diaai/backend_client.py` — transcribe
+- `backend/api/v1/media.py` — STT endpoint

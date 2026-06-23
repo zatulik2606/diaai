@@ -69,4 +69,35 @@ def build_handlers(backend_client: BackendClient) -> Router:
 
         await message.answer(reply)
 
+    @router.message(F.voice)
+    async def voice_handler(message: Message) -> None:
+        chat_id = message.chat.id
+
+        if not message.voice:
+            await message.answer("Не удалось прочитать голосовое. Попробуйте снова.")
+            return
+
+        file_info = await message.bot.get_file(message.voice.file_id)
+        file_bytes = await message.bot.download_file(file_info.file_path)
+        raw = file_bytes.read()
+        audio_base64 = base64.b64encode(raw).decode("utf-8")
+        logger.info("Incoming voice chat_id=%s audio_bytes=%s", chat_id, len(raw))
+
+        try:
+            text = await backend_client.transcribe_audio(
+                audio_base64,
+                media_type="audio/ogg",
+            )
+        except BackendClientError as exc:
+            await message.answer(exc.user_message)
+            return
+
+        try:
+            reply = await backend_client.send_assistant_message(chat_id, text=text)
+        except BackendClientError as exc:
+            await message.answer(exc.user_message)
+            return
+
+        await message.answer(reply)
+
     return router

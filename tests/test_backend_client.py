@@ -154,3 +154,24 @@ async def test_send_assistant_message_returns_fallback_on_empty_reply() -> None:
         assert "Не удалось получить ответ" in reply
     finally:
         await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_transcribe_audio_returns_text_on_200() -> None:
+    client = await _make_client(lambda _request: httpx.Response(200, json={"text": "  Привет  "}))
+    try:
+        text = await client.transcribe_audio("abc123", media_type="audio/ogg")
+        assert text == "Привет"
+    finally:
+        await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_transcribe_audio_raises_on_422() -> None:
+    client = await _make_client(lambda _request: httpx.Response(422))
+    try:
+        with pytest.raises(BackendClientError) as exc_info:
+            await client.transcribe_audio("abc123")
+        assert "распознать" in exc_info.value.user_message.lower()
+    finally:
+        await client.aclose()

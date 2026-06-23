@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { ActivityChart } from "@/components/dashboard/activity-chart";
+import { DataQueryPanel } from "@/components/analytics/data-query-panel";
 import { KpiGrid } from "@/components/dashboard/kpi-grid";
 import { ProgressMatrix } from "@/components/dashboard/progress-matrix";
 import { QuestionsTable } from "@/components/dashboard/questions-table";
@@ -31,6 +32,8 @@ export default async function DashboardPage() {
       </div>
 
       <KpiGrid kpis={data.summary.kpis} />
+
+      <DataQueryPanel role={session.role} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ActivityChart activity={data.activity} />

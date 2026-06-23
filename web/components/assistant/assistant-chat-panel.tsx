@@ -1,13 +1,14 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
+import { Loader2, Volume2 } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 import { useAssistantChat } from "@/components/assistant/assistant-chat-provider";
 import { ChatInput } from "@/components/assistant/chat-input";
 import { ChatMessageList } from "@/components/assistant/chat-message-list";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSpeechOutput } from "@/hooks/use-speech-output";
 import { cn } from "@/lib/utils";
 
 type AssistantChatPanelProps = {
@@ -32,12 +33,25 @@ export function AssistantChatPanel({
     loadMore,
     sendMessage,
   } = useAssistantChat();
+  const { enabled: ttsEnabled, setEnabled: setTtsEnabled, supported: ttsSupported, speak } =
+    useSpeechOutput();
+  const wasSendingRef = useRef(false);
 
   useEffect(() => {
     if (active && !loaded && !loading) {
       void loadHistory();
     }
   }, [active, loaded, loading, loadHistory]);
+
+  useEffect(() => {
+    if (wasSendingRef.current && !sending && ttsEnabled) {
+      const last = messages[messages.length - 1];
+      if (last?.role === "assistant") {
+        speak(last.text);
+      }
+    }
+    wasSendingRef.current = sending;
+  }, [messages, sending, speak, ttsEnabled]);
 
   const historyFailed = Boolean(error && !loaded && !loading);
 
@@ -97,6 +111,20 @@ export function AssistantChatPanel({
         <p className="text-sm text-destructive" role="alert">
           {error}
         </p>
+      ) : null}
+
+      {ttsSupported ? (
+        <Button
+          type="button"
+          variant={ttsEnabled ? "outline" : "ghost"}
+          size="sm"
+          className="self-start"
+          aria-pressed={ttsEnabled}
+          onClick={() => setTtsEnabled((value) => !value)}
+        >
+          <Volume2 className="mr-2 size-4" />
+          {ttsEnabled ? "Озвучивание включено" : "Озвучивать ответы"}
+        </Button>
       ) : null}
 
       <ChatInput

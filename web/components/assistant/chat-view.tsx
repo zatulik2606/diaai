@@ -4,8 +4,8 @@ import { AssistantChatPanel } from "@/components/assistant/assistant-chat-panel"
 
 export function ChatView() {
   return (
-    <div className="flex h-full flex-col gap-4">
-      <header>
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
+      <header className="shrink-0">
         <h1 className="text-2xl font-semibold tracking-tight">
           Чат с ассистентом
         </h1>

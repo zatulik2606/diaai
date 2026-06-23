@@ -4,30 +4,49 @@
 
 Skills: [shadcn](../../../../.agents/skills/shadcn/SKILL.md) · [vercel-react-best-practices](../../../../.agents/skills/vercel-react-best-practices/SKILL.md) · [nextjs-app-router-patterns](../../../../.agents/skills/nextjs-app-router-patterns/SKILL.md)
 
-**Статус:** 📋 Planned
+**Статус:** ✅ Done · [summary](summary.md)
 
 ---
 
 ## Цель
 
-Закрыть остаток [tasklist iter 6](../../../tasklist-frontend.md): полноэкранный `/chat` как first-class экран. **Ядро уже в iter 5** — здесь polish и DoD tasklist.
+Закрыть formal DoD [tasklist iter 6](../../../tasklist-frontend.md) для `/chat`: polish UX без новых API. **Ядро реализовано в iter 5.**
 
-## Что уже сделано (iter 5)
+## Ценность
 
-| Пункт tasklist | Статус |
-|----------------|--------|
-| Route `/chat` — full-page chat | ✅ `chat-view.tsx` + `page.tsx` |
-| Shared components с FAB | ✅ `AssistantChatPanel` |
-| Единая история | ✅ `AssistantChatProvider` |
+- `/chat` без дублирования FAB
+- Error boundary как у dashboard/leaderboard
+- Закрытие iter 6 → 7/10
 
-## Gap analysis (iter 5 → iter 6)
+## Зависимости
 
-| Блок | Сейчас | Целевое iter 6 |
-|------|--------|----------------|
-| `/chat` error boundary | нет | `error.tsx` + retry |
-| FAB на `/chat` | дублирует UI | скрыть FAB на `/chat` (optional UX) |
-| Mobile layout | базовый | проверить Sheet vs full page |
-| Docs / tasklist | iter 6 «Next» | закрыть iter 6, 7/10 |
+| Область | Статус |
+|---------|--------|
+| iter 5: `/chat`, `AssistantChatProvider`, FAB | ✅ |
+| Backend assistant API | ✅ |
+
+**Зона работ:** `web/` polish + docs. **Не** backend, **не** mobile sidebar.
+
+## Gap analysis
+
+| Блок | Было (iter 5) | Целевое iter 6 |
+|------|---------------|----------------|
+| FAB на `/chat` | показывается | скрыть |
+| `chat/error.tsx` | нет | Card + retry |
+| Layout full height | базовый | flex min-h-0 chain |
+| Docs | draft | plan + summary |
+
+## Архитектура
+
+```mermaid
+flowchart TB
+  Layout["app layout"] --> Provider["AssistantChatProvider"]
+  Layout --> Sidebar["Chat nav → /chat"]
+  Layout --> FAB["ChatFab hidden on /chat"]
+  Layout --> Page["/chat ChatView"]
+  Provider --> Page
+  Provider --> FAB
+```
 
 ## Задачи
 
@@ -37,10 +56,14 @@ Skills: [shadcn](../../../../.agents/skills/shadcn/SKILL.md) · [vercel-react-be
 
 ## Definition of Done
 
-**Self-check:** FAB скрыт на `/chat` (или осознанно оставлен); `error.tsx`; `make web-build` green.
+**Self-check:** FAB hidden on `/chat`; `error.tsx`; `make web-build` green; FAB ↔ `/chat` regression.
 
-**User-check:** сообщение FAB ↔ `/chat` синхронно; навигация Chat в sidebar стабильна.
+**User-check:** `ivan_p` → FAB send → `/chat` same history; no FAB on `/chat`.
 
 ## Out of scope
 
-- Новые API, фото, streaming
+- Mobile hamburger nav, фото, streaming, iter 7 review
+
+## Следующий шаг
+
+[iteration-7-quality-review](../iteration-7-quality-review/plan.md)

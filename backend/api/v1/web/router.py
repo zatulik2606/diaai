@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from backend.api.v1.web import (
+    analytics_query,
     assistant_history,
     auth,
     doctor_dashboard,
@@ -14,3 +15,4 @@ router.include_router(doctor_dashboard.router)
 router.include_router(patient_dashboard.router)
 router.include_router(leaderboard.router)
 router.include_router(assistant_history.router)
+router.include_router(analytics_query.router)

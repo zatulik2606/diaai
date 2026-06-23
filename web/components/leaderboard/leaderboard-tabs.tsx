@@ -1,11 +1,25 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { useState } from "react";
+
 import { BjeTop5Legend } from "@/components/leaderboard/bje-top5-legend";
-import { LeaderboardScatter } from "@/components/leaderboard/leaderboard-scatter";
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { LeaderboardResponse } from "@/lib/types/leaderboard";
+
+const LeaderboardScatter = dynamic(
+  () =>
+    import("@/components/leaderboard/leaderboard-scatter").then(
+      (mod) => mod.LeaderboardScatter,
+    ),
+  {
+    loading: () => <Skeleton className="aspect-auto h-[320px] w-full" />,
+    ssr: false,
+  },
+);
 
 const PERIOD_LABELS: Record<string, string> = {
   "7d": "7 дней",
@@ -31,6 +45,8 @@ export function LeaderboardTabs({
   metricY?: string;
   currentUserId?: string;
 }) {
+  const [tab, setTab] = useState("table");
+
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
@@ -39,7 +55,7 @@ export function LeaderboardTabs({
         когорты по БЖЕ
       </p>
       <BjeTop5Legend rows={data.table} />
-      <Tabs defaultValue="table">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="table">Таблица</TabsTrigger>
           <TabsTrigger value="scatter">Карта</TabsTrigger>
@@ -55,11 +71,13 @@ export function LeaderboardTabs({
           </Card>
         </TabsContent>
         <TabsContent value="scatter">
-          <LeaderboardScatter
-            points={data.scatter}
-            metricX={metricX}
-            metricY={metricY}
-          />
+          {tab === "scatter" ? (
+            <LeaderboardScatter
+              points={data.scatter}
+              metricX={metricX}
+              metricY={metricY}
+            />
+          ) : null}
         </TabsContent>
       </Tabs>
     </div>

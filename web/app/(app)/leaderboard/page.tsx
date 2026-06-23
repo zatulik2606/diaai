@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { DataQueryPanel } from "@/components/analytics/data-query-panel";
 import { LeaderboardTabs } from "@/components/leaderboard/leaderboard-tabs";
 import { fetchLeaderboard } from "@/lib/backend-client";
 import { getSession } from "@/lib/session";
@@ -28,6 +29,8 @@ export default async function LeaderboardPage() {
           {myRow ? ` · ваше место: #${myRow.rank}` : ""}
         </p>
       </div>
+
+      <DataQueryPanel role={session.role} />
 
       <LeaderboardTabs
         data={data}

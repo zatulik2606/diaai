@@ -1,6 +1,6 @@
 # Frontend: сводка области
 
-**Прогресс:** **6 / 10** итераций ✅ · **6 / 10** задач ✅ · iter 6 📋 Next
+**Прогресс:** **10 / 10** итераций ✅ · **10 / 10** задач ✅ · область **завершена**
 
 | Итерация | Статус | Summary |
 |----------|--------|---------|
@@ -9,9 +9,14 @@
 | 2 Каркас frontend | ✅ | [iteration-2-scaffold/summary.md](iteration-2-scaffold/summary.md) |
 | 3 Панель пациента | ✅ | [iteration-3-patient-dashboard/summary.md](iteration-3-patient-dashboard/summary.md) |
 | 4 Лидерборд | ✅ | [iteration-4-leaderboard/summary.md](iteration-4-leaderboard/summary.md) |
-| 5 Чат с ассистентом (FAB) | ✅ | [iteration-5-assistant-chat/summary.md](iteration-5-assistant-chat/summary.md) |
-| 6 Чат в основной области | 📋 Next | [iteration-6-main-chat/plan.md](iteration-6-main-chat/plan.md) |
+| 5 Чат (FAB + BFF) | ✅ | [iteration-5-assistant-chat/summary.md](iteration-5-assistant-chat/summary.md) |
+| 6 Чат `/chat` polish | ✅ | [iteration-6-main-chat/summary.md](iteration-6-main-chat/summary.md) |
+| 7 Ревью качества | ✅ | [iteration-7-quality-review/summary.md](iteration-7-quality-review/summary.md) |
+| 8 Голосовой режим | ✅ | [iteration-8-voice-chat/summary.md](iteration-8-voice-chat/summary.md) |
+| 9 Text-to-SQL | ✅ | [iteration-9-text-to-sql/summary.md](iteration-9-text-to-sql/summary.md) |
 
-**Маршруты web:** `/login` · `/dashboard` · `/leaderboard` · `/chat` · FAB chat.
+**Маршруты web:** `/login` · `/dashboard` · `/leaderboard` · `/chat` · FAB (скрыт на `/chat`).
 
-**Следующая работа:** [iteration-6-main-chat/plan.md](iteration-6-main-chat/plan.md) — polish `/chat` (error boundary, UX).
+**Analytics NL:** [text-to-sql-scenarios.md](../../spec/text-to-sql-scenarios.md) · [text-to-sql-architecture.md](../../spec/text-to-sql-architecture.md)
+
+**Следующая работа:** backend iter 4 analytics (отдельная область) или post-MVP web screens.
