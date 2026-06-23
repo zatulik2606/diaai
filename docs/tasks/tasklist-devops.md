@@ -47,8 +47,8 @@ Deploy в облако, secrets management и полный pipeline — post-MVP
 | Источник | Связь | Зависимости |
 |----------|-------|-------------|
 | [plan.md — Post-MVP](../plan.md#post-mvp-не-в-таблице-этапов) | Production deploy (bot + backend + web) | backend ✅ · frontend ✅ · database ✅ |
-| [architecture.md](../architecture.md) | compose diagram, `devops/` | ✅ iter 0 |
-| [onboarding.md](../onboarding.md) | сейчас — ручной multi-process | iter 0 → путь «одной командой» |
+| [architecture.md](../architecture.md) | compose diagram, `devops/`, GHCR | ✅ iter 0–1 |
+| [onboarding.md](../onboarding.md) | Docker stack «одной командой» (build + GHCR) | ✅ iter 0–1 |
 | [tasklist-backend.md](tasklist-backend.md) task-06 | `docker-compose.yml` только PG | iter 0 **расширяет** тот же корневой compose |
 | [tasklist-database.md](tasklist-database.md) | `make db-*`, миграции, seed | compose: migrate/seed при старте backend или init hook |
 

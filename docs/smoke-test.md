@@ -4,6 +4,8 @@
 
 Опирается на [onboarding.md](onboarding.md) · [how-to-get-tokens.md](how-to-get-tokens.md)
 
+> **Альтернатива — Docker stack:** `make stack-init` (build) или `make stack-pull-registry && make stack-up-registry` ([ghcr-stack.md](devops/ghcr-stack.md)); далее §4 Web smoke на :3000 без `make backend-run` / `make web-dev`.
+
 ---
 
 ## 0. Системные зависимости

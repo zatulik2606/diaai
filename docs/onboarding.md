@@ -52,15 +52,18 @@ make web-install    # pnpm в web/
 
 ### Docker stack (рекомендуется для demo)
 
-Один сценарий вместо нескольких терминалов — см. **[docker-compose-local.md](devops/docker-compose-local.md)**:
+Один сценарий вместо нескольких терминалов — корневой [`docker-compose.yml`](../docker-compose.yml), два режима в **одном** файле (profiles):
+
+| Режим | Команды | Гайд |
+|-------|---------|------|
+| **Build** (local `docker build`) | `make stack-init` → `make stack-health` | [docker-compose-local.md](devops/docker-compose-local.md) |
+| **Registry** (GHCR, без build) | `make stack-pull-registry && make stack-up-registry && make stack-health` | [ghcr-stack.md](devops/ghcr-stack.md) |
 
 ```bash
 cp .env.example .env   # BACKEND_SERVICE_TOKEN, OPENROUTER_API_KEY
-make stack-init        # db-reset + stack-up
+make stack-init        # db-reset + stack-up (build)
 make stack-health
 # http://localhost:3000/login → ivan_p
-
-# Registry (GHCR, без build): make stack-up-registry
 ```
 
 Host dev (hot reload, pytest): §2 ниже · `make db-up` поднимает **только** postgres.

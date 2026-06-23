@@ -1,6 +1,6 @@
 # Аудит документации diaai
 
-**Дата:** 2026-06-07 · **Контекст:** post frontend iter 9 · `make test` → **84** · **P0–P2 выполнены** (см. § «Выполнение P0–P2»)
+**Дата:** 2026-06-23 · **Контекст:** post devops iter 0–1 (local stack + GHCR) · `make test` → **84** · **P0–P2 выполнены** (см. § «Выполнение P0–P2»)
 
 Цель аудита — согласовать docs с реальным состоянием репозитория: статусы этапов, счётчики тестов, карта API, onboarding/smoke, отсутствие «слепых зон» между product-plan и tasklist'ами областей.
 
@@ -19,7 +19,7 @@
 | Spec-слой (scenarios, vision) | «📋 iter 5» | актуальные каналы + post-MVP ✅ |
 | Backend iter 4 analytics | «таблиц нет» в plan | контракты task 09 ✅ |
 
-**Остаётся (P3):** исторические summary в `impl/**` (снимки на момент iter); ADR/backend-area plan — counts в закрытых task-блоках; `api-contract.md` — отметка impl analytics после task 10.
+**Остаётся (P3):** исторические summary в `impl/**` (снимки на момент iter); ADR/backend-area plan — counts в закрытых task-блоках; `api-contract.md` — отметка impl analytics после task 10. **DevOps iter 0–1 закрыт** (9/9 ✅) — CD/cloud deploy post-MVP.
 
 ---
 
@@ -37,7 +37,9 @@
 | 4 | Web | [web/README.md](../web/README.md) | ✅ |
 | 5 | Bot | [src/diaai/README.md](../src/diaai/README.md) | ✅ |
 | 6 | Полный smoke (~15 мин) | **[smoke-test.md](smoke-test.md)** | ✅ |
-| 7 | Quality gate | `make test` → 84 | ✅ |
+| 7 | Docker stack (build) | `make stack-up && make stack-health` · [docker-compose-local.md](devops/docker-compose-local.md) | ✅ |
+| 8 | Docker stack (GHCR) | `make stack-pull-registry && make stack-up-registry && make stack-health` · [ghcr-stack.md](devops/ghcr-stack.md) | ✅ |
+| 9 | Quality gate | `make test` → 84 | ✅ |
 
 ### Реестр документов (верхний уровень)
 
@@ -59,6 +61,10 @@
 | [tasks/tasklist-backend.md](tasks/tasklist-backend.md) | backend 9/12 | ✅ |
 | [tasks/tasklist-bot.md](tasks/tasklist-bot.md) | bot + voice | ✅ |
 | [tasks/tasklist-database.md](tasks/tasklist-database.md) | database 5/5 ✅ | ✅ |
+| [tasks/tasklist-devops.md](tasks/tasklist-devops.md) | devops 9/9 ✅ (iter 0 stack · iter 1 GHCR) | ✅ |
+| [devops/docker-compose-local.md](devops/docker-compose-local.md) | local Docker stack (build profile) | ✅ |
+| [devops/ghcr-stack.md](devops/ghcr-stack.md) | stack из GHCR (registry profile) | ✅ |
+| [devops/ci/README.md](../devops/ci/README.md) | GHA → GHCR, tags, pull | ✅ |
 | [tasks/tasklist-web.md](tasks/tasklist-web.md) | — | ✅ deprecated → [frontend](tasks/tasklist-frontend.md) |
 
 ---
@@ -176,6 +182,14 @@
 | 12 Close iter 4 | iteration-4 summary, tasklist-backend, plan iter 4 → Done | 📋 |
 
 ---
+
+## Проверка 2026-06-23 (devops iter 0–1)
+
+| Проверка | Результат |
+|----------|-----------|
+| `make stack-up && make stack-health` | ✅ build profile |
+| `make stack-pull-registry && make stack-up-registry && make stack-health` | ✅ GHCR |
+| `make test` | **84** |
 
 ## Проверка 2026-06-07
 

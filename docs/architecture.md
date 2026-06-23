@@ -71,7 +71,7 @@ flowchart TB
 | Только PG | `make db-up` |
 | Bot optional | `make stack-up-bot` / `make stack-up-registry-bot` |
 
-Guide: [devops/docker-compose-local.md](devops/docker-compose-local.md) · артефакты: [devops/README.md](../devops/README.md).
+Guide: [devops/docker-compose-local.md](devops/docker-compose-local.md) (build) · [devops/ghcr-stack.md](devops/ghcr-stack.md) (GHCR) · артефакты: [devops/README.md](../devops/README.md) · CI: [devops/ci/README.md](../devops/ci/README.md).
 
 ### Backend (слои)
 

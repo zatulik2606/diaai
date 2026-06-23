@@ -66,7 +66,7 @@ make stack-health
 # http://localhost:3000/login → ivan_p
 ```
 
-Подробнее: **[docs/devops/docker-compose-local.md](docs/devops/docker-compose-local.md)**.
+Подробнее: **[docs/devops/docker-compose-local.md](docs/devops/docker-compose-local.md)** (local build) · **[docs/devops/ghcr-stack.md](docs/devops/ghcr-stack.md)** (`make stack-up-registry`, без `docker build`).
 
 ### Host dev (hot reload, pytest)
 
@@ -118,7 +118,8 @@ Web: `web/.env.local` — `BACKEND_URL`, `BACKEND_SERVICE_TOKEN` (server-only). 
 | `make install` | uv sync (bot + backend deps) |
 | `make run` | Telegram bot |
 | `make db-reset` | чистая PG + migrate + seed |
-| `make stack-up` / `stack-down` / `stack-health` | полный Docker stack |
+| `make stack-up` / `stack-down` / `stack-health` | полный Docker stack (build) |
+| `make stack-up-registry` / `stack-pull-registry` | stack из GHCR (registry profile) |
 | `make stack-init` | db-reset + stack-up |
 | `make db-inspect` | counts без ПДн |
 | `make backend-run` | FastAPI :8000 + reload |
