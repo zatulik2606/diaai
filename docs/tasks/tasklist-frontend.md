@@ -26,8 +26,9 @@
 | Область | Статус | Нужно frontend'у |
 |---------|--------|------------------|
 | Backend MVP (assistant, events) | ✅ | чат, события |
-| Database iter 5 (9 таблиц) | ✅ | analytics, snapshots |
-| Backend iter 4 (analytics API) | ✅ | leaderboard DTO (`products` + `bje_medal`, patient access) |
+| Database iter 5 (9 таблиц) | ✅ | snapshots, consultations (seed) |
+| Backend web API (iter 1) | ✅ | `/api/v1/web/*` — dashboard, leaderboard, chat history |
+| Backend iter 4 (analytics REST) | 📋 | `/api/v1/analytics/*` — signals, recommendations; не блокирует закрытый frontend |
 
 ## Стек
 
@@ -105,8 +106,8 @@ web/
 
 | plan.md | Frontend tasklist | Зависимости |
 |---------|-------------------|-------------|
-| [Итерация 5 — веб](../plan.md#итерация-5--веб-интерфейс-пациент-с-диабетом--доктор) | итерации 0–9 | backend + database ✅ |
-| [Итерация 4 — аналитика](../plan.md#итерация-4--аналитика-и-динамика-состояния) | iter 1, 3, 4 | [tasklist-backend](tasklist-backend.md) 09–12 |
+| [Итерация 5 — веб](../plan.md#итерация-5--веб-интерфейс) | итерации 0–9 ✅ | backend web API + database ✅ |
+| [Итерация 4 — analytics REST](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) | dashboard частично через web API ✅ | backend 09–12 📋 |
 
 ## Легенда статусов
 

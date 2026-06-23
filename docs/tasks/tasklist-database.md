@@ -4,15 +4,15 @@
 
 ## Обзор
 
-Рабочий план области **слой данных**: от продуктовых сценариев и полной схемы PostgreSQL до инфраструктуры, seed и интеграции в backend. Закрывает пробелы MVP-схемы (`001_initial_schema`) — роли, аналитика, консультации, анализ фото — и готовит единый источник данных для [backend iteration 4](tasklist-backend.md) и [web](tasklist-web.md).
+Рабочий план области **слой данных**: от продуктовых сценариев и полной схемы PostgreSQL до инфраструктуры, seed и интеграции в backend. Закрывает пробелы MVP-схемы (`001_initial_schema`) — роли, аналитика, консультации, анализ фото — и готовит единый источник данных для [backend iteration 4](tasklist-backend.md) и [frontend](tasklist-frontend.md).
 
-**Текущее состояние:** PostgreSQL 9 таблиц (`001` + `002`), ORM/repos, seed, `make db-*`. Область **database завершена (5/5)**. Следующий шаг — backend analytics (09–12).
+**Текущее состояние:** PostgreSQL 9 таблиц (`001`–`003`), ORM/repos, seed, `make db-*`. Область **database завершена (5/5)**. Следующий шаг — backend analytics REST (09–12, task 09 ✅).
 
 **Прогресс:** **5 / 5** итераций · **5 / 5** задач ✅ · [impl/database/summary.md](impl/database/summary.md)
 
 ## Базовая инфраструктура (зависимость)
 
-Bootstrap PostgreSQL (compose, Alembic, миграции `001` + `002`, `DATABASE_URL`) создан в **Backend MVP** и завершён в области **database** — [iteration-2-core](impl/backend/iteration-2-core/summary.md) · [iteration-5 summary](impl/database/iteration-5-orm-repos/summary.md).
+Bootstrap PostgreSQL (compose, Alembic, миграции `001`–`003`, `DATABASE_URL`) создан в **Backend MVP** и завершён в области **database** — [iteration-2-core](impl/backend/iteration-2-core/summary.md) · [iteration-5 summary](impl/database/iteration-5-orm-repos/summary.md).
 
 | Компонент | Владелец / итерация | Артефакт | Статус |
 |-----------|---------------------|----------|--------|
@@ -22,6 +22,7 @@ Bootstrap PostgreSQL (compose, Alembic, миграции `001` + `002`, `DATABAS
 | `DATABASE_URL` | Backend iter 2 · database iter 4 (docs) | [`.env.example`](../../.env.example), [`backend/config.py`](../../backend/config.py) | ✅ |
 | Миграция `001_*` | Backend iter 2 · database iter 2 (diff) | [`alembic/versions/001_initial_schema.py`](../../alembic/versions/001_initial_schema.py) — 5 таблиц | ✅ |
 | Миграция `002_*` | Database iter 5 | [`alembic/versions/002_full_data_layer.py`](../../alembic/versions/002_full_data_layer.py) — 9 таблиц | ✅ |
+| Миграция `003_*` | Frontend iter 1 | [`alembic/versions/003_telegram_username.py`](../../alembic/versions/003_telegram_username.py) — `users.telegram_username` | ✅ |
 | ORM / repos | Database iter 5 | [`backend/models/`](../../backend/models/), [`backend/repositories/`](../../backend/repositories/) | ✅ |
 | Seed-данные | Database iter 4–5 | [`data/progress-import.v1.json`](../../data/progress-import.v1.json) v2, [`scripts/db/seed_from_progress.py`](../../scripts/db/seed_from_progress.py) | ✅ |
 | Применение миграций | Database iter 3–5 | `make backend-migrate` / `make db-migrate`; в `make db-reset` — автоматически | ✅ |
@@ -30,11 +31,11 @@ Bootstrap PostgreSQL (compose, Alembic, миграции `001` + `002`, `DATABAS
 
 ```bash
 cp .env.example .env          # DATABASE_URL уже задан
-make db-reset                 # PG + migrate 001→002 + seed v2
+make db-reset                 # PG + migrate 001→003 + seed
 make db-inspect               # 9 tables; progress_snapshots:2, consultations:1
 make db-shell                 # SELECT count(*) FROM photo_analyses;
-make backend-test             # 37 passed (sqlite, без running PG)
-make test                     # 52 passed (backend + bot)
+make backend-test             # 67 passed (sqlite, без running PG)
+make test                     # 84 passed (67 backend + 17 bot)
 ```
 
 Подробнее: [database-access.md](../tech/database-access.md) § «Локальное окружение и seed» · [backend/README.md](../../backend/README.md) · [README.md](../../README.md).
@@ -61,8 +62,8 @@ make test                     # 52 passed (backend + bot)
 
 | plan.md / область | Этот tasklist | Зависимости |
 |-------------------|---------------|-------------|
-| [Итерация 4 — аналитика](../plan.md#итерация-4--аналитика-и-динамика-состояния) | итерации 2, 5 — таблицы `progress_snapshots`, агрегаты | [tasklist-backend](tasklist-backend.md) 09–12 |
-| [Итерация 5 — web](../plan.md#итерация-5--веб-интерфейс-пациент-с-диабетом--доктор) | итерация 1 — сценарии UI пациента с диабетом/доктора | [tasklist-web.md](tasklist-web.md) |
+| [Итерация 4 — analytics REST](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) | итерации 2, 5 — таблицы `progress_snapshots`, агрегаты | [tasklist-backend](tasklist-backend.md) 09–12 |
+| [Итерация 5 — web](../plan.md#итерация-5--веб-интерфейс) ✅ | итерация 1 — сценарии UI | [tasklist-frontend.md](tasklist-frontend.md) |
 | Backend MVP ✅ | миграция `001_initial_schema` — база для расширения | [iteration-2-core summary](impl/backend/iteration-2-core/summary.md) |
 | ADR-003 ✅ | SQLAlchemy async + Alembic + repos | [database-access.md](../tech/database-access.md) |
 | Seed + `make db-*` ✅ | iter 4 — one-command окружение | [iteration-4 summary](impl/database/iteration-4-db-infra-seed/summary.md) |
@@ -335,6 +336,8 @@ Self-check ✅ · User-check 📋 — [iteration-4 summary](impl/database/iterat
 
 ---
 
+> **Примечание:** self-check с числом тестов в закрытых итерациях ниже — **исторический снимок**. Актуально: `make test` → **84** (см. [README.md](../../README.md)).
+
 ## Итерация 5: ORM, репозитории, backend ✅
 
 → [iteration-5-orm-repos/plan.md](impl/database/iteration-5-orm-repos/plan.md) · [summary](impl/database/iteration-5-orm-repos/summary.md)
@@ -373,7 +376,7 @@ Self-check ✅ · User-check 📋 — [iteration-4 summary](impl/database/iterat
 | `docs/spec/schema-er.md` | ✅ ссылка на `002_full_data_layer.py` |
 | `docs/tasks/tasklist-backend.md` | ✅ dependency iter 5 для 09–12 |
 | `docs/tasks/impl/database/summary.md` | ✅ область 5/5 |
-| `docs/tech/backend-structure.md` | ✅ iter 5, 9 tables, 52 tests |
+| `docs/tech/backend-structure.md` | ✅ iter 5, 9 tables, 84 tests |
 | `backend/README.md` | ✅ миграция `002`, новые таблицы |
 | `docs/api/api-contract.md` | — без изменений (v1) |
 
@@ -433,7 +436,7 @@ Self-check ✅ · User-check 📋 — [iteration-5 summary](impl/database/iterat
 | [database-access.md](../tech/database-access.md) | практический guide (миграции, seed, `db-*`) |
 | [data/progress-import.v1.json](../../data/progress-import.v1.json) | эталонный seed v2 (iter 4–5) |
 | [tasklist-backend.md](tasklist-backend.md) | API и аналитика (09–12) |
-| [tasklist-web.md](tasklist-web.md) | frontend пациент с диабетом / доктор |
+| [tasklist-frontend.md](tasklist-frontend.md) | frontend (web) ✅ |
 | [spec/README.md](../spec/README.md) | индекс spec-документов |
 | [impl/database/summary.md](impl/database/summary.md) | сводка области database |
 | [templates/workflow.md](../templates/workflow.md) | процесс plan/summary |

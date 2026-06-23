@@ -46,6 +46,7 @@ REST-расширения backend для web-клиента. Machine-readable: [
 | 12 | GET | `/api/v1/web/patient/dashboard/questions` | `patient_telegram_id`, `limit?`, `offset?` | `items[]`, `total`, `limit`, `offset` | 200 |
 | 13 | GET | `/api/v1/web/patient/dashboard/submissions` | `patient_telegram_id`, `limit?`, `offset?` | `items[]`, `total`, `limit`, `offset` | 200 |
 | 14 | GET | `/api/v1/web/patient/dashboard/progress-matrix` | `patient_telegram_id`, `period?` | `period`, `columns[]`, `rows[]` (metric rows) | 200 |
+| 15 | POST | `/api/v1/web/analytics/query` | `doctor_telegram_id` / `patient_telegram_id`, body: `question` | `answer`, `sql`, `rows[]`, `row_count` | 200 |
 
 ---
 

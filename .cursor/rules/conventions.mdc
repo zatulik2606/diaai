@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Conventions
 
-Полная спецификация: [docs/vision.md](docs/vision.md). ADR: [docs/adr/](docs/adr/). При неясностях — сверяйся с документами, не выдумывай.
+Полная спецификация: [docs/vision.md](docs/vision.md). ADR: [docs/adr/](docs/adr/). Onboarding: [docs/onboarding.md](docs/onboarding.md). При неясностях — сверяйся с документами, не выдумывай.
 
 ## Стек
 

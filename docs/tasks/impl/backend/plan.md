@@ -19,9 +19,9 @@
 | 1 | Основание | 01–02 | ✅ Done | [iteration-1-foundation/plan.md](iteration-1-foundation/plan.md) · [summary](iteration-1-foundation/summary.md) |
 | 2 | Сборка ядра | 03–05 | ✅ Done | [iteration-2-core/plan.md](iteration-2-core/plan.md) · [summary](iteration-2-core/summary.md) |
 | 3 | Поставка | 06–08 | ✅ Done | [iteration-3-delivery/plan.md](iteration-3-delivery/plan.md) · [summary](iteration-3-delivery/summary.md) |
-| 4 | Аналитика | 09–12 | 📋 Planned | [iteration-4-analytics/plan.md](iteration-4-analytics/plan.md) · [summary](iteration-4-analytics/summary.md) |
+| 4 | Аналитика | 09–12 | 🚧 In Progress (09 ✅) | [iteration-4-analytics/plan.md](iteration-4-analytics/plan.md) · [summary](iteration-4-analytics/summary.md) |
 
-**Прогресс:** 8 / 12 задач (01–08 ✅) · **следующий этап:** итерация 4 (аналитика) · **тесты:** `make test` — 45 passed
+**Прогресс:** 9 / 12 задач (01–09 ✅) · **следующий:** task 10 · **тесты:** `make test` — **84** (67 backend + 17 bot)
 
 ## Связь с plan.md (продукт)
 
@@ -29,7 +29,7 @@
 |---------|---------|
 | [Итерация 2 — Backend-ядро и БД](../../../plan.md#итерация-2--backend-ядро-и-бд) | итерации 1–2 ✅, task-06 ✅ |
 | [Итерация 3 — Миграция бота](../../../plan.md#итерация-3--миграция-бота-на-backend) | task-06–08 ✅ |
-| [Итерация 4 — Аналитика](../../../plan.md#итерация-4--аналитика-и-динамика-состояния) | iteration-4 📋 (task-09–12) |
+| [Итерация 4 — Аналитика](../../../plan.md#итерация-4--аналитика-и-динамика-backend-rest) | iteration-4 🚧 (09 ✅, 10–12 📋) |
 
 ## Архитектура (текущая)
 
@@ -93,7 +93,7 @@ docs/tasks/impl/backend/
 |---------|------------|
 | `make backend-run` | FastAPI :8000 |
 | `make run` | Telegram-бот (требует backend) |
-| `make test` | pytest: backend + bot (45) |
+| `make test` | pytest: backend + bot (**84**) |
 | `make lint` | ruff: src, backend, tests |
 
 ## Документы

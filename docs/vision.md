@@ -1,7 +1,7 @@
 # Техническое видение проекта
 
 Опирается на [идею проекта](idea.md).  
-Детализация: [data-model.md](data-model.md) · [integrations.md](integrations.md) · [adr/](adr/)
+Детализация: [architecture.md](architecture.md) · [data-model.md](data-model.md) · [integrations.md](integrations.md) · [adr/](adr/)
 
 ---
 
@@ -132,7 +132,7 @@ sequenceDiagram
 ```mermaid
 flowchart TB
     subgraph presentation [Presentation layer]
-        BotClient["bot/"]
+        BotClient["src/diaai/"]
         WebClient["web/"]
     end
 
@@ -158,10 +158,10 @@ flowchart TB
 | Этап | Состояние |
 |------|-----------|
 | **MVP (было)** | Telegram-бот автономно; история в RAM; прямой LLM |
-| **Сейчас (task-07)** | bot → backend REST; история в PostgreSQL; LLM на backend |
-| **Целевая архитектура** | bot и web → backend → БД; единый контекст, аналитика, консультации |
+| **Сейчас** | bot + backend + web → PostgreSQL; web iter 0–9 ✅; voice ✅; Text-to-SQL ✅; backend analytics REST 📋 |
+| **Следующее** | `/api/v1/analytics/*`, consultations UI (D5/D6, Doc2–Doc4), production deploy |
 
-MVP — первый шаг: проверка сценариев и ценности. Дальше — перенос логики в backend без смены продуктовой модели.
+MVP — первый шаг: проверка сценариев и ценности. Дальше — analytics REST и консультации без смены продуктовой модели.
 
 ---
 
@@ -224,22 +224,22 @@ Multi-component проект:
 
 ```
 diaai/
-├── bot/                 # Telegram-клиент (MVP реализован в src/diaai/)
-├── backend/             # ядро системы (целевой компонент)
-├── web/                 # единый frontend, роли пациент с диабетом / доктор
+├── src/diaai/           # Telegram-клиент (bot)
+├── backend/             # ядро: FastAPI, services, repos
+├── web/                 # Next.js frontend (patient / doctor)
 ├── docs/
 │   ├── idea.md
 │   ├── vision.md
-│   ├── data-model.md    # доменные сущности и связи
-│   ├── spec/            # сценарии и требования к данным (read/write)
-│   ├── adr/             # архитектурные решения (ADR)
-│   ├── integrations.md  # внешние сервисы
+│   ├── data-model.md
+│   ├── spec/            # сценарии и требования к данным
+│   ├── adr/
+│   ├── integrations.md
 │   └── how-to-get-tokens.md
 ├── prompts/             # системные промпты LLM
 └── README.md
 ```
 
-**Текущее состояние:** MVP-бот в `src/diaai/` — клиент backend API (task-07). `backend/` — FastAPI, PostgreSQL, OpenRouter, сценарии A/B. Контракт: [api-contract.md](api/api-contract.md).
+**Текущее состояние:** bot в `src/diaai/` — клиент backend API ✅. `backend/` — FastAPI, PostgreSQL (9 таблиц), OpenRouter (LLM + STT), сценарии A/B + web API. `web/` — dashboard, leaderboard, chat, voice, Text-to-SQL ✅. Контракты: [api-contract.md](api/api-contract.md) · [frontend-contract.md](api/frontend-contract.md). Smoke: [smoke-test.md](smoke-test.md).
 
 ---
 
@@ -285,7 +285,16 @@ diaai/
 | Линт / формат | ruff |
 | Структура | `backend/` — см. [ADR-002](adr/adr-002-backend-stack.md) |
 
-Стек web — на этапе реализации.
+## Технологии (web)
+
+| Компонент | Выбор |
+|-----------|--------|
+| Framework | Next.js (App Router) + React 19 |
+| Язык | TypeScript |
+| UI | shadcn/ui + Tailwind CSS |
+| Package manager | pnpm 11.6 |
+| Auth | BFF + httpOnly cookie (`diaai_session`) |
+| Dev guide | [web/README.md](../web/README.md) |
 
 ---
 
@@ -296,7 +305,7 @@ diaai/
 | Язык | Python 3.12+ |
 | Зависимости | `uv` |
 | Telegram | aiogram 3.x, polling |
-| LLM | OpenAI-compatible клиент, **OpenRouter** |
+| LLM | через backend API *(prod)*; legacy direct OpenRouter только в dev-ветке MVP |
 | Линт / формат | ruff |
 | Автоматизация | Makefile: `install`, `run`, `lint`, `format` |
 
@@ -307,7 +316,7 @@ diaai/
 - **Провайдер:** OpenRouter.
 - **Задачи:** оценка ХЕ/БЖЕ по тексту и фото, диалог, справочные рекомендации по инсулину в контексте еды.
 - **Ограничения:** лимит истории, таймауты, понятные сообщения при ошибках; без назначения доз.
-- **Целевое состояние:** вызовы LLM — через backend, не напрямую из клиентов.
+- **Целевое состояние:** вызовы LLM — через backend ✅ *(bot, web assistant, STT, Text-to-SQL)*.
 
 ---
 
@@ -334,13 +343,13 @@ OpenRouter и LLM — на стороне backend (см. [backend/README.md](../
 
 ---
 
-## Сборка и запуск (MVP)
+## Сборка и запуск
 
 ```bash
-make install   # uv venv + uv sync
-make run       # запуск бота
-make lint      # ruff check
-make format    # ruff format
+make db-reset && make backend-run   # PostgreSQL + API :8000
+make run                            # бот (отдельный терминал)
+make web-dev                        # web :3000 — см. web/README.md
+make test                           # 84 tests
 ```
 
-Деплой multi-component системы — на этапе появления backend и web.
+Локальный чеклист: [smoke-test.md](smoke-test.md). Production deploy (bot + backend + web) — post-MVP, см. [plan.md](plan.md#post-mvp-не-в-таблице-этапов).

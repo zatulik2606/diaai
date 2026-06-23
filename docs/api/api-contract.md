@@ -1,14 +1,14 @@
 # API-контракт diaai (v1)
 
-Описание REST API backend для MVP. Machine-readable: [openapi.yaml](openapi.yaml) (tags: `system`, `assistant`, `events`, `web`). Соглашения и коды ошибок: [conventions.md](conventions.md).
+Описание REST API backend для MVP. Machine-readable: [openapi.yaml](openapi.yaml) (tags: `system`, `assistant`, `media`, `events`, `analytics`, `web`). Соглашения и коды ошибок: [conventions.md](conventions.md).
 
-**Статус:** bot endpoint'ы ✅ (backend iter 2–3) · web `/api/v1/web/*` ✅ (frontend iter 1).
+**Статус:** bot endpoint'ы ✅ (backend iter 2–3) · web `/api/v1/web/*` ✅ (frontend iter 1) · analytics `/api/v1/analytics/*` 📋 contract (backend iter 4, task 09 ✅ → impl 10–11).
 
 **Клиенты:**
 
 | Клиент | Endpoint'ы | Статус |
 |--------|------------|--------|
-| Telegram-бот | `/api/v1/assistant/*`, `/api/v1/events/*` | ✅ `src/diaai/backend_client.py` |
+| Telegram-бот | `/api/v1/assistant/*`, `/api/v1/events/*`, `/api/v1/analytics/*` | ✅ assistant/events · 📋 analytics (iter 4) |
 | Web (Next.js) | `/api/v1/web/*` + reuse `POST /assistant/messages` | ✅ [frontend-contract.md](frontend-contract.md) |
 
 Продуктовые требования web UI — [frontend-requirements.md](../spec/frontend-requirements.md).
@@ -32,6 +32,7 @@
 |----|------------|------------|
 | A | Вопрос ассистенту (текст / фото → LLM) | `POST /api/v1/assistant/messages` |
 | B | Фиксация питания и инсулина | `POST /api/v1/events/food`, `POST /api/v1/events/insulin`, `GET /api/v1/events/food` |
+| C | Динамика и рекомендации (D3, D4) | `GET /api/v1/analytics/progress`, `signals`, `recommendations` |
 
 **Сценарии (web)** — см. [frontend-requirements.md](../spec/frontend-requirements.md):
 
@@ -43,7 +44,9 @@
 | 4 Матрица прогресса | Doc2, D3 | `GET /api/v1/web/doctor/dashboard/progress-matrix` |
 | Auth (login) | — | `POST /api/v1/web/auth/resolve` |
 
-**Вне scope v1:** JWT/web-session на backend, CRUD консультаций Doc3–Doc4, `/api/v1/analytics/*` (backend iter 4 — отдельный track).
+**Вне scope v1:** JWT/web-session на backend, CRUD консультаций Doc3–Doc4.
+
+**Analytics vs web:** dashboard KPI — `/api/v1/web/*` ✅; unified bot API — `/api/v1/analytics/*` 📋 impl (контракт task 09). Text-to-SQL — `/api/v1/web/analytics/query` (doctor, отдельный контур).
 
 **Web:** детальные контракты, JSON-примеры и PG mapping — [frontend-contract.md](frontend-contract.md).
 
@@ -57,6 +60,7 @@
 |--------|------|------|---------|----------|
 | GET | `/health` | нет | 200 | Health check + версия приложения |
 | POST | `/api/v1/assistant/messages` | Bearer | 200 | Сценарий A / D2 — вопрос ассистенту |
+| POST | `/api/v1/media/transcribe` | Bearer | 200 | STT: voice → text (bot, web fallback) |
 | POST | `/api/v1/events/food` | Bearer | 201 | Создать событие питания |
 | GET | `/api/v1/events/food` | Bearer | 200 | Список событий питания (optional MVP) |
 | POST | `/api/v1/events/insulin` | Bearer | 201 | Создать событие инсулина |
@@ -72,6 +76,7 @@
 | GET | `/api/v1/web/doctor/dashboard/submissions` | Bearer | 200 | 1 | food + photo events |
 | GET | `/api/v1/web/doctor/dashboard/progress-matrix` | Bearer | 200 | 4 | матрица пациенты × периоды |
 | GET | `/api/v1/web/leaderboard` | Bearer | 200 | 2 | таблица + scatter |
+| POST | `/api/v1/web/analytics/query` | Bearer | 200 | 2 | NL → read-only SQL (Text-to-SQL) |
 | GET | `/api/v1/web/assistant/history` | Bearer | 200 | 3 | история чата |
 | GET | `/api/v1/web/patient/dashboard/summary` | Bearer | 200 | 1 | patient KPI + delta |
 | GET | `/api/v1/web/patient/dashboard/activity` | Bearer | 200 | 1 | активность пациента |
@@ -82,6 +87,16 @@
 Doctor dashboard/leaderboard: query `doctor_telegram_id`. Patient dashboard: query `patient_telegram_id`. Списки: `limit` (default 20, max 100), `offset` (default 0), ответ `{ items, total, limit, offset }`.
 
 Полные параметры и структуры ответов — [frontend-contract.md](frontend-contract.md).
+
+### Analytics (`/api/v1/analytics/*`) — 📋 contract ✅, impl task 10–11
+
+| Method | Path | Auth | Success | Сценарий | Описание |
+|--------|------|------|---------|----------|----------|
+| GET | `/api/v1/analytics/progress` | Bearer | 200 | D3 / C | снимок прогресса за day/week/month |
+| GET | `/api/v1/analytics/signals` | Bearer | 200 | D3 / C | rule-based сигналы изменений |
+| GET | `/api/v1/analytics/recommendations` | Bearer | 200 | D4 / C | справочные рекомендации (paginated) |
+
+Query: `telegram_id` (обязательный). Role: `diabetic` only → иначе 403. Детали JSON — [scenarios/analytics-progress.md](scenarios/analytics-progress.md) · [scenarios/analytics-signals-recommendations.md](scenarios/analytics-signals-recommendations.md).
 
 Runtime Swagger: `make backend-run` → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs). Сверка с yaml: `make backend-openapi-export`.
 
@@ -453,6 +468,8 @@ Response 200: paginated; item: `id`, `role` (`user`\|`assistant`), `text`, `crea
 | Next.js Route Handler | Bearer `BACKEND_SERVICE_TOKEN` (server-only) |
 | FAB send | `POST /api/v1/assistant/messages` |
 | FAB history | `GET /api/v1/web/assistant/history` |
+| Voice (web/bot) | `POST /api/v1/media/transcribe` → assistant |
+| Analytics NL (doctor) | `POST /api/v1/web/analytics/query` |
 
 ---
 
@@ -488,13 +505,15 @@ Design review (api-design-principles): [api-contract-review.md](api-contract-rev
 
 | Документ | Содержание |
 |----------|------------|
-| [openapi.yaml](openapi.yaml) | OpenAPI 3.1 (tags: `system`, `assistant`, `events`, `web`) |
+| [openapi.yaml](openapi.yaml) | OpenAPI 3.1 (tags: `system`, `assistant`, `events`, `analytics`, `web`) |
 | [api-contract-review.md](api-contract-review.md) | Design review (api-design-principles) |
 | [frontend-contract.md](frontend-contract.md) | Web endpoint'ы — полные JSON и PG mapping |
 | [frontend-requirements.md](../spec/frontend-requirements.md) | UI зоны 1–4, auth, wireframes |
 | [conventions.md](conventions.md) | Auth, коды ошибок, лимиты |
 | [scenarios/assistant-question.md](scenarios/assistant-question.md) | Сценарий A — детали |
 | [scenarios/event-record.md](scenarios/event-record.md) | Сценарий B — детали |
+| [scenarios/analytics-progress.md](scenarios/analytics-progress.md) | D3 — progress |
+| [scenarios/analytics-signals-recommendations.md](scenarios/analytics-signals-recommendations.md) | D3/D4 — signals, recommendations |
 | [data-model.md](../data-model.md) | Сущности и поля домена |
 | [integrations.md](../integrations.md) | OpenRouter, PostgreSQL |
 | [backend/README.md](../../backend/README.md) | Запуск и env |

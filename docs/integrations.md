@@ -1,13 +1,13 @@
 # Внешние интеграции
 
-Опирается на [idea.md](idea.md), [vision.md](vision.md), [data-model.md](data-model.md).
+Опирается на [idea.md](idea.md), [vision.md](vision.md), [architecture.md](architecture.md), [data-model.md](data-model.md).
 
 Обзор связей системы **diaai** с внешними сервисами.
 
 ```mermaid
 flowchart TB
     subgraph diaai [diaai]
-        Bot["bot"]
+        Bot["src/diaai/ bot"]
         Backend["backend"]
         Web["web"]
     end

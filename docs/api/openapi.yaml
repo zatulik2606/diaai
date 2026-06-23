@@ -6,7 +6,10 @@ info:
     MVP backend для diaai. Полный контракт: [api-contract.md](api-contract.md).
     Web extensions: [frontend-contract.md](frontend-contract.md).
     Сценарии: [assistant-question.md](scenarios/assistant-question.md),
-    [event-record.md](scenarios/event-record.md). Соглашения: [conventions.md](conventions.md).
+    [event-record.md](scenarios/event-record.md),
+    [analytics-progress.md](scenarios/analytics-progress.md),
+    [analytics-signals-recommendations.md](scenarios/analytics-signals-recommendations.md).
+    Соглашения: [conventions.md](conventions.md).
 
 servers:
   - url: http://127.0.0.1:8000
@@ -194,6 +197,106 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
 
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/analytics/progress:
+    get:
+      summary: Scenario C / D3 — progress snapshot for period
+      tags: [analytics]
+      parameters:
+        - $ref: "#/components/parameters/TelegramId"
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+            default: week
+      responses:
+        "200":
+          description: Progress aggregates with previous period comparison
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsProgressResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/analytics/signals:
+    get:
+      summary: Scenario C / D3 — change signals (rule-based)
+      tags: [analytics]
+      parameters:
+        - $ref: "#/components/parameters/TelegramId"
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month]
+            default: week
+      responses:
+        "200":
+          description: Detected metric shifts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsSignalsResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/analytics/recommendations:
+    get:
+      summary: Scenario C / D4 — reference recommendations
+      tags: [analytics]
+      parameters:
+        - $ref: "#/components/parameters/TelegramId"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        "200":
+          description: Paginated recommendations (no dose prescriptions)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsRecommendationsResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
   /api/v1/web/auth/resolve:
     post:
       summary: Resolve Telegram username to user (web login)
@@ -217,6 +320,130 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/patient/dashboard/summary:
+    get:
+      summary: Patient dashboard KPI summary
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/PatientTelegramId"
+        - name: period_days
+          in: query
+          schema:
+            type: integer
+            default: 7
+            minimum: 1
+            maximum: 365
+      responses:
+        "200":
+          description: KPI cards with delta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummaryResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/patient/dashboard/activity:
+    get:
+      summary: Patient dashboard activity time series
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/PatientTelegramId"
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 14
+            minimum: 1
+            maximum: 90
+      responses:
+        "200":
+          description: Daily activity series
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardActivityResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/patient/dashboard/questions:
+    get:
+      summary: Patient questions feed
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/PatientTelegramId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Paginated questions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionsFeedResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/patient/dashboard/submissions:
+    get:
+      summary: Patient food events and photo analyses
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/PatientTelegramId"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Paginated submissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionsFeedResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/web/patient/dashboard/progress-matrix:
+    get:
+      summary: Patient progress matrix
+      tags: [web]
+      parameters:
+        - $ref: "#/components/parameters/PatientTelegramId"
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month]
+            default: week
+      responses:
+        "200":
+          description: Progress matrix
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgressMatrixResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "422":
           $ref: "#/components/responses/ValidationError"
 
@@ -490,8 +717,173 @@ components:
         type: integer
         default: 0
         minimum: 0
+    TelegramId:
+      name: telegram_id
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: Telegram chat.id; owner must have role diabetic
 
   schemas:
+    AnalyticsMetricSums:
+      type: object
+      required: [xe, bje, insulin]
+      properties:
+        xe:
+          type: number
+          format: float
+        bje:
+          type: number
+          format: float
+        insulin:
+          type: number
+          format: float
+        proteins:
+          type: number
+          format: float
+          nullable: true
+        fats:
+          type: number
+          format: float
+          nullable: true
+        carbs:
+          type: number
+          format: float
+          nullable: true
+
+    AnalyticsPreviousPeriod:
+      type: object
+      required: [period_start, period_end, sums]
+      properties:
+        period_start:
+          type: string
+          format: date
+        period_end:
+          type: string
+          format: date
+        sums:
+          $ref: "#/components/schemas/AnalyticsMetricSums"
+
+    AnalyticsProgressResponse:
+      type: object
+      required:
+        - telegram_id
+        - period
+        - period_start
+        - period_end
+        - sums
+        - previous_period
+        - delta_pct
+        - trend
+        - source
+      properties:
+        telegram_id:
+          type: integer
+          format: int64
+        period:
+          type: string
+          enum: [day, week, month]
+        period_start:
+          type: string
+          format: date
+        period_end:
+          type: string
+          format: date
+        sums:
+          $ref: "#/components/schemas/AnalyticsMetricSums"
+        previous_period:
+          $ref: "#/components/schemas/AnalyticsPreviousPeriod"
+        delta_pct:
+          type: object
+          required: [xe, bje, insulin]
+          properties:
+            xe:
+              type: number
+            bje:
+              type: number
+            insulin:
+              type: number
+        trend:
+          type: string
+          enum: [improving, stable, worsening]
+        comment:
+          type: string
+          nullable: true
+        source:
+          type: string
+          enum: [computed, snapshot]
+
+    AnalyticsSignal:
+      type: object
+      required: [code, severity, metric, direction, message, delta_pct]
+      properties:
+        code:
+          type: string
+        severity:
+          type: string
+          enum: [info, warning]
+        metric:
+          type: string
+          enum: [xe, bje, insulin]
+        direction:
+          type: string
+          enum: [up, down, flat]
+        message:
+          type: string
+        delta_pct:
+          type: number
+
+    AnalyticsSignalsResponse:
+      type: object
+      required: [telegram_id, period, signals]
+      properties:
+        telegram_id:
+          type: integer
+          format: int64
+        period:
+          type: string
+          enum: [week, month]
+        signals:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsSignal"
+
+    AnalyticsRecommendationItem:
+      type: object
+      required: [id, type, text, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [nutrition, insulin, dynamics]
+        text:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AnalyticsRecommendationsResponse:
+      type: object
+      required: [telegram_id, items, total, limit, offset]
+      properties:
+        telegram_id:
+          type: integer
+          format: int64
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsRecommendationItem"
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
     AuthResolveRequest:
       type: object
       required: [username]

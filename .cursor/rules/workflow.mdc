@@ -9,7 +9,7 @@ alwaysApply: true
 
 ## Подход
 
-AI-driven / Spec-driven: работа **по областям** (bot, backend, web, infra) → **итерации** → **задачи**. Спецификации и артефакты в `docs/`, код — в `bot/` / `backend/` / `web/` / `src/diaai/` (MVP).
+AI-driven / Spec-driven: работа **по областям** (bot, backend, web, infra) → **итерации** → **задачи**. Спецификации и артефакты в `docs/`, код — в `src/diaai/` (bot) / `backend/` / `web/`.
 
 ## Иерархия
 

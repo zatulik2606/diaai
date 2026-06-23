@@ -141,4 +141,5 @@ flowchart LR
 - task-03 ✅ — каркас `backend/`, stub v1
 - task-05 ✅ — endpoint impl + PostgreSQL
 - task-06–08 ✅ — docs, bot → API, quality gate
-- **30** backend + **15** bot тестов (`make test` — 45)
+- iter 4 task-09 ✅ — analytics REST contracts (OpenAPI)
+- **67** backend + **17** bot тестов (`make test` — **84**)

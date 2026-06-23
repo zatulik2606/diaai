@@ -6,7 +6,16 @@
 
 ## Организация работ
 
-`plan.md` фиксирует этапы верхнего уровня: что строим и в какой последовательности. Детализация каждого этапа — в tasklist'е соответствующей области в `docs/tasks/tasklist-<область>.md`. Один этап соответствует одной области (bot, backend, web) и одному tasklist'у.
+`plan.md` фиксирует **продуктовые этапы** верхнего уровня: что строим и в какой последовательности. Детализация — в tasklist'ах областей `docs/tasks/tasklist-<область>.md`.
+
+| Область | Tasklist | Связь с этапами plan.md |
+|---------|----------|-------------------------|
+| bot | [tasklist-bot.md](tasks/tasklist-bot.md) | этапы 1, 3; voice — cross-cutting (frontend iter 8) |
+| backend | [tasklist-backend.md](tasks/tasklist-backend.md) | этапы 2, 4 |
+| database | [tasklist-database.md](tasks/tasklist-database.md) | параллельно этапу 2 ✅ (5/5) |
+| frontend (web) | [tasklist-frontend.md](tasks/tasklist-frontend.md) | этап 5 ✅ (iter 0–9) |
+
+Один продуктовый этап может затрагивать несколько областей; database и frontend ведут **свои** итерации внутри tasklist'ов.
 
 ---
 
@@ -37,19 +46,28 @@ flowchart LR
     E1["1. MVP бота\n✅ Done"]
     E2["2. Backend + БД\n✅ Done"]
     E3["3. Bot → Backend\n✅ Done"]
-    E4["4. Аналитика\n📋 Planned"]
-    E5["5. Веб-интерфейс\n📋 Planned"]
+    E4["4. Analytics REST\n🚧 09 ✅"]
+    E5["5. Web UI\n✅ Done"]
+    DB["Database\n✅ 5/5"]
 
-    E1 --> E2 --> E3 --> E4 --> E5
+    E1 --> E2 --> E3
+    E3 --> E4
+    E2 --> DB
+    E3 -.->|"web API iter 1"| E5
+    E4 -.->|"signals, bot client"| E3
 ```
+
+> **Параллельность:** web (этап 5) реализован **до** backend analytics REST (этап 4) — dashboard использует `/api/v1/web/*`, а не `/api/v1/analytics/*`. Этап 4 остаётся нужен для сигналов, рекомендаций и единого API для бота.
 
 | Итерация | Название | Цель | Статус | Tasklist |
 |----------|----------|------|--------|----------|
-| 1 | MVP Telegram-бота | Запустить первый клиент с диалогом и анализом фото | ✅ Done | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
-| 2 | Backend-ядро и БД | Вынести данные и логику сопровождения в единый backend | ✅ Done | [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) |
-| 3 | Миграция бота на backend | Сделать бота тонким клиентом без локального состояния | ✅ Done | [docs/tasks/tasklist-bot.md](tasks/tasklist-bot.md) |
-| 4 | Аналитика и динамика состояния | Добавить прогресс, тренды и сигналы изменений | 📋 Planned | [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) |
-| 5 | Веб-интерфейс (пациент с диабетом / доктор) | Дать единый web-доступ к данным и консультациям | 📋 Planned | [docs/tasks/tasklist-web.md](tasks/tasklist-web.md) |
+| 1 | MVP Telegram-бота | Запустить первый клиент с диалогом и анализом фото | ✅ Done | [tasklist-bot.md](tasks/tasklist-bot.md) |
+| 2 | Backend-ядро и БД | Вынести данные и логику сопровождения в единый backend | ✅ Done | [tasklist-backend.md](tasks/tasklist-backend.md) · [tasklist-database.md](tasks/tasklist-database.md) |
+| 3 | Миграция бота на backend | Сделать бота тонким клиентом без локального состояния | ✅ Done | [tasklist-bot.md](tasks/tasklist-bot.md) · [tasklist-backend.md](tasks/tasklist-backend.md) |
+| 4 | Аналитика и динамика (backend REST) | `/api/v1/analytics/*`: снимки, сигналы, рекомендации | 🚧 In Progress (09 ✅, 10–12 📋) | [tasklist-backend.md](tasks/tasklist-backend.md) iter 4 |
+| 5 | Веб-интерфейс | Dashboard, leaderboard, chat, voice, Text-to-SQL | ✅ Done | [tasklist-frontend.md](tasks/tasklist-frontend.md) |
+
+**Не в таблице (закрыто в tasklist'ах):** database 5/5 ✅ · bot voice ✅ (frontend iter 8) · web analytics NL ✅ (frontend iter 9, `/api/v1/web/analytics/query`).
 
 ---
 
@@ -79,14 +97,16 @@ flowchart LR
 
 **Основание (backend итерация 1) ✅:** ADR-002, REST-контракты v1 — [summary](tasks/impl/backend/iteration-1-foundation/summary.md).
 
-**Прогресс backend (6/8 задач):** impl endpoint'ов A/B + PostgreSQL ✅ (task-05); документация backend ✅ (task-06).
+**Прогресс backend (задачи 01–08 ✅):** REST A/B, PostgreSQL, bot → API, quality gate — [iteration-2](tasks/impl/backend/iteration-2-core/summary.md) · [iteration-3](tasks/impl/backend/iteration-3-delivery/summary.md).
+
+**Database (параллельно ✅):** 9 таблиц, ORM/repos, seed — [tasklist-database.md](tasks/tasklist-database.md).
 
 **Ценность:** данные сохраняются между сессиями; появляется персистентный контекст пользователя.
 
 **Что сделано:**
 - REST API (FastAPI, [ADR-002](adr/adr-002-backend-stack.md)): auth, assistant, events
 - PostgreSQL: схема, миграции Alembic, docker-compose (порт 5433)
-- 21 тест; [backend/README.md](../backend/README.md) — онбординг
+- `make test` — **84** (67 backend + 17 bot); [backend/README.md](../backend/README.md)
 
 **Критерии завершения:**
 - backend принимает запросы и возвращает ответы ✅
@@ -119,42 +139,53 @@ flowchart LR
 
 ---
 
-### Итерация 4 — Аналитика и динамика состояния `📋 Planned`
+### Итерация 4 — Аналитика и динамика (backend REST) `🚧 In Progress`
 
-**Ценность:** система показывает тренды и отклонения — пользователь видит динамику, а не только текущий момент.
+**Прогресс:** task 09 (контракты) ✅ · tasks 10–12 (impl) 📋
 
-**Что включает:**
-- агрегация событий за период (день / неделя / месяц)
-- Снимки прогресса: сумма ХЕ / БЖЕ / БЖУ / инсулина, тренд
-- Сигналы изменений: заметные сдвиги в рационе и дозах
-- Рекомендации на основе динамики (справочные, без назначения доз)
-- Элементы прогнозирования при сохранении паттернов
+**Ценность:** единый analytics API для бота и клиентов — тренды, сигналы, справочные рекомендации (без назначения доз).
+
+**Частично закрыто (не заменяет этап 4):**
+- Web dashboard KPI/activity/matrix — `/api/v1/web/patient|doctor/dashboard/*` ✅
+- Таблицы `progress_snapshots`, `recommendations` в PG + seed ✅
+- Text-to-SQL для доктора — `/api/v1/web/analytics/query` ✅ (frontend iter 9, отдельный контур)
+
+**Что включает (backend iter 4, задачи 09–12):**
+- Контракты `GET /api/v1/analytics/progress|signals|recommendations`
+- Агрегация событий за day/week/month; эвристики сигналов
+- Справочные recommendations; pytest + OpenAPI
 
 **Критерии завершения:**
-- backend формирует снимки прогресса за период
-- система выдаёт рекомендации на основе истории питания и инсулина
-- сигналы изменений доступны через API
+- backend отдаёт снимок прогресса за период по `telegram_id`
+- сигналы и рекомендации доступны через `/api/v1/analytics/*`
+- `make lint && make test` green; [summary](tasks/impl/backend/iteration-4-analytics/summary.md) ✅
 
-**Tasklist:** [docs/tasks/tasklist-backend.md](tasks/tasklist-backend.md) — [iteration-4 plan](tasks/impl/backend/iteration-4-analytics/plan.md)
+**Tasklist:** [tasklist-backend.md](tasks/tasklist-backend.md) — [iteration-4 plan](tasks/impl/backend/iteration-4-analytics/plan.md)
 
 ---
 
-### Итерация 5 — Веб-интерфейс (пациент с диабетом / доктор) `📋 Planned`
+### Итерация 5 — Веб-интерфейс `✅ Done`
 
-**Ценность:** пациент с диабетом видит аналитику и динамику состояния в удобном веб-приложении; опционально — доктор и консультации.
+**Ценность:** пациент — dashboard и чат; доктор — leaderboard и Text-to-SQL.
 
-**Что включает:**
-- единый frontend-проект (роли: пациент с диабетом, доктор)
-- интерфейс пациента с диабетом: история событий, снимки прогресса, тренды
-- запись на онлайн / офлайн консультацию
-- интерфейс доктора (опционально): обзор пациента, комментарии
+**Что сделано (frontend iter 0–9):** Next.js, `/dashboard`, `/leaderboard`, `/chat`, voice, analytics NL. Контракт: [frontend-contract.md](api/frontend-contract.md).
 
-**Критерии завершения:**
-- пациент с диабетом видит динамику состояния за выбранный период
-- работает с тем же backend что и бот
-- запись к доктору функционирует (хотя бы базовый сценарий)
+**Вне scope MVP (post-MVP):** запись на консультацию (D5), история консультаций (D6), карточка пациента доктора (Doc2–Doc4) — таблица `consultations` в PG есть, UI/API нет.
 
-**Tasklist:** [docs/tasks/tasklist-web.md](tasks/tasklist-web.md)
+**Критерии завершения:** dashboard + chat + leaderboard ✅ · smoke: [smoke-test.md](smoke-test.md)
+
+**Tasklist:** [tasklist-frontend.md](tasks/tasklist-frontend.md)
+
+---
+
+## Post-MVP (не в таблице этапов)
+
+| Тема | Статус | Где детализировать |
+|------|--------|-------------------|
+| Backend analytics REST (этап 4) | 📋 Planned | [tasklist-backend.md](tasks/tasklist-backend.md) 09–12 |
+| Консультации D5/D6, Doc2–Doc4 | 📋 Planned | [user-scenarios.md](spec/user-scenarios.md) |
+| Production deploy (bot + backend + web) | 📋 Planned | [vision.md](vision.md) |
+| Structured photo fields в assistant | 📋 Planned | backend README → iter 11 |
 
 ---
 
@@ -164,13 +195,18 @@ flowchart LR
 |----------|------------|
 | [idea.md](idea.md) | продуктовая модель и сценарии |
 | [vision.md](vision.md) | границы системы и архитектура |
+| [architecture.md](architecture.md) | компоненты, API, mermaid |
+| [doc-audit.md](doc-audit.md) | аудит документации |
 | [data-model.md](data-model.md) | доменные сущности |
 | [integrations.md](integrations.md) | внешние сервисы и критичность |
 | [adr/](adr/) | архитектурные решения |
 | [templates/workflow.md](templates/workflow.md) | процесс работы и структура tasklist'ов |
 | [prompts/generate-tasklist.md](prompts/generate-tasklist.md) | prompt и эталон декомпозиции tasklist'ов |
 | [tasks/tasklist-backend.md](tasks/tasklist-backend.md) | детализация итераций 2 и 4 (backend) |
-| [tasks/tasklist-database.md](tasks/tasklist-database.md) | полноценный слой данных PostgreSQL |
+| [tasks/tasklist-bot.md](tasks/tasklist-bot.md) | MVP бота, миграция на backend, voice |
+| [tasks/tasklist-frontend.md](tasks/tasklist-frontend.md) | web iter 0–9 ✅ |
+| [tasks/tasklist-database.md](tasks/tasklist-database.md) | полноценный слой данных PostgreSQL ✅ |
+| [onboarding.md](onboarding.md) · [smoke-test.md](smoke-test.md) | вход разработчика · one-session проверка |
 | [spec/](spec/) | продуктовые сценарии и требования к данным |
 | [api/api-contract.md](api/api-contract.md) | REST API v1 — контракт, endpoint'ы, примеры |
 | [api/conventions.md](api/conventions.md) | коды ошибок и соглашения REST API |

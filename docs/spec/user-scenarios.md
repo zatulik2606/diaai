@@ -10,7 +10,7 @@
 
 ## Роль: пациент с диабетом
 
-Пользователь ведёт дневник, общается с ассистентом, смотрит динамику и при необходимости записывается к доктору. Каналы: Telegram-бот (сейчас), web (план iter 5).
+Пользователь ведёт дневник, общается с ассистентом, смотрит динамику и при необходимости записывается к доктору. Каналы: Telegram-бот ✅, web ✅ ([frontend iter 0–9](../tasks/tasklist-frontend.md)).
 
 ### D1 — Дневник питания и инсулина
 
@@ -52,7 +52,7 @@
 
 **Web-экран (черновик):** Dashboard с переключателем периода.
 
-*Зависимость:* [plan.md iter 4](../plan.md#итерация-4--аналитика-и-динамика-состояния) — backend analytics.
+*Зависимость:* dashboard KPI через `/api/v1/web/patient/dashboard/*` ✅; полный analytics REST (`/api/v1/analytics/*`, сигналы) — [plan iter 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) 📋.
 
 ---
 
@@ -68,7 +68,7 @@
 
 **Web-экран (черновик):** Блок «Рекомендации» на dashboard или отдельная вкладка.
 
----
+*Зависимость:* [plan iter 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) — таблица `recommendations` в PG ✅, API и UI 📋.
 
 ### D5 — Запись к доктору
 
@@ -82,7 +82,7 @@
 
 **Web-экран (черновик):** Форма записи + статус заявки.
 
-*Зависимость:* [plan.md iter 5](../plan.md#итерация-5--веб-интерфейс-пациент-с-диабетом--доктор).
+*Зависимость:* post-MVP — таблица `consultations` в PG ✅, UI/API 📋 ([plan post-MVP](../plan.md#post-mvp-не-в-таблице-этапов)).
 
 ---
 
@@ -178,12 +178,20 @@
 
 | Сценарий | Telegram (бот) | Web |
 |----------|----------------|-----|
-| D1, D2, D7 | ✅ сейчас | 📋 iter 5 |
-| D3, D4 | 📋 через API iter 4 | 📋 iter 5 |
-| D5, D6 | 📋 post-MVP | 📋 iter 5 |
-| Doc1–Doc4 | — | 📋 iter 5 |
+| D1 — дневник | ✅ events API | ✅ dashboard submissions |
+| D2 — ассистент | ✅ | ✅ `/chat`, FAB |
+| D7 — фото | ✅ | ✅ `/chat` (текст + voice); upload фото — post-MVP |
+| D3 — динамика | 📋 iter 4 REST | ✅ dashboard KPI/matrix *(web API)* |
+| D4 — рекомендации | 📋 iter 4 | 📋 iter 4 *(нет UI)* |
+| D5, D6 — консультации | 📋 post-MVP | 📋 post-MVP |
+| Doc1 — список пациентов | — | ⚠️ частично: `/leaderboard` *(не полный Doc1)* |
+| Doc2 — обзор пациента | — | 📋 post-MVP |
+| Doc3, Doc4 — консультация, заметки | — | 📋 post-MVP |
+
+**Дополнительно (web, doctor):** Text-to-SQL на `/leaderboard` ✅ — ad-hoc запросы к PG, не заменяет Doc2–Doc4.
 
 ## Связанные документы
 
 - [data-requirements.md](data-requirements.md) — read/write и MVP scope
+- [doc-audit.md](../doc-audit.md) — аудит и приоритеты docs
 - [api-contract.md](../api/api-contract.md) — REST v1 (сценарии A/B для D1–D2)

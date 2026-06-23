@@ -8,8 +8,9 @@
 
 - **Версия:** v1 (`/api/v1/…`)
 - **Клиент MVP:** Telegram-бот → backend (service token); Next.js BFF → web routes
-- **Сценарии:** A — вопрос ассистенту; B — фиксация питания и инсулина; Web — dashboard, leaderboard, auth, history
-- **Вне scope v1:** JWT/web-session на backend, CRUD консультаций, `/api/v1/analytics/progress` (backend iter 4)
+- **Сценарии:** A — вопрос ассистенту; B — фиксация питания и инсулина; C — analytics (D3/D4); Web — dashboard, leaderboard, auth, history
+- **Analytics REST:** `/api/v1/analytics/*` — contract ✅ (task 09), impl 📋 (task 10–11). Web dashboard — `/api/v1/web/*` ✅
+- **Вне scope v1:** JWT/web-session на backend, CRUD консультаций
 
 ## Базовый URL и версионирование
 
@@ -32,7 +33,11 @@
 | POST | `/api/v1/events/food` | создать событие питания | 201 | Bearer |
 | GET | `/api/v1/events/food` | список событий питания (optional MVP) | 200 | Bearer |
 | POST | `/api/v1/events/insulin` | создать событие инсулина | 201 | Bearer |
+| GET | `/api/v1/analytics/progress` | D3 — снимок прогресса | 200 | Bearer |
+| GET | `/api/v1/analytics/signals` | D3 — сигналы изменений | 200 | Bearer |
+| GET | `/api/v1/analytics/recommendations` | D4 — рекомендации | 200 | Bearer |
 | POST | `/api/v1/web/auth/resolve` | username → user (web login) | 200 | Bearer |
+| GET | `/api/v1/web/patient/dashboard/*` | KPI, activity, questions, submissions, matrix | 200 | Bearer |
 | GET | `/api/v1/web/doctor/dashboard/*` | KPI, activity, questions, submissions, matrix | 200 | Bearer |
 | GET | `/api/v1/web/leaderboard` | рейтинг + scatter | 200 | Bearer |
 | GET | `/api/v1/web/assistant/history` | история FAB-чата | 200 | Bearer |
@@ -131,7 +136,7 @@ Web DTO: [frontend-contract.md](../api/frontend-contract.md).
 
 ## Contract tests (task-04–08 ✅)
 
-Реализация: `backend/tests/` + `tests/` — **74** теста (`make test`).
+Реализация: `backend/tests/` + `tests/` — **84** теста (`make test`: 67 backend + 17 bot).
 
 | Группа | Файл | Коды |
 |--------|------|------|

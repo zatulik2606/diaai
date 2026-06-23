@@ -2,7 +2,7 @@
 
 Опирается на [user-scenarios.md](user-scenarios.md) · [data-model.md](../data-model.md) · [api-contract.md](../api/api-contract.md)
 
-Матрица read/write по сценариям. **API v1 не меняется** в рамках database iter 1 — новые endpoint'ы для D3–D7 и Doc* — scope [tasklist-backend](../tasks/tasklist-backend.md) 09–12 и [tasklist-web](../tasks/tasklist-web.md).
+Матрица read/write по сценариям. **API v1 bot** — без изменений. Web dashboard и chat — `/api/v1/web/*` ✅. Новые endpoint'ы D3–D4 (analytics REST) — [tasklist-backend](../tasks/tasklist-backend.md) 09–12; consultations UI — post-MVP ([tasklist-frontend](../tasks/tasklist-frontend.md) закрыт, D5/D6 вне scope).
 
 ---
 
@@ -59,15 +59,23 @@
 | FoodEvent | `food_events` | D1 |
 | InsulinEvent | `insulin_events` | D1 |
 
-### Must add — до plan iter 4–5
+### Добавлено в PostgreSQL (`002_full_data_layer` + `003_telegram_username`) ✅
 
-| Сущность | Сценарии | Приоритет | Примечание |
-|----------|----------|-----------|------------|
-| ProgressSnapshot | D3, Doc2 | P1 | backend iter 4 |
-| Recommendation | D4 | P1 | backend iter 4 |
-| PhotoAnalysis | D2, D7 | P1 | open: таблица vs `dialog_requests.media` — iter 2 |
-| Consultation | D5, D6, Doc3, Doc4 | P2 | web iter 5 |
-| User.display_name, doctor users | Doc1, web | P2 | расширение `users` |
+| Сущность | Таблица | Сценарии | REST / UI |
+|----------|---------|----------|-----------|
+| ProgressSnapshot | `progress_snapshots` | D3, Doc2 | web dashboard ✅ · `/api/v1/analytics/*` 📋 |
+| Recommendation | `recommendations` | D4 | iter 4 📋 |
+| PhotoAnalysis | `photo_analyses` | D2, D7 | assistant persist ✅ |
+| Consultation | `consultations` | D5, D6, Doc3, Doc4 | seed ✅ · UI post-MVP 📋 |
+| User.display_name, doctor | `users` | Doc1, web auth | seed + `/web/auth/resolve` ✅ |
+
+### Остаётся (post-MVP / backend iter 4)
+
+| Тема | Сценарии | Статус |
+|------|----------|--------|
+| Analytics REST (signals, recommendations API) | D3, D4 | backend iter 4 📋 |
+| Consultations UI + workflow | D5, D6, Doc2–Doc4 | post-MVP 📋 |
+| Web photo upload в chat | D7 | post-MVP 📋 |
 
 ### Backlog (post-MVP data layer)
 
@@ -88,7 +96,7 @@
 | D2, D7 (бот) | `POST /api/v1/assistant/messages` |
 | D1 (бот) | `POST /api/v1/events/food`, `POST /api/v1/events/insulin`, `GET /api/v1/events/food` |
 
-D3–D6, Doc* — **только требования к данным**; REST — [tasklist-backend](../tasks/tasklist-backend.md) 09–12.
+D3 dashboard — `/api/v1/web/patient|doctor/dashboard/*` ✅. D4, signals — **только требования к данным**; REST — [tasklist-backend](../tasks/tasklist-backend.md) 09–12. D5–D6, Doc* — post-MVP.
 
 ---
 

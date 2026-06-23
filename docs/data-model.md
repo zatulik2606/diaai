@@ -194,6 +194,8 @@
 | тип | nutrition / insulin / … | enum | `type TEXT CHECK (...)` |
 | время | когда сформирована | datetime | `created_at TIMESTAMPTZ NOT NULL` |
 
+REST: `GET /api/v1/analytics/recommendations` — [analytics-signals-recommendations.md](../api/scenarios/analytics-signals-recommendations.md) *(contract ✅, impl task 11)*.
+
 ---
 
 ### Снимок прогресса → `progress_snapshots`
@@ -210,6 +212,8 @@
 | тренд | improving / stable / … | enum | `trend TEXT CHECK (...)` |
 | комментарий | вывод системы | текст | `comment TEXT` |
 | время создания | persist | datetime | `created_at TIMESTAMPTZ NOT NULL` |
+
+REST (bot/clients): `GET /api/v1/analytics/progress` — [analytics-progress.md](../api/scenarios/analytics-progress.md) *(contract ✅, impl task 10)*.
 
 ---
 

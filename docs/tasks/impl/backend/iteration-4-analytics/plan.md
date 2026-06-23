@@ -1,158 +1,84 @@
 # Итерация backend 4: Аналитика и динамика состояния
 
-Опирается на [tasklist-backend.md](../../../tasklist-backend.md) · [iteration-3-delivery](../iteration-3-delivery/plan.md) · [plan.md](../../../../plan.md#итерация-4--аналитика-и-динамика-состояния) · [data-model.md](../../../../data-model.md) · [vision.md](../../../../vision.md)
+Опирается на [tasklist-backend.md](../../../tasklist-backend.md) · [iteration-3-delivery](../iteration-3-delivery/plan.md) · [plan.md](../../../../plan.md#итерация-4--аналитика-и-динамика-backend-rest) · [data-model.md](../../../../data-model.md)
 
 Skills: [api-design-principles](.agents/skills/api-design-principles/SKILL.md) · [python-testing-patterns](.agents/skills/python-testing-patterns/SKILL.md)
 
 ## Цель
 
-Добавить в backend аналитику по истории питания и инсулина: снимки прогресса за период, сигналы изменений и справочные рекомендации — без назначения доз.
+REST API `/api/v1/analytics/*`: снимки прогресса, сигналы, справочные рекомендации — для бота и клиентов вне web-dashboard.
 
 ## Статус
 
-📋 Planned — задачи 09–12 (после закрытия delivery 01–08 ✅).
+🚧 **In Progress** — task 09 ✅ · tasks 10–12 📋
 
 ## Ценность
 
-- Пользователь видит **динамику**, а не только текущий момент (день / неделя / месяц)
-- Единый API для будущего web и расширений бота
-- Основа для итерации 5 (веб-дашборд)
+- Бот и клиенты получают **единый** analytics API (D3, D4)
+- Не дублирует web dashboard (`/api/v1/web/*` уже ✅)
+- Rule-based v1; LLM для рекомендаций — post-MVP
 
 ## Предусловия
 
-- ✅ [Итерация backend 3](../iteration-3-delivery/summary.md) — bot → API, PostgreSQL, quality gate (task-08)
-- ✅ События `food_events` / `insulin_events` и assistant v1 в production-ready состоянии
-- 📋 Сущности `ProgressSnapshot`, `Recommendation` — описаны в [data-model.md](../../../../data-model.md), таблиц ещё нет
+- ✅ Backend delivery 01–08, database 5/5 (9 таблиц, `progress_snapshots`, `recommendations`)
+- ✅ Web dashboard + Text-to-SQL — frontend iter 0–9 (не блокирует iter 4)
+- ✅ Task 09 — контракты OpenAPI + scenarios
 
-## Связь с plan.md (продукт)
+## Связь с plan.md
 
-| plan.md | Backend tasklist |
-|---------|------------------|
-| [Итерация 4 — Аналитика](../../../../plan.md#итерация-4--аналитика-и-динамика-состояния) | iteration-4, задачи 09–12 |
-| [Итерация 5 — Веб](../../../../plan.md#итерация-5--веб-интерфейс-пациент-с-диабетом--доктор) | потребитель API аналитики |
+| plan.md | Backend |
+|---------|---------|
+| [Итерация 4 — analytics REST](../../../../plan.md#итерация-4--аналитика-и-динамика-backend-rest) | tasks 09–12 |
+| [Итерация 5 — web ✅](../../../../plan.md#итерация-5--веб-интерфейс) | потребляет `/web/*`, не `/analytics/*` |
 
 ## Scope / out of scope
 
-| В scope | Вне scope (post-MVP) |
-|---------|----------------------|
-| Агрегация ХЕ / БЖЕ / БЖУ / инсулина за период | ML-прогнозы глюкозы |
-| REST API снимков и сигналов | Web UI |
-| Справочные реcommendations (без доз) | Роль доктора, консультации |
-| Contract-first: OpenAPI + pytest | Read-replica / TimescaleDB |
-| Миграция Alembic для новых таблиц | PhotoAnalysis как отдельная сущность |
+| В scope | Вне scope |
+|---------|-----------|
+| `GET /api/v1/analytics/progress\|signals\|recommendations` | Web UI |
+| On-the-fly агрегация + read `recommendations` | ML-прогнозы глюкозы |
+| Rule-based signals/recs, guard без доз | CRUD consultations |
+| pytest + OpenAPI | Новые Alembic migrations *(002 уже есть)* |
 
 ## Архитектура
 
 ```mermaid
 flowchart TB
-    subgraph clients [clients]
-        Bot["bot / будущий web"]
-    end
-    subgraph api [api/v1]
-        analytics["analytics.py"]
-        events["events.py existing"]
-    end
-    subgraph services [services]
-        snap_svc["snapshot_service"]
-        signal_svc["signal_service"]
-        rec_svc["recommendation_service"]
-    end
-    subgraph data [persistence]
-        repos["repositories/"]
-        pg["PostgreSQL"]
-    end
-    Bot -->|Bearer REST| analytics
-    analytics --> snap_svc
-    analytics --> signal_svc
-    analytics --> rec_svc
-    snap_svc --> repos
-    signal_svc --> repos
-    rec_svc --> repos
-    repos --> pg
-    events --> pg
+    Bot["bot / clients"]
+    analytics["api/v1/analytics.py"]
+    svc["analytics_service"]
+    repos["food / insulin / recommendation repos"]
+    pg["PostgreSQL"]
+    Bot -->|Bearer| analytics --> svc --> repos --> pg
 ```
 
-**Поток:** `telegram_id` + период (`day` / `week` / `month`) → агрегация `food_events` / `insulin_events` → `ProgressSnapshot` (расчёт или материализация) → JSON-ответ; опционально — список сигналов и рекомендаций за тот же период.
+**Переиспользование:** `web_utils.period_window_days`, `FoodEventRepository`, `InsulinEventRepository` (как `WebPatientService`).
 
-**Принципы:** KISS — SQL-агрегации в repository; без отдельного analytics-сервиса; LLM для рекомендаций только если rule-based недостаточно (решение в task-03).
-
-## Задачи итерации
+## Задачи
 
 | # | Задача | Статус | Документы |
 |---|--------|--------|-----------|
-| 09 | Контракты аналитики (OpenAPI, scenarios) | 📋 Planned | [plan](tasks/task-09-analytics-contracts/plan.md) |
-| 10 | Снимки прогресса (ORM, migration, GET) | 📋 Planned | [plan](tasks/task-10-progress-snapshots/plan.md) |
-| 11 | Сигналы и рекомендации | 📋 Planned | [plan](tasks/task-11-recommendations-signals/plan.md) |
-| 12 | Тесты, документация, закрытие итерации | 📋 Planned | [plan](tasks/task-12-docs-and-quality/plan.md) |
-
-### Task-09 — контракты (кратко)
-
-| Артефакт | Содержание |
-|----------|------------|
-| `docs/api/api-contract.md` | новые endpoint'ы analytics v1 |
-| `docs/api/scenarios/` | сценарий progress / signals |
-| `docs/api/openapi.yaml` | `GET /api/v1/analytics/progress`, signals, recommendations |
-| `docs/data-model.md` | поля `ProgressSnapshot`, `Recommendation` |
-| `docs/tech/api-contracts.md` | tech debt / scope v2 |
-
-### Task-10 — снимки (кратко)
-
-| Слой | Артефакты |
-|------|-----------|
-| DB | Alembic `002_*`, модели `ProgressSnapshot` (или view-only MVP без persist — решение в task plan) |
-| Repo | агрегация по `user_id`, период, timezone UTC |
-| API | `GET ...?telegram_id=&period=day\|week\|month` |
-| Tests | contract + impl, 403 по ownership |
-
-### Task-11 — сигналы и рекомендации (кратко)
-
-| Тема | Содержание |
-|------|------------|
-| Signals | эвристики: рост/падение средних ХЕ, частота инсулина, отклонение от baseline периода |
-| Recommendations | справочный текст; **не** дозы инсулина; опционально LLM с system prompt |
-| API | `GET /api/v1/analytics/signals`, `GET /api/v1/analytics/recommendations` |
-
-### Task-12 — закрытие (кратко)
-
-| Тема | Содержание |
-|------|------------|
-| Tests | расширить `make test`; coverage ключевых сценариев |
-| Docs | `backend/README.md`, `tasklist-backend.md`, iteration-4 `summary.md` |
-| Quality | `make lint`; логи без PII (как task-08) |
+| 09 | Контракты analytics | ✅ Done | [plan](tasks/task-09-analytics-contracts/plan.md) · [summary](tasks/task-09-analytics-contracts/summary.md) |
+| 10 | Impl progress | 📋 Next | [plan](tasks/task-10-progress-snapshots/plan.md) |
+| 11 | Signals + recommendations | 📋 Planned | [plan](tasks/task-11-recommendations-signals/plan.md) |
+| 12 | Docs + quality gate | 📋 Planned | [plan](tasks/task-12-docs-and-quality/plan.md) |
 
 ## Критерии завершения итерации
 
-- [ ] OpenAPI и scenarios для analytics согласованы с [conventions.md](../../../../api/conventions.md)
-- [ ] Backend отдаёт снимок прогресса за day/week/month по `telegram_id`
-- [ ] Сигналы изменений доступны через API
-- [ ] Рекомendations справочные, без назначения доз (guard в prompt / коде)
-- [ ] Alembic migration применяется на dev PG (`make backend-migrate`)
-- [ ] `make lint && make test` — green; счёт тестов зафиксирован в README
-- [ ] [summary.md](summary.md) итерации 4 ✅
+- [x] OpenAPI + scenarios analytics (task 09)
+- [ ] `GET /analytics/progress` — impl + tests
+- [ ] `GET /analytics/signals`, `/analytics/recommendations` — impl + tests
+- [ ] Guard: рекомендации без назначения доз
+- [ ] `make lint && make test` green; [summary.md](summary.md) ✅
 
-## Dev quick start (после task-10+)
+## Dev quick start (после task 10)
 
 ```bash
-docker compose up -d
-make backend-migrate
-make backend-run
-
-# пример (контракт TBD в task-09)
+make db-reset && make backend-run
 curl -s -H "Authorization: Bearer $BACKEND_SERVICE_TOKEN" \
-  "http://127.0.0.1:8000/api/v1/analytics/progress?telegram_id=404674868&period=week"
+  "http://127.0.0.1:8000/api/v1/analytics/progress?telegram_id=900000001&period=week"
 ```
-
-## Definition of Done
-
-**Агент:** задачи 09–12 с `plan.md` / `summary.md`; итерация закрыта в tasklist.
-
-**Пользователь:** по Swagger понятно, как получить прогресс и сигналы; ответы не содержат назначений доз.
 
 ## Следующий этап
 
-[Итерация 5 — Веб](../../../../plan.md#итерация-5--веб-интерфейс-пациент-с-диабетом--доктор) · [tasklist-web.md](../../../tasklist-web.md).
-
-## Документы
-
-- 📋 [План области](../plan.md)
-- 📝 [Summary](summary.md) — 📋 Planned
+Task 10 → [task-10-progress-snapshots/plan.md](tasks/task-10-progress-snapshots/plan.md)

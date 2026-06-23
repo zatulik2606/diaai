@@ -46,7 +46,12 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `LLM_MAX_HISTORY` | нет | сообщений в контексте диалога, default `10` |
 | `LLM_TIMEOUT_SECONDS` | нет | таймаут LLM, default `30` |
 | `BACKEND_HOST` / `BACKEND_PORT` | нет | bind uvicorn, default `127.0.0.1:8000` |
-| `LOG_LEVEL` | нет | default `INFO` |
+| `STT_MODEL` | нет | модель STT через OpenRouter, default `openai/whisper-large-v3` |
+| `STT_TIMEOUT_SECONDS` | нет | таймаут транскрипции, default `60` |
+| `ANALYTICS_QUERY_MODEL` | нет | LLM для Text-to-SQL, default `openrouter/auto` |
+| `ANALYTICS_QUERY_TIMEOUT_SECONDS` | нет | таймаут SQL-запроса, default `5` |
+| `ANALYTICS_QUERY_ROW_LIMIT` | нет | max строк результата, default `100` |
+| `ANALYTICS_QUERY_LLM_TIMEOUT_SECONDS` | нет | таймаут генерации SQL, default `30` |
 
 События питания/инсулина (`/api/v1/events/*`) работают без OpenRouter.
 
@@ -57,7 +62,7 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `make backend-install` | `uv sync` — зависимости |
 | `make backend-run` | uvicorn с reload |
 | `make backend-migrate` | `alembic upgrade head` |
-| `make backend-test` | pytest (45 тестов) |
+| `make backend-test` | pytest (**67** backend tests; full suite: `make test` → 84) |
 | `make backend-lint` | ruff check |
 | `make backend-format` | ruff format |
 | `make backend-openapi-export` | dump `/openapi.json` для diff (не коммитить) |
@@ -134,6 +139,22 @@ curl -s "$BASE/api/v1/web/leaderboard?doctor_telegram_id=162684825" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+**Patient dashboard (demo `@ivan_p`, telegram_id `900000001`):**
+
+```bash
+curl -s "$BASE/api/v1/web/patient/dashboard/summary?patient_telegram_id=900000001" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+**Analytics NL query (doctor):**
+
+```bash
+curl -s -X POST "$BASE/api/v1/web/analytics/query" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"doctor_telegram_id": 162684825, "question": "Сколько событий питания за неделю?"}'
+```
+
 ## Docker Compose
 
 В репозитории только **PostgreSQL** (backend запускается локально через `make backend-run`):
@@ -172,13 +193,14 @@ Smoke: `backend/tests/test_health.py`, `backend/tests/test_auth.py`.
 - [OpenAPI yaml](../docs/api/openapi.yaml) — machine-readable контракт
 - [Сценарии](../docs/api/scenarios/)
 - [Design review](../docs/tech/api-contracts.md)
+- [Architecture](../docs/architecture.md)
 - [Tasklist backend](../docs/tasks/tasklist-backend.md)
 
 ## Миграции и БД
 
 PostgreSQL через SQLAlchemy 2 async + Alembic. Миграции: `001_initial_schema` → `002_full_data_layer` → `003_telegram_username` (9 таблиц + `users.telegram_username`). Архитектура — [ADR-003](../docs/adr/adr-003-data-access-layer.md). Guide — [database-access.md](../docs/tech/database-access.md).
 
-Web routes: `backend/api/v1/web/` — auth, doctor dashboard, leaderboard, assistant history. Контракт — [frontend-contract.md](../docs/api/frontend-contract.md).
+Web routes: `backend/api/v1/web/` — auth, patient/doctor dashboard, leaderboard, assistant history, analytics query. STT: `backend/api/v1/media.py` → `POST /api/v1/media/transcribe`. Контракт — [frontend-contract.md](../docs/api/frontend-contract.md).
 
 ```bash
 make db-reset              # 001 + 002 + seed

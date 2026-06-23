@@ -1,6 +1,6 @@
 # Database: сводка области
 
-> **Статус:** ✅ Done (**5 / 5** итераций)
+> **Статус:** ✅ Done (**5 / 5** итераций) · **актуально:** `make test` — **84**, миграции `001`–`003`
 
 Сводный план: [plan.md](plan.md)
 
@@ -19,13 +19,13 @@
 | Критерий | Результат |
 |----------|-----------|
 | `002_full_data_layer` | 9 таблиц |
-| `make db-reset && make test` | 52 passed |
-| photo → `photo_analyses` | ✅ (unit/integration tests) |
+| `make db-reset && make test` | 52 passed *(на момент закрытия iter 5; сейчас 84)* |
+| photo → `photo_analyses` | ✅ |
 | Persistence PG | ✅ после restart backend |
 | Область database | **5/5** ✅ |
 
 ## Область завершена
 
-Data layer готов для [backend analytics 09–12](../tasklist-backend.md) и web.
+Data layer готов для [backend analytics 09–12](../tasklist-backend.md) и [frontend](../tasklist-frontend.md).
 
-**Ключевые артефакты:** `001` + `002` migrations, 10 ORM models, 10 repos, `make db-*`, seed v2, `docs/spec/schema-er.md`, ADR-003.
+**Ключевые артефакты:** миграции `001`–`003`, ORM/repos, `make db-*`, seed, [schema-er.md](../../spec/schema-er.md), ADR-003.
