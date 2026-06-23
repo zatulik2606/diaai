@@ -157,14 +157,24 @@ curl -s -X POST "$BASE/api/v1/web/analytics/query" \
 
 ## Docker Compose
 
-В репозитории только **PostgreSQL** (backend запускается локально через `make backend-run`):
+Корневой [`docker-compose.yml`](../docker-compose.yml) — **полный stack**: postgres, backend, web; bot — profile `bot`.
 
-- Host port **5433** → container 5432 (если локальный 5432 занят другим PG).
-- Volume `diaai_pg_data` для персистентности данных.
+| Режим | Команда |
+|-------|---------|
+| Полный stack | `make stack-up` |
+| Только PostgreSQL | `make db-up` |
+| Bot + stack | `make stack-up-bot` |
+
+- Host port **5433** → container 5432.
+- Volume `diaai_pg_data`.
+- Backend в контейнере: migrate on start, `DATABASE_URL=@postgres:5432`.
+
+Guide: [docs/devops/docker-compose-local.md](../docs/devops/docker-compose-local.md).
 
 ```bash
-docker compose up -d
+make db-up           # только postgres
 docker compose ps    # healthcheck: healthy
+make stack-up        # postgres + backend + web
 ```
 
 ## Тесты
@@ -180,7 +190,7 @@ Smoke: `backend/tests/test_health.py`, `backend/tests/test_auth.py`.
 
 | Симптом | Причина | Решение |
 |---------|---------|---------|
-| Connection refused :5433 | PG не запущен | `docker compose up -d` |
+| Connection refused :5433 | PG не запущен | `make db-up` |
 | 401 `UNAUTHORIZED` | неверный/отсутствует Bearer | проверить `BACKEND_SERVICE_TOKEN` в `.env` и заголовок |
 | 502 `LLM_UNAVAILABLE` | OpenRouter | задать `OPENROUTER_API_KEY` |
 | 503 на API | нет БД | `make backend-migrate`, проверить `DATABASE_URL` |

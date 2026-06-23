@@ -54,13 +54,28 @@ flowchart LR
 
 ## Быстрый старт
 
+### Docker stack (demo / onboarding)
+
+```bash
+git clone <repo-url> diaai && cd diaai
+cp .env.example .env
+# BACKEND_SERVICE_TOKEN, OPENROUTER_API_KEY — docs/how-to-get-tokens.md
+
+make stack-init        # db-reset + postgres + backend + web
+make stack-health
+# http://localhost:3000/login → ivan_p
+```
+
+Подробнее: **[docs/devops/docker-compose-local.md](docs/devops/docker-compose-local.md)**.
+
+### Host dev (hot reload, pytest)
+
 ```bash
 git clone <repo-url> diaai && cd diaai
 
 cp .env.example .env
 cp web/.env.example web/.env.local
 # Заполнить BACKEND_SERVICE_TOKEN (не change-me), OPENROUTER_API_KEY
-# Токены: docs/how-to-get-tokens.md
 
 make install && make web-install
 make db-reset              # PostgreSQL :5433 + migrate + seed
@@ -103,6 +118,8 @@ Web: `web/.env.local` — `BACKEND_URL`, `BACKEND_SERVICE_TOKEN` (server-only). 
 | `make install` | uv sync (bot + backend deps) |
 | `make run` | Telegram bot |
 | `make db-reset` | чистая PG + migrate + seed |
+| `make stack-up` / `stack-down` / `stack-health` | полный Docker stack |
+| `make stack-init` | db-reset + stack-up |
 | `make db-inspect` | counts без ПДн |
 | `make backend-run` | FastAPI :8000 + reload |
 | `make backend-migrate` | Alembic upgrade head |

@@ -1,0 +1,15 @@
+# Reference ignore list for bot build (context: repo root).
+# Applied via root .dockerignore when building from repository root.
+
+.git
+web/
+node_modules
+.venv
+docs/
+backend/
+alembic/
+prompts/
+tests/
+backend/tests/
+.env
+.env.*

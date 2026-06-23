@@ -1,0 +1,5 @@
+# Applied via web/.dockerignore when context is web/
+
+node_modules
+.next
+.env*

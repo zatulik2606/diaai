@@ -1,0 +1,45 @@
+# Python image builds (backend, bot) — context: repo root
+
+.git
+.github
+.cursor
+.agents
+.venv
+venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+.mypy_cache
+htmlcov
+.coverage
+
+# Other services (not needed in Python images)
+web/
+node_modules
+
+# Docs and dev artifacts
+docs/
+*.md
+!README.md
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.DS_Store
+.idea
+.vscode
+
+# Docker devops (Dockerfiles copied explicitly)
+devops/ci
+
+# Tests (optional trim — keep for smaller context)
+tests/
+backend/tests/
+
+# Data / scripts not needed at runtime
+scripts/
+data/

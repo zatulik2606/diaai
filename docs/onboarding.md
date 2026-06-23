@@ -50,6 +50,21 @@ make install        # uv sync — bot + backend
 make web-install    # pnpm в web/
 ```
 
+### Docker stack (рекомендуется для demo)
+
+Один сценарий вместо нескольких терминалов — см. **[docker-compose-local.md](devops/docker-compose-local.md)**:
+
+```bash
+cp .env.example .env   # BACKEND_SERVICE_TOKEN, OPENROUTER_API_KEY
+make stack-init        # db-reset + stack-up
+make stack-health
+# http://localhost:3000/login → ivan_p
+
+# Registry (GHCR, без build): make stack-up-registry
+```
+
+Host dev (hot reload, pytest): §2 ниже · `make db-up` поднимает **только** postgres.
+
 ---
 
 ## 2. Настройка каждого компонента

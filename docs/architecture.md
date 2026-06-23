@@ -46,6 +46,32 @@ flowchart TB
 | **Web** | `web/` | Next.js App Router, shadcn, BFF routes | 3000 |
 | **Промпты** | `prompts/` | `system.txt`, `analytics_sql.txt` | — |
 | **Документация** | `docs/` | spec, API, tasklists, ADR | — |
+| **DevOps** | `devops/` | Dockerfile'ы; orchestration — корневой compose | — |
+
+### Docker Compose (полный stack)
+
+**Один файл:** [`docker-compose.yml`](../docker-compose.yml) — `postgres` · `backend` · `web` · `bot` (profile).
+
+```mermaid
+flowchart TB
+  subgraph compose [docker-compose.yml]
+    PG[postgres :5433]
+    BE[backend :8000]
+    WEB[web :3000]
+    BOT[bot profile]
+  end
+  PG --> BE --> WEB
+  BE --> BOT
+```
+
+| Режим | Команда |
+|-------|---------|
+| Полный stack (build) | `make stack-up` |
+| Registry (GHCR) | `make stack-up-registry` |
+| Только PG | `make db-up` |
+| Bot optional | `make stack-up-bot` / `make stack-up-registry-bot` |
+
+Guide: [devops/docker-compose-local.md](devops/docker-compose-local.md) · артефакты: [devops/README.md](../devops/README.md).
 
 ### Backend (слои)
 
@@ -176,6 +202,7 @@ ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md
 | frontend | [tasklist-frontend.md](tasks/tasklist-frontend.md) | 10/10 ✅ |
 | database | [tasklist-database.md](tasks/tasklist-database.md) | 5/5 ✅ |
 | bot | [tasklist-bot.md](tasks/tasklist-bot.md) | MVP + backend + voice ✅ |
+| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | iter 0 ✅ local stack · iter 1 ✅ GHCR |
 
 Workflow: [templates/workflow.md](templates/workflow.md).
 

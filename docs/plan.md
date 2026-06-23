@@ -14,6 +14,7 @@
 | backend | [tasklist-backend.md](tasks/tasklist-backend.md) | этапы 2, 4 |
 | database | [tasklist-database.md](tasks/tasklist-database.md) | параллельно этапу 2 ✅ (5/5) |
 | frontend (web) | [tasklist-frontend.md](tasks/tasklist-frontend.md) | этап 5 ✅ (iter 0–9) |
+| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | Post-MVP: local stack ✅ (iter 0) · GHCR 📋 (iter 1) |
 
 Один продуктовый этап может затрагивать несколько областей; database и frontend ведут **свои** итерации внутри tasklist'ов.
 
@@ -184,7 +185,7 @@ flowchart LR
 |------|--------|-------------------|
 | Backend analytics REST (этап 4) | 📋 Planned | [tasklist-backend.md](tasks/tasklist-backend.md) 09–12 |
 | Консультации D5/D6, Doc2–Doc4 | 📋 Planned | [user-scenarios.md](spec/user-scenarios.md) |
-| Production deploy (bot + backend + web) | 📋 Planned | [vision.md](vision.md) |
+| Production deploy (bot + backend + web) | 🚧 iter 0 ✅ stack · iter 1 📋 GHCR | [tasklist-devops.md](tasks/tasklist-devops.md) |
 | Structured photo fields в assistant | 📋 Planned | backend README → iter 11 |
 
 ---
@@ -206,6 +207,7 @@ flowchart LR
 | [tasks/tasklist-bot.md](tasks/tasklist-bot.md) | MVP бота, миграция на backend, voice |
 | [tasks/tasklist-frontend.md](tasks/tasklist-frontend.md) | web iter 0–9 ✅ |
 | [tasks/tasklist-database.md](tasks/tasklist-database.md) | полноценный слой данных PostgreSQL ✅ |
+| [tasks/tasklist-devops.md](tasks/tasklist-devops.md) | Docker stack, GHCR (iter 0–1) |
 | [onboarding.md](onboarding.md) · [smoke-test.md](smoke-test.md) | вход разработчика · one-session проверка |
 | [spec/](spec/) | продуктовые сценарии и требования к данным |
 | [api/api-contract.md](api/api-contract.md) | REST API v1 — контракт, endpoint'ы, примеры |

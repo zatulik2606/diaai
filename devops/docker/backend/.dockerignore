@@ -1,0 +1,12 @@
+# Reference ignore list for backend build (context: repo root).
+# Applied via root .dockerignore when building from repository root.
+
+.git
+web/
+node_modules
+.venv
+docs/
+tests/
+backend/tests/
+.env
+.env.*
