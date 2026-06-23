@@ -37,6 +37,16 @@ Repo → Settings → Actions → General → **Read and write permissions** д�
 
 Первый push: package visibility **public** или `docker login ghcr.io` для private pull.
 
+Образы: **linux/amd64** + **linux/arm64** (Apple Silicon).
+
+## Login
+
+```bash
+# GitHub → Settings → Developer settings → PAT (classic)
+# Scopes: read:packages (pull), write:packages (push с машины)
+echo YOUR_GITHUB_PAT | docker login ghcr.io -u zatulik2606 --password-stdin
+```
+
 ## Локальный pull + stack (registry mode)
 
 ```bash
