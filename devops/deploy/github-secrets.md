@@ -54,6 +54,38 @@ docker login ghcr.io -u GITHUB_USERNAME -p GITHUB_PAT
 
 ---
 
+## GlitchTip EU — DSN (observability)
+
+Public ingest keys org **diaai** на [eu.glitchtip.com](https://eu.glitchtip.com). Копия значений: [devops/glitchtip/dsn.env.example](../glitchtip/dsn.env.example).
+
+| Secret | Проект | Значение |
+|--------|--------|----------|
+| `GLITCHTIP_DSN` | diaai-backend (240) | `https://0751c4291bce484985dbdeb657c1272d@eu.glitchtip.com/240` |
+| `GLITCHTIP_WEB_DSN` | diaai-web server (241) | `https://6b6da490a88a431cb2265981efdb5a97@eu.glitchtip.com/241` |
+| `NEXT_PUBLIC_GLITCHTIP_DSN` | diaai-web browser (241) | `https://6b6da490a88a431cb2265981efdb5a97@eu.glitchtip.com/241` |
+
+**Где используются**
+
+| Место | Переменные |
+|-------|------------|
+| VPS runtime | `/opt/diaai/.env` — `GLITCHTIP_DSN`, `GLITCHTIP_WEB_DSN`, `NEXT_PUBLIC_GLITCHTIP_DSN`, `GLITCHTIP_URL`, `GLITCHTIP_ENVIRONMENT` |
+| GitHub Actions | secrets для CI build web (`NEXT_PUBLIC_*` в Docker) и документации команды |
+
+**Не класть в GitHub Secrets** (только VPS `.env`): `GLITCHTIP_DEBUG_TOKEN`, `TELEGRAM_ALARM_*`, `GLITCHTIP_WEBHOOK_SECRET`.
+
+### CLI
+
+```bash
+gh secret set GLITCHTIP_DSN --body "https://0751c4291bce484985dbdeb657c1272d@eu.glitchtip.com/240"
+gh secret set GLITCHTIP_WEB_DSN --body "https://6b6da490a88a431cb2265981efdb5a97@eu.glitchtip.com/241"
+gh secret set NEXT_PUBLIC_GLITCHTIP_DSN --body "https://6b6da490a88a431cb2265981efdb5a97@eu.glitchtip.com/241"
+gh secret list | grep GLITCHTIP
+```
+
+На VPS после добавления secrets в GitHub — всё равно пропишите те же строки в `/opt/diaai/.env` (deploy не синхронизирует secrets автоматически).
+
+---
+
 ## Проверка SSH (локально)
 
 ```bash

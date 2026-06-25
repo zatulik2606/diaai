@@ -222,7 +222,7 @@ flowchart LR
 |------|------------|
 | `.github/workflows/docker-publish.yml` | build → GHCR |
 | `.github/workflows/deploy.yml` | SSH → `/opt/diaai` |
-| [github-secrets.md](github-secrets.md) | `DEPLOY_*` secrets (manual) |
+| [github-secrets.md](github-secrets.md) | `DEPLOY_*`, `GLITCHTIP_*` DSN (manual) |
 
 Trigger: **Deploy** после успешного **Docker Publish** на `main`, или `workflow_dispatch`.
 
