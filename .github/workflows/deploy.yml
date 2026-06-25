@@ -39,7 +39,7 @@ jobs:
             make stack-up-registry
             echo "Waiting for web (Next.js start)..."
             for i in $(seq 1 45); do
-              curl -sf -o /dev/null http://127.0.0.1:3000/ && break
+              if curl -sf -o /dev/null http://127.0.0.1:3000/; then break; fi
               sleep 2
             done
             make stack-health
