@@ -1,0 +1,11 @@
+# Server compose override — bind postgres to localhost only.
+# Copy on VPS:
+#   cp devops/deploy/compose.server.override.yml compose.override.yml
+#
+# docker compose auto-merges compose.override.yml
+
+services:
+  postgres:
+    # Replace base "5433:5432" — avoid double bind (compose merges arrays by default)
+    ports: !override
+      - "127.0.0.1:5433:5432"

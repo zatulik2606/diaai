@@ -6,6 +6,8 @@
 
 > **Альтернатива — Docker stack:** `make stack-init` (build) или `make stack-pull-registry && make stack-up-registry` ([ghcr-stack.md](devops/ghcr-stack.md)); далее §4 Web smoke на :3000 без `make backend-run` / `make web-dev`.
 
+> **Production VPS:** см. [§ Production VPS](#production-vps-timeweb-cloud) ниже.
+
 ---
 
 ## 0. Системные зависимости
@@ -133,3 +135,18 @@ make web-lint && make web-build
 | Web «Сервис недоступен» | backend :8000; token в `web/.env.local` |
 | Analytics «Не удалось выполнить запрос» | `prompts/analytics_sql.txt` существует; backend reload |
 | Seed пустой | `make db-reset` |
+
+---
+
+## Production VPS (Timeweb Cloud)
+
+Stack на VPS: [devops/deploy/README.md](devops/deploy/README.md). После `make stack-up-registry` и `make db-seed` (нужен `uv` на сервере):
+
+| Проверка | Команда / URL |
+|----------|----------------|
+| Backend health | `curl -sf http://201.51.4.34:8000/health` |
+| Web | http://201.51.4.34:3000/login → `ivan_p` → `/dashboard` |
+| Login API | `curl -sf -X POST http://201.51.4.34:3000/api/auth/login -H 'Content-Type: application/json' -d '{"username":"ivan_p"}'` → `{"ok":true,"role":"diabetic"}` |
+| Postgres снаружи | порт 5433 **не** в ufw; bind `127.0.0.1` only |
+
+На сервере: `cd /opt/diaai && make stack-health`.

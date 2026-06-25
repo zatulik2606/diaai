@@ -194,3 +194,23 @@ make stack-up-registry   # postgres + migrate (entrypoint backend)
 ```
 
 Для полноценного demo один раз установите `uv` и выполните `make db-reset`.
+
+---
+
+## 11. Production VPS (Timeweb Cloud)
+
+Полная инструкция layout, `.env`, GHCR login (ручной шаг): **[devops/deploy/README.md](../../devops/deploy/README.md)**.
+
+Кратко:
+
+| | |
+|--|--|
+| Path | `/opt/diaai` (user `deploy`) |
+| Override | `compose.override.yml` — postgres на `127.0.0.1:5433` |
+| Pull | `make stack-pull-registry` (packages public — login часто не нужен) |
+| Up | `make stack-up-registry` |
+| URLs | `http://SERVER_IP:3000`, `http://SERVER_IP:8000/health` |
+
+**`docker login ghcr.io`** — только если `denied` при pull; выполняет **пользователь** (PAT `read:packages`). См. deploy README §5.
+
+Bootstrap VPS: [devops/server/README.md](../../devops/server/README.md).

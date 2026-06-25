@@ -68,6 +68,8 @@ make stack-health
 
 Host dev (hot reload, pytest): §2 ниже · `make db-up` поднимает **только** postgres.
 
+**Production VPS** (Timeweb Cloud, registry stack): [devops/deploy/README.md](devops/deploy/README.md) · smoke: [smoke-test.md § Production VPS](smoke-test.md#production-vps-timeweb-cloud).
+
 ---
 
 ## 2. Настройка каждого компонента

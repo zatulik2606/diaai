@@ -68,10 +68,11 @@ flowchart TB
 |-------|---------|
 | Полный stack (build) | `make stack-up` |
 | Registry (GHCR) | `make stack-up-registry` |
+| Production VPS (iter 2–4) | registry profile на сервере | `http://201.51.4.34:3000` · `:8000/health` |
 | Только PG | `make db-up` |
 | Bot optional | `make stack-up-bot` / `make stack-up-registry-bot` |
 
-Guide: [devops/docker-compose-local.md](devops/docker-compose-local.md) (build) · [devops/ghcr-stack.md](devops/ghcr-stack.md) (GHCR) · артефакты: [devops/README.md](../devops/README.md) · CI: [devops/ci/README.md](../devops/ci/README.md).
+Guide: [devops/docker-compose-local.md](devops/docker-compose-local.md) (build) · [devops/ghcr-stack.md](devops/ghcr-stack.md) (GHCR) · [devops/twc-cli.md](devops/twc-cli.md) (VPS) · артефакты: [devops/README.md](../devops/README.md) · CI: [devops/ci/README.md](../devops/ci/README.md).
 
 ### Backend (слои)
 
@@ -202,7 +203,7 @@ ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md
 | frontend | [tasklist-frontend.md](tasks/tasklist-frontend.md) | 10/10 ✅ |
 | database | [tasklist-database.md](tasks/tasklist-database.md) | 5/5 ✅ |
 | bot | [tasklist-bot.md](tasks/tasklist-bot.md) | MVP + backend + voice ✅ |
-| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | iter 0 ✅ local stack · iter 1 ✅ GHCR |
+| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | iter 0–3 ✅ · iter 4 📋 CD (15/18) |
 
 Workflow: [templates/workflow.md](templates/workflow.md).
 

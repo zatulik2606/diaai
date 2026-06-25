@@ -1,0 +1,47 @@
+# Deploy to VPS via SSH
+# Pattern: github-actions-templates · workflow_run after Docker Publish
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Docker Publish"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy stack on VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          command_timeout: 15m
+          script: |
+            set -euo pipefail
+            cd /opt/diaai
+            git pull --ff-only origin main
+            cp devops/deploy/compose.server.override.yml compose.override.yml
+            export PATH="$HOME/.local/bin:$PATH"
+            make stack-pull-registry
+            make stack-up-registry
+            make stack-health
+
+      - name: Smoke (public endpoints)
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          curl -sf "http://${DEPLOY_HOST}:8000/health" | grep -q '"status":"ok"'
+          curl -sf -o /dev/null "http://${DEPLOY_HOST}:3000/"

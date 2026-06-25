@@ -15,7 +15,14 @@ devops/
 │   └── .env.compose.example  # stack env overrides (справка)
 ├── ci/
 │   └── README.md             # GHCR / GHA (iter 1)
-└── (docs)                    # docs/devops/twc-cli.md — post-MVP deploy
+├── server/                   # VPS iter 2–3
+│   ├── bootstrap.sh
+│   ├── inventory.example.md
+│   └── README.md
+├── deploy/                   # VPS layout iter 3–4
+│   ├── README.md
+│   └── compose.server.override.yml
+└── (docs)                    # docs/devops/twc-cli.md
 ```
 
 ## Почему не `backend/Dockerfile`?
@@ -56,9 +63,9 @@ CI: [devops/ci/README.md](ci/README.md) · `make stack-up-registry`
 
 Guide GHCR: [docs/devops/ghcr-stack.md](../docs/devops/ghcr-stack.md)
 
-## Post-MVP: Timeweb Cloud
+## Timeweb Cloud (iter 2 ✅)
 
-CLI для будущего deploy: [docs/devops/twc-cli.md](../docs/devops/twc-cli.md) (`twc` — установка, `~/.twcrc`, проверка).
+Production VPS: `201.51.4.34` · [server/README.md](server/README.md) · [deploy/README.md](deploy/README.md).
 
 ## Compose
 
@@ -72,4 +79,5 @@ CLI для будущего deploy: [docs/devops/twc-cli.md](../docs/devops/twc-
 
 - [tasklist-devops.md](../docs/tasks/tasklist-devops.md)
 - [docker-compose-local.md](../docs/devops/docker-compose-local.md)
-- [twc-cli.md](../docs/devops/twc-cli.md) — Timeweb Cloud CLI (post-MVP)
+- [twc-cli.md](../docs/devops/twc-cli.md) — Timeweb Cloud CLI (iter 2)
+- [server/README.md](server/README.md) — VPS bootstrap (iter 2–3)
