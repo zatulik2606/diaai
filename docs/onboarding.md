@@ -38,7 +38,9 @@ cp web/.env.example web/.env.local
 |------------|-----|-------------|
 | `BACKEND_SERVICE_TOKEN` | `.env` + `web/.env.local` | да (одинаковое значение, не `change-me`) |
 | `OPENROUTER_API_KEY` | `.env` | да для assistant, STT, Text-to-SQL |
-| `TELEGRAM_BOT_TOKEN` | `.env` | только для bot |
+| `TELEGRAM_BOT_TOKEN` | `.env` | да для `make run` (основной diaai bot) |
+| `TELEGRAM_ALARM_BOT_TOKEN` | `.env` | `@diaaialarm_bot` — алерты GlitchTip · [alerts-telegram.md](../devops/glitchtip/alerts-telegram.md) |
+| `TELEGRAM_ALARM_CHAT_ID` | `.env` | chat id после `/start` alarm-бота |
 | `DATABASE_URL` | `.env` | default OK для local |
 
 Как получить ключи: [how-to-get-tokens.md](how-to-get-tokens.md).

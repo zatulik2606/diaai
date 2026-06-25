@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 import { defaultPathForRole } from "@/lib/types/auth";
 import { parseSessionCookie, SESSION_COOKIE } from "@/lib/session";
 
-const PUBLIC_PATHS = ["/login"];
+const PUBLIC_PATHS = ["/login", "/debug", "/monitoring"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
     request.cookies.get(SESSION_COOKIE)?.value,
   );
 
-  if (pathname.startsWith("/api/auth")) {
+  if (pathname.startsWith("/api/auth") || pathname.startsWith("/api/debug")) {
     return NextResponse.next();
   }
 

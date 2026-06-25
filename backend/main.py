@@ -14,10 +14,14 @@ from starlette.responses import Response
 from backend.api.v1.router import api_router
 from backend.config import get_settings, validate_service_token
 from backend.database import dispose_db, init_db
+from backend.debug_glitchtip import include_debug_routes
 from backend.exceptions import AppError
 from backend.schemas.errors import ErrorBody, ErrorDetail
+from backend.sentry_setup import init_sentry
 
 logger = logging.getLogger(__name__)
+
+init_sentry(get_settings())
 
 
 @asynccontextmanager
@@ -95,6 +99,11 @@ def create_app() -> FastAPI:
             request_id,
             exc.__class__.__name__,
         )
+        if get_settings().glitchtip_dsn:
+            import sentry_sdk
+
+            sentry_sdk.set_tag("request_id", request_id)
+            sentry_sdk.capture_exception(exc)
         return _error_response(
             AppError(
                 code="INTERNAL_ERROR",
@@ -108,6 +117,7 @@ def create_app() -> FastAPI:
         return {"status": "ok", "version": app.version}
 
     app.include_router(api_router, prefix="/api/v1")
+    include_debug_routes(app, settings)
     return app
 
 

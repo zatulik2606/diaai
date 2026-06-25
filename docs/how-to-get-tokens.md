@@ -35,6 +35,33 @@
 
 ---
 
+## 1b. Alarm bot (@diaaialarm_bot) — GlitchTip alerts
+
+Отдельный бот для уведомлений об ошибках (не для диалога с пациентом).
+
+1. Бот уже создан: [@diaaialarm_bot](https://t.me/diaaialarm_bot)
+2. Токен от BotFather → `.env`:
+
+   ```env
+   TELEGRAM_ALARM_BOT_TOKEN=...
+   ```
+
+3. Напишите боту **Start** (`/start`), затем получите `chat_id`:
+
+   ```bash
+   bash devops/glitchtip/scripts/test-alarm-bot.sh
+   ```
+
+4. Добавьте в `.env`:
+
+   ```env
+   TELEGRAM_ALARM_CHAT_ID=123456789
+   ```
+
+Подробно: [devops/glitchtip/alerts-telegram.md](../devops/glitchtip/alerts-telegram.md)
+
+---
+
 ## 2. OpenRouter API key
 
 1. Откройте [openrouter.ai](https://openrouter.ai/) и зарегистрируйтесь (Google, GitHub или email).

@@ -23,7 +23,17 @@ devops/
 ├── deploy/                   # VPS layout iter 3–4
 │   ├── README.md
 │   └── compose.server.override.yml
-└── (docs)                    # docs/devops/twc-cli.md
+├── glitchtip/                # error tracking (основной, Timeweb)
+│   ├── timeweb-deploy.md
+│   ├── compose.yml
+│   └── bootstrap-timeweb.sh
+├── monitoring/               # Dozzle + GlitchTip→Telegram bridge (ADR-005)
+│   ├── README.md
+│   ├── uptimerobot.md
+│   └── compose.yml
+└── sentry/                   # альтернатива: full self-hosted Sentry
+    ├── timeweb-deploy.md
+    └── scripts/create-projects.sh
 ```
 
 ## Почему не `backend/Dockerfile`?
@@ -63,6 +73,28 @@ docker build -f devops/docker/web/Dockerfile -t diaai-web:local web/
 CI: [devops/ci/README.md](ci/README.md) · `make stack-up-registry`
 
 Guide GHCR: [docs/devops/ghcr-stack.md](../docs/devops/ghcr-stack.md) · login: [ci/ghcr-login.md](ci/ghcr-login.md)
+
+## Error tracking (GlitchTip)
+
+**Hosted EU (без VPS):** [glitchtip/hosted.md](glitchtip/hosted.md) · [eu.glitchtip.com](https://eu.glitchtip.com)
+
+**Self-hosted Timeweb:** [glitchtip/timeweb-deploy.md](glitchtip/timeweb-deploy.md)
+
+Альтернатива (16 GB+ RAM): [sentry/timeweb-deploy.md](sentry/timeweb-deploy.md)
+
+## Monitoring (ADR-005)
+
+| Компонент | Назначение |
+|-----------|------------|
+| [monitoring/README.md](monitoring/README.md) | Dozzle, GlitchTip→Telegram bridge |
+| [monitoring/uptimerobot.md](monitoring/uptimerobot.md) | внешний uptime (SaaS) |
+
+```bash
+make monitoring-up    # Dozzle :8888 + bridge :8080
+make monitoring-ps
+```
+
+ADR: [docs/adr/adr-005-observability.md](../docs/adr/adr-005-observability.md)
 
 ## Timeweb Cloud (iter 2 ✅)
 

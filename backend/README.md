@@ -52,6 +52,9 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `ANALYTICS_QUERY_TIMEOUT_SECONDS` | нет | таймаут SQL-запроса, default `5` |
 | `ANALYTICS_QUERY_ROW_LIMIT` | нет | max строк результата, default `100` |
 | `ANALYTICS_QUERY_LLM_TIMEOUT_SECONDS` | нет | таймаут генерации SQL, default `30` |
+| `GLITCHTIP_DSN` | нет | GlitchTip (проект `diaai-backend`); пусто = выкл. · [devops/glitchtip/hosted.md](../devops/glitchtip/hosted.md) |
+| `GLITCHTIP_ENVIRONMENT` | нет | default `development` |
+| `GLITCHTIP_TRACES_SAMPLE_RATE` | нет | default `0.01` (1% transactions); GlitchTip: `auto_session_tracking=False` в коде |
 
 События питания/инсулина (`/api/v1/events/*`) работают без OpenRouter.
 

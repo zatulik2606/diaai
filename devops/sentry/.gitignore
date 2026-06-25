@@ -1,0 +1,11 @@
+# On-premise Sentry (self-hosted) for diaai
+#
+# Клон репозитория и локальные DSN — не коммитить.
+# Скопируйте dsn.env.example → dsn.local.env после создания проектов.
+
+# Official self-hosted checkout (git clone)
+self-hosted/
+
+# DSN после create-projects.sh или create-projects-cloud.sh
+dsn.local.env
+dsn.cloud.local.env

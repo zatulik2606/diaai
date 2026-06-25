@@ -228,6 +228,35 @@ Trigger: **Deploy** после успешного **Docker Publish** на `main`
 
 ---
 
+## 9. Observability (MVP)
+
+ADR: [adr-005-observability.md](../../docs/adr/adr-005-observability.md) · guide: [monitoring/README.md](../monitoring/README.md)
+
+### На VPS после деплоя
+
+```bash
+ssh deploy@201.51.4.34 'cd /opt/diaai && make monitoring-up && make monitoring-ps'
+```
+
+`.env` на сервере должен содержать `TELEGRAM_ALARM_*`, `GLITCHTIP_*`, опционально `GLITCHTIP_WEBHOOK_SECRET`.
+
+**ufw:** порт **8080** открыт для GlitchTip webhook; Dozzle **8888** только localhost (см. `compose.server.override.yml`).
+
+### Acceptance checklist
+
+| # | Критерий | Как проверить | Статус |
+|---|----------|---------------|--------|
+| 1 | GlitchTip ingest | test event в UI eu.glitchtip.com | ☐ |
+| 2 | Bridge health | `curl -sf http://127.0.0.1:8080/health` на VPS | ☐ |
+| 3 | GlitchTip → Telegram | POST `/webhook` или новый issue в GlitchTip | ☐ |
+| 4 | UptimeRobot backend | monitor `http://IP:8000/health` keyword `"status":"ok"` Up | ☐ |
+| 5 | UptimeRobot web | monitor `http://IP:3000/` Up | ☐ |
+| 6 | Dozzle | `ssh -L 8888:127.0.0.1:8888 deploy@IP` → UI логов | ☐ |
+
+UptimeRobot setup: [monitoring/uptimerobot.md](../monitoring/uptimerobot.md)
+
+---
+
 ## Troubleshoot
 
 | Симптом | Решение |

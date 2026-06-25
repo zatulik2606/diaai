@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     analytics_query_timeout_seconds: float = 5.0
     analytics_query_row_limit: int = 100
     analytics_query_llm_timeout_seconds: float = 30.0
+    glitchtip_dsn: str = ""
+    glitchtip_environment: str = "development"
+    glitchtip_traces_sample_rate: float = 0.01
+    glitchtip_release: str = ""
+    glitchtip_debug_token: str = ""
 
 
 def validate_service_token(settings: Settings) -> None:

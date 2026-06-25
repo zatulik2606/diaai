@@ -79,7 +79,7 @@ web-build:
 web-lint:
 	cd web && pnpm lint
 
-.PHONY: stack-up stack-down stack-ps stack-logs stack-logs-tail stack-health stack-init stack-up-registry stack-pull-registry stack-up-registry-bot stack-pull-registry-bot
+.PHONY: stack-up stack-down stack-ps stack-logs stack-logs-tail stack-health stack-init stack-up-registry stack-pull-registry stack-up-registry-bot stack-pull-registry-bot sentry-install sentry-up sentry-down sentry-ps
 
 GHCR_REGISTRY ?= ghcr.io
 GHCR_OWNER ?= zatulik2606
@@ -147,3 +147,14 @@ stack-health:
 stack-init:
 	$(MAKE) db-reset
 	$(MAKE) stack-up
+
+sentry-install sentry-up sentry-down sentry-ps sentry-cloud-projects:
+	$(MAKE) -C devops/sentry $@
+
+.PHONY: glitchtip-up glitchtip-down glitchtip-ps glitchtip-logs glitchtip-pull
+glitchtip-up glitchtip-down glitchtip-ps glitchtip-logs glitchtip-pull:
+	$(MAKE) -C devops/glitchtip $@
+
+.PHONY: monitoring-up monitoring-down monitoring-ps monitoring-logs monitoring-build
+monitoring-up monitoring-down monitoring-ps monitoring-logs monitoring-build:
+	$(MAKE) -C devops/monitoring $@

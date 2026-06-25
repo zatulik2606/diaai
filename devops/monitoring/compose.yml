@@ -1,0 +1,35 @@
+# Monitoring stack — merge with root docker-compose.yml
+# Usage: make monitoring-up  (COMPOSE_PROFILES=monitoring)
+
+services:
+  dozzle:
+    profiles:
+      - monitoring
+    image: amir20/dozzle:v8.14.7
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "${DOZZLE_BIND:-127.0.0.1:8888}:8080"
+    environment:
+      DOZZLE_NO_ANALYTICS: "true"
+    restart: unless-stopped
+
+  glitchtip-telegram-bridge:
+    profiles:
+      - monitoring
+    build:
+      context: devops/monitoring/glitchtip-telegram-bridge
+      dockerfile: Dockerfile
+    environment:
+      TELEGRAM_ALARM_BOT_TOKEN: ${TELEGRAM_ALARM_BOT_TOKEN:-}
+      TELEGRAM_ALARM_CHAT_ID: ${TELEGRAM_ALARM_CHAT_ID:-}
+      GLITCHTIP_WEBHOOK_SECRET: ${GLITCHTIP_WEBHOOK_SECRET:-}
+      PORT: "8080"
+    ports:
+      - "${GLITCHTIP_BRIDGE_BIND:-8080:8080}"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3

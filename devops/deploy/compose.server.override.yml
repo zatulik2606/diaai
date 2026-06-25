@@ -9,3 +9,7 @@ services:
     # Replace base "5433:5432" — avoid double bind (compose merges arrays by default)
     ports: !override
       - "127.0.0.1:5433:5432"
+
+  dozzle:
+    ports: !override
+      - "127.0.0.1:8888:8080"

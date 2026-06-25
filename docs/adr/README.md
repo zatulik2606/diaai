@@ -18,3 +18,4 @@
 | [adr-002-backend-stack.md](adr-002-backend-stack.md) | Стек backend: FastAPI | Принято | 2026-06-07 |
 | [adr-003-data-access-layer.md](adr-003-data-access-layer.md) | Слой доступа к данным: SQLAlchemy 2 + Alembic | Принято | 2026-06-07 |
 | [adr-004-text-to-sql.md](adr-004-text-to-sql.md) | Text-to-SQL: read-only ad-hoc analytics | Принято | 2026-06-07 |
+| [adr-005-observability.md](adr-005-observability.md) | Observability MVP: GlitchTip, UptimeRobot, Dozzle | Принято | 2026-06-07 |

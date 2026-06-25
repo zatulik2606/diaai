@@ -56,12 +56,19 @@ services:
     build:
       context: web
       dockerfile: ../devops/docker/web/Dockerfile
+      args:
+        NEXT_PUBLIC_GLITCHTIP_DSN: ${NEXT_PUBLIC_GLITCHTIP_DSN:-}
+        GLITCHTIP_DSN: ${GLITCHTIP_WEB_DSN:-}
+        GLITCHTIP_URL: ${GLITCHTIP_URL:-}
     ports:
       - "3000:3000"
     env_file:
       - .env
     environment:
       BACKEND_URL: http://backend:8000
+      GLITCHTIP_DSN: ${GLITCHTIP_WEB_DSN:-}
+      NEXT_PUBLIC_GLITCHTIP_DSN: ${NEXT_PUBLIC_GLITCHTIP_DSN:-}
+      GLITCHTIP_URL: ${GLITCHTIP_URL:-}
     depends_on:
       backend:
         condition: service_healthy

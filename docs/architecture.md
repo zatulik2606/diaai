@@ -191,7 +191,20 @@ erDiagram
 | Web | Next.js (App Router), TypeScript, shadcn/ui, Tailwind, pnpm |
 | DB | PostgreSQL 16 (Docker) |
 
-ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md](adr/adr-002-backend-stack.md) · [adr-004-text-to-sql.md](adr/adr-004-text-to-sql.md).
+ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md](adr/adr-002-backend-stack.md) · [adr-004-text-to-sql.md](adr/adr-004-text-to-sql.md) · [adr-005-observability.md](adr/adr-005-observability.md).
+
+---
+
+## Observability (prod MVP)
+
+| Категория | Инструмент | Документ |
+|-----------|------------|----------|
+| Ошибки в коде | GlitchTip EU (`GLITCHTIP_*`) | [devops/glitchtip/hosted.md](../devops/glitchtip/hosted.md) |
+| Алерты | @diaaialarm_bot + bridge | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Uptime | UptimeRobot (SaaS) | [devops/monitoring/uptimerobot.md](../devops/monitoring/uptimerobot.md) |
+| Логи | Dozzle (compose profile `monitoring`) | ADR-005 |
+
+Внутренний liveness: Docker healthchecks · `make stack-health` · CD smoke после деплоя.
 
 ---
 
