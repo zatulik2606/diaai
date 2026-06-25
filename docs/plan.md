@@ -14,7 +14,7 @@
 | backend | [tasklist-backend.md](tasks/tasklist-backend.md) | этапы 2, 4 |
 | database | [tasklist-database.md](tasks/tasklist-database.md) | параллельно этапу 2 ✅ (5/5) |
 | frontend (web) | [tasklist-frontend.md](tasks/tasklist-frontend.md) | этап 5 ✅ (iter 0–9) |
-| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | iter 0–3 ✅ · production VPS · iter 4 📋 CD (15/18) |
+| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | **18/18 ✅** · VPS + CD · [summary](tasks/impl/devops/summary.md) |
 
 Один продуктовый этап может затрагивать несколько областей; database и frontend ведут **свои** итерации внутри tasklist'ов.
 
@@ -207,7 +207,7 @@ flowchart LR
 | [tasks/tasklist-bot.md](tasks/tasklist-bot.md) | MVP бота, миграция на backend, voice |
 | [tasks/tasklist-frontend.md](tasks/tasklist-frontend.md) | web iter 0–9 ✅ |
 | [tasks/tasklist-database.md](tasks/tasklist-database.md) | полноценный слой данных PostgreSQL ✅ |
-| [tasks/tasklist-devops.md](tasks/tasklist-devops.md) | Docker stack, GHCR (iter 0–1 ✅) · VPS + CD (iter 2–4 📋) |
+| [tasks/tasklist-devops.md](tasks/tasklist-devops.md) | DevOps **18/18 ✅** · stack, GHCR, VPS, CD |
 | [onboarding.md](onboarding.md) · [smoke-test.md](smoke-test.md) | вход разработчика · one-session проверка |
 | [spec/](spec/) | продуктовые сценарии и требования к данным |
 | [api/api-contract.md](api/api-contract.md) | REST API v1 — контракт, endpoint'ы, примеры |

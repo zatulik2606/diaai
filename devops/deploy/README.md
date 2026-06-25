@@ -82,29 +82,35 @@ Compose подставляет `DATABASE_URL` и `BACKEND_URL` для конте
 
 ## 5. `docker login ghcr.io` — **выполняет пользователь**
 
-> Агент **не** выполняет login. Packages часто **public** — login может не понадобиться.
+> Агент **не** выполняет login. Сначала pull **без login** — packages public.
 
-Если `docker pull` возвращает `denied`:
-
-1. GitHub → **Settings → Developer settings → Personal access tokens**
-2. PAT (classic) со scope **`read:packages`**
-3. На сервере под `deploy`:
-
-```bash
-ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34
-
-read -s GITHUB_PAT   # вставить PAT, Enter
-echo "$GITHUB_PAT" | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
-unset GITHUB_PAT
-```
-
-Проверка pull:
+### Проверка pull (шаг 1)
 
 ```bash
 docker pull ghcr.io/zatulik2606/diaai-backend:main
 ```
 
-Токен **не** сохранять в git и не логировать в CI output.
+OK → login не нужен. `denied` → шаг 2.
+
+### Login (шаг 2, если нужен)
+
+PAT (classic), scope **`read:packages`**. Password = **PAT**, не пароль GitHub. Username: **`zatulik2606`**.
+
+```bash
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34
+
+read -s GITHUB_PAT
+echo "$GITHUB_PAT" | docker login ghcr.io -u zatulik2606 --password-stdin
+unset GITHUB_PAT
+```
+
+### Pull снова (шаг 3)
+
+```bash
+docker pull ghcr.io/zatulik2606/diaai-backend:main
+```
+
+Полная инструкция: **[devops/ci/ghcr-login.md](../ci/ghcr-login.md)**.
 
 ---
 
@@ -147,6 +153,59 @@ Demo seed: `make db-reset` требует `uv` на хосте — см. [ghcr-s
 
 ---
 
+## Обязательная проверка (DoD iter 3)
+
+После bootstrap + layout + первого stack — три критерия. Выполнять под `deploy@VPS` из `/opt/diaai`, если не указано иное.
+
+### 1. Docker и Compose; bootstrap воспроизводим
+
+```bash
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34 'docker --version && docker compose version'
+```
+
+Ожидание: версии Docker Engine и Compose plugin (bootstrap: [server/README.md § Bootstrap](../server/README.md#bootstrap-task-13-)).
+
+На **новом** сервере: `bootstrap.sh` + [§1–4](#1-bootstrap-если-ещё-не-делали) этого README — без ручных правок compose кроме `compose.override.yml`.
+
+### 2. Pull образов без ошибок
+
+> **Не** `docker compose pull` без env — подтянет `diaai-*:local` и упадёт. Используйте Makefile:
+
+```bash
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34 'cd /opt/diaai && make stack-pull-registry'
+```
+
+Ожидание: `Pulled` для `ghcr.io/.../diaai-backend:main` и `diaai-web:main`, exit 0.
+
+При `denied` — [ghcr-login.md](../ci/ghcr-login.md).
+
+### 3. Stack поднят; health и web по public IP
+
+На VPS:
+
+```bash
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34 'cd /opt/diaai && make stack-health'
+```
+
+С локальной машины (замените IP):
+
+```bash
+curl -sf http://201.51.4.34:8000/health
+curl -sf -o /dev/null -w '%{http_code}\n' http://201.51.4.34:3000/
+```
+
+Ожидание: `{"status":"ok",...}` и HTTP `200` или `307` (redirect на login) для web.
+
+| Критерий | Команда | Статус (prod) |
+|----------|---------|---------------|
+| Docker + Compose | `docker compose version` | ✅ 29.6 / v5.2 |
+| Pull GHCR | `make stack-pull-registry` | ✅ |
+| Backend | `http://201.51.4.34:8000/health` | ✅ |
+| Web | `http://201.51.4.34:3000` | ✅ |
+| stack-health | `make stack-health` | ✅ all passed |
+
+---
+
 ## 8. CD — GitHub Actions (iter 4)
 
 ```mermaid
@@ -173,7 +232,7 @@ Trigger: **Deploy** после успешного **Docker Publish** на `main`
 
 | Симптом | Решение |
 |---------|---------|
-| `denied` при pull | §5 login ghcr.io |
+| `denied` при pull | [ghcr-login.md](../ci/ghcr-login.md) — `docker login ghcr.io -u USER -p PAT` или `--password-stdin` |
 | `permission denied` на docker | user в группе `docker`; re-login SSH |
 | postgres снаружи | проверить `compose.override.yml` |
 | `.env` 401 | `BACKEND_SERVICE_TOKEN` совпадает с backend |

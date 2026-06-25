@@ -25,6 +25,16 @@ Production stack из GHCR на VPS; smoke API + web login.
 - `compose.override.yml`: `ports: !override` — fix double port bind
 - Seed на VPS через `uv` (не в bootstrap)
 
+## Обязательная проверка (2026-06-07)
+
+| Критерий | Результат |
+|----------|-----------|
+| Docker 29.6 + Compose v5.2 | ✅ |
+| `make stack-pull-registry` | ✅ GHCR backend/web Pulled |
+| `make stack-health` | ✅ postgres, backend, web |
+| Public API | ✅ `http://201.51.4.34:8000/health` → `{"status":"ok",...}` |
+| Public web | ✅ `http://201.51.4.34:3000` → HTTP 307 |
+
 ## Next
 
-Iter 4: GitHub Secrets + deploy workflow
+Iter 4: GitHub Secrets + deploy workflow ✅

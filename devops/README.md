@@ -14,7 +14,8 @@ devops/
 ├── compose/
 │   └── .env.compose.example  # stack env overrides (справка)
 ├── ci/
-│   └── README.md             # GHCR / GHA (iter 1)
+│   ├── README.md             # GHCR / GHA (iter 1)
+│   └── ghcr-login.md         # docker login ghcr.io
 ├── server/                   # VPS iter 2–3
 │   ├── bootstrap.sh
 │   ├── inventory.example.md
@@ -61,7 +62,7 @@ docker build -f devops/docker/web/Dockerfile -t diaai-web:local web/
 
 CI: [devops/ci/README.md](ci/README.md) · `make stack-up-registry`
 
-Guide GHCR: [docs/devops/ghcr-stack.md](../docs/devops/ghcr-stack.md)
+Guide GHCR: [docs/devops/ghcr-stack.md](../docs/devops/ghcr-stack.md) · login: [ci/ghcr-login.md](ci/ghcr-login.md)
 
 ## Timeweb Cloud (iter 2 ✅)
 

@@ -43,7 +43,14 @@ gh secret list
 |--------|-------|
 | `GHCR_PULL_TOKEN` | packages private; PAT `read:packages` для `docker login` на сервере |
 
-Сейчас packages **public** — secret не нужен.
+Login на VPS (выполняет пользователь):
+
+```bash
+docker login ghcr.io -u GITHUB_USERNAME -p GITHUB_PAT
+# или: echo "$GITHUB_PAT" | docker login ghcr.io -u GITHUB_USERNAME --password-stdin
+```
+
+Подробнее: [devops/ci/ghcr-login.md](../ci/ghcr-login.md).
 
 ---
 
@@ -52,6 +59,8 @@ gh secret list
 ```bash
 ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34 'cd /opt/diaai && docker compose version'
 ```
+
+Подробнее: [server/README.md § Проверка SSH](../server/README.md#проверка-ssh).
 
 Public key `diaai-deploy` уже на сервере (bootstrap task 13).
 

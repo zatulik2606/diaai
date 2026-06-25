@@ -41,26 +41,33 @@ Repo → Settings → Actions → General → **Read and write permissions** д�
 
 ## Login
 
+Полная инструкция: **[ghcr-login.md](ghcr-login.md)**.
+
+**PAT (classic):** scope `read:packages` (pull), `write:packages` (push с машины). Username: GitHub login (`zatulik2606`).
+
 ```bash
-# GitHub → Settings → Developer settings → PAT (classic)
-# Scopes: read:packages (pull), write:packages (push с машины)
-echo YOUR_GITHUB_PAT | docker login ghcr.io -u zatulik2606 --password-stdin
+# Способ 1 — -u + -p (работает; Docker warn про insecure CLI)
+docker login ghcr.io -u "$GITHUB_USERNAME" -p "$GITHUB_PAT"
+
+# Способ 2 — предпочтительно
+echo "$GITHUB_PAT" | docker login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
 ```
+
+Packages public — login часто не нужен. См. [ghcr-login.md § Быстрая проверка](ghcr-login.md#быстрая-проверка-pull).
 
 ## Локальный pull + stack (registry mode)
 
 ```bash
-# login (private packages)
-echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+# 1. проверка pull (без login, если public)
+docker pull ghcr.io/zatulik2606/diaai-backend:main
 
-# из корня repo
+# 2. при denied — login (см. ghcr-login.md), затем pull снова
+
+# 3. stack
 make stack-up-registry              # IMAGE_TAG=main по умолчанию
 make stack-up-registry IMAGE_TAG=sha-abc1234
 
-# явный pull из GHCR (после login)
 make stack-pull-registry
-
-# с bot
 make stack-up-registry-bot
 ```
 
@@ -82,4 +89,4 @@ make stack-up-registry
 
 Один файл: [`docker-compose.yml`](../../docker-compose.yml).
 
-Guide: [docs/devops/docker-compose-local.md](../../docs/devops/docker-compose-local.md) · **GHCR:** [docs/devops/ghcr-stack.md](../../docs/devops/ghcr-stack.md)
+Guide: [docs/devops/docker-compose-local.md](../../docs/devops/docker-compose-local.md) · **GHCR:** [docs/devops/ghcr-stack.md](../../docs/devops/ghcr-stack.md) · **login:** [ghcr-login.md](ghcr-login.md)

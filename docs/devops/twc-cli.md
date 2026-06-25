@@ -98,18 +98,6 @@ chmod 600 ~/.ssh/diaai-admin ~/.ssh/diaai-deploy
 chmod 644 ~/.ssh/diaai-admin.pub ~/.ssh/diaai-deploy.pub
 ```
 
-Опционально `~/.ssh/config`:
-
-```
-Host diaai-vps
-  HostName YOUR_SERVER_IP
-  User root
-  IdentityFile ~/.ssh/diaai-admin
-  IdentitiesOnly yes
-```
-
-После task 11 подставьте реальный IP вместо `YOUR_SERVER_IP`.
-
 ### 2. Загрузка public key в Timeweb Cloud
 
 ```bash
@@ -128,17 +116,51 @@ twc ssh-key list
 twc ssh-key add SERVER_ID SSH_KEY_ID
 ```
 
-### 3. Проверка SSH (после task 11)
+### 3. Проверка SSH (ручная)
+
+Production VPS: IPv4 **`201.51.4.34`**. Пароль отключён — только ключ.
+
+**Admin** (ваш вход, user `root`):
 
 ```bash
-ssh -i ~/.ssh/diaai-admin root@YOUR_SERVER_IP 'uname -a'
+ssh -i ~/.ssh/diaai-admin root@201.51.4.34
 ```
 
-Deploy-ключ на сервере — в iter 3 (`authorized_keys` пользователя deploy); локальная проверка:
+Без интерактивной сессии:
 
 ```bash
-ssh -i ~/.ssh/diaai-deploy deploy@YOUR_SERVER_IP 'whoami'
+ssh -i ~/.ssh/diaai-admin root@201.51.4.34 'uname -a'
 ```
+
+Ожидание: prompt shell или вывод `Linux ... Ubuntu 24.04` **без запроса пароля**.
+
+**Deploy** (CI/CD, user `deploy`):
+
+```bash
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34
+```
+
+Проверка доступа к stack:
+
+```bash
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34 'cd /opt/diaai && docker compose ps'
+```
+
+| Ключ | User | Файл |
+|------|------|------|
+| admin | `root` | `~/.ssh/diaai-admin` |
+| deploy | `deploy` | `~/.ssh/diaai-deploy` |
+
+**Troubleshoot**
+
+| Симптом | Решение |
+|---------|---------|
+| `Permission denied (publickey)` | проверить путь к ключу; `chmod 600 ~/.ssh/diaai-admin` |
+| `No such file or directory` (ключ) | сгенерировать ключи (§1) или скопировать с машины, где создавали |
+| `Connection timed out` | IP и статус сервера в панели Timeweb |
+| запрос пароля | на сервере только ключи; проверить `-i ~/.ssh/diaai-admin` |
+
+Подробнее: [devops/server/README.md § Проверка SSH](../../devops/server/README.md#проверка-ssh).
 
 ---
 

@@ -34,11 +34,30 @@
 | SSH user | `root` (Ubuntu cloud image Timeweb) |
 | Password auth | disabled (`--disable-ssh-password-auth`) |
 
-## Проверка
+## Проверка SSH (ручная)
+
+Production IPv4: **`201.51.4.34`**.
+
+**Admin:**
 
 ```bash
-ssh -i ~/.ssh/diaai-admin root@PUBLIC_IPV4 'uname -a'
-twc server get SERVER_ID
+ssh -i ~/.ssh/diaai-admin root@201.51.4.34
+ssh -i ~/.ssh/diaai-admin root@201.51.4.34 'uname -a'
+```
+
+**Deploy:**
+
+```bash
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34 'whoami'
+```
+
+Права: `chmod 600 ~/.ssh/diaai-admin ~/.ssh/diaai-deploy`
+
+Полная инструкция и troubleshoot: [server/README.md](../server/README.md#проверка-ssh) · [twc-cli.md](../../docs/devops/twc-cli.md#3-проверка-ssh-ручная).
+
+```bash
+twc server get 8460897
 ```
 
 ## Ссылки
