@@ -13,8 +13,9 @@ devops/
 │   └── web/                  # Next.js production image
 ├── compose/
 │   └── .env.compose.example  # stack env overrides (справка)
-└── ci/
-    └── README.md             # GHCR / GHA (iter 1)
+├── ci/
+│   └── README.md             # GHCR / GHA (iter 1)
+└── (docs)                    # docs/devops/twc-cli.md — post-MVP deploy
 ```
 
 ## Почему не `backend/Dockerfile`?
@@ -55,6 +56,10 @@ CI: [devops/ci/README.md](ci/README.md) · `make stack-up-registry`
 
 Guide GHCR: [docs/devops/ghcr-stack.md](../docs/devops/ghcr-stack.md)
 
+## Post-MVP: Timeweb Cloud
+
+CLI для будущего deploy: [docs/devops/twc-cli.md](../docs/devops/twc-cli.md) (`twc` — установка, `~/.twcrc`, проверка).
+
 ## Compose
 
 - **Один файл:** `docker-compose.yml` в корне
@@ -67,3 +72,4 @@ Guide GHCR: [docs/devops/ghcr-stack.md](../docs/devops/ghcr-stack.md)
 
 - [tasklist-devops.md](../docs/tasks/tasklist-devops.md)
 - [docker-compose-local.md](../docs/devops/docker-compose-local.md)
+- [twc-cli.md](../docs/devops/twc-cli.md) — Timeweb Cloud CLI (post-MVP)
