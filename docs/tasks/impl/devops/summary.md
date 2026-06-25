@@ -1,43 +1,25 @@
-# DevOps — summary области
+# DevOps — итог области (iter 0–4)
 
-**Обновлено:** 2026-06-23
+Опирается на [tasklist-devops.md](../../tasklist-devops.md)
 
-## Статус
+## Прогресс
 
-| Итерация | Статус | Задачи |
-|----------|--------|--------|
-| 0 — локальный stack | ✅ Done | 01–06 |
-| 1 — GHCR | ✅ Done | 07–09 |
+**18 / 18 задач ✅**
 
-**Прогресс:** 9 / 9 · **prep phase закрыта**
+| Iter | Результат |
+|------|-----------|
+| 0 | Локальный docker-compose stack |
+| 1 | GHCR + `docker-publish.yml` |
+| 2 | VPS Timeweb `201.51.4.34` |
+| 3 | Bootstrap + manual registry deploy |
+| 4 | GHA CD `deploy.yml` |
 
-## Iter 0 ✅
+## Production
 
-Полный stack в одном [`docker-compose.yml`](../../../docker-compose.yml).
-
-| Команда | Назначение |
-|---------|------------|
-| `make stack-init` | первый запуск (db-reset + stack) |
-| `make stack-up` / `stack-health` | build mode |
-| `make stack-up-bot` | + Telegram bot |
-| `make db-up` | только PostgreSQL (host dev) |
-
-Guide: [docs/devops/docker-compose-local.md](../../../devops/docker-compose-local.md)
-
-## Iter 1 ✅
-
-| Команда | Назначение |
-|---------|------------|
-| `make stack-up-registry` | stack из GHCR (без build) |
-| `make stack-pull-registry` | pull образов из GHCR |
-| `make stack-up-registry-bot` | registry + bot |
-
-CI: [`.github/workflows/docker-publish.yml`](../../../.github/workflows/docker-publish.yml) · [devops/ci/README.md](../../../devops/ci/README.md)
-
-Образы: `ghcr.io/zatulik2606/diaai-{backend,bot,web}`
-
-Детали: [iteration-1-registry-ci/summary.md](iteration-1-registry-ci/summary.md)
+- http://201.51.4.34:3000
+- http://201.51.4.34:8000/health
+- CD: push `main` → publish → deploy
 
 ## Post-MVP
 
-Deploy в облако, CD, secrets management, full CI on PR — вне iter 0–1.
+K8s, managed DB, HTTPS reverse proxy, full CI on PR — см. tasklist § Post-MVP

@@ -1,28 +1,20 @@
 # Task 18 summary
 
-## E2E
+## E2E ✅
 
 | Run | Commit | Result |
 |-----|--------|--------|
-| 1 | `120710e` | Deploy SSH OK; `stack-health` FAIL — web cold start |
-| 2 | fix wait loop | → после push |
+| [28166334358](https://github.com/zatulik2606/diaai/actions/runs/28166334358) | `3e6e0da` | **success** |
 
-## Verify (после run 1, stack уже live)
+Fixes: web warm-up wait; `set -e` + curl in loop.
 
-```text
-curl http://201.51.4.34:8000/health → ok
-curl http://201.51.4.34:3000/ → 307
-POST login ivan_p → 200 (task 15)
-```
+## Verify
 
-## Pipeline
+Production после auto-deploy:
 
-push main → Docker Publish ✅ → Deploy (workflow_run) → git pull + stack registry
+- http://201.51.4.34:8000/health ✅
+- http://201.51.4.34:3000 ✅
 
-## Fix
+## Область DevOps
 
-`deploy.yml`: retry curl :3000 до 90s перед `make stack-health`
-
-## Docs
-
-tasklist iter 4 ✅ · plan · architecture · onboarding · smoke-test
+**18/18 ✅**

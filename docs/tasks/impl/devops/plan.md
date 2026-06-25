@@ -14,9 +14,9 @@ Production deploy MVP: **локальный stack** (iter 0 ✅) → **GHCR** (i
 | 1 | Сборка образов и GHCR | 07–09 | ✅ Done | [plan](iteration-1-registry-ci/plan.md) · [summary](iteration-1-registry-ci/summary.md) |
 | 2 | Облачный сервер Timeweb Cloud | 10–12 | ✅ Done | [plan](iteration-2-timeweb-server/plan.md) · [summary](iteration-2-timeweb-server/summary.md) |
 | 3 | Настройка сервера и ручной deploy | 13–15 | ✅ Done | [plan](iteration-3-server-setup/plan.md) · [summary](iteration-3-server-setup/summary.md) |
-| 4 | Автоматизация деплоя (GHA → VPS) | 16–18 | 📋 Next | [plan](iteration-4-deploy-ci/plan.md) · [summary](iteration-4-deploy-ci/summary.md) |
+| 4 | Автоматизация деплоя (GHA → VPS) | 16–18 | ✅ Done | [plan](iteration-4-deploy-ci/plan.md) · [summary](iteration-4-deploy-ci/summary.md) |
 
-**Прогресс:** 15 / 18 задач · **iter 0–3 ✅** · **iter 4 📋 Next**
+**Прогресс:** 18 / 18 задач · **область DevOps MVP ✅**
 
 ## Правило
 

@@ -185,7 +185,7 @@ flowchart LR
 |------|--------|-------------------|
 | Backend analytics REST (этап 4) | 📋 Planned | [tasklist-backend.md](tasks/tasklist-backend.md) 09–12 |
 | Консультации D5/D6, Doc2–Doc4 | 📋 Planned | [user-scenarios.md](spec/user-scenarios.md) |
-| Production deploy (VPS Timeweb + GHA CD) | 🚧 stack live ✅ · CD iter 4 📋 | [tasklist-devops.md](tasks/tasklist-devops.md) |
+| Production deploy (VPS + GHA CD) | ✅ iter 0–4 Done | [tasklist-devops.md](tasks/tasklist-devops.md) |
 | Structured photo fields в assistant | 📋 Planned | backend README → iter 11 |
 
 ---

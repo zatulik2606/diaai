@@ -2,7 +2,7 @@
 
 ## Ценность
 
-Push `main` → GHCR → автодеплой на VPS без ручного SSH.
+Push `main` → GHCR → автодеплой на VPS (SSH, без ручного вмешательства).
 
 ## Задачи
 
@@ -10,12 +10,29 @@ Push `main` → GHCR → автодеплой на VPS без ручного SSH
 |---|--------|
 | 16 GitHub Secrets | ✅ |
 | 17 deploy.yml | ✅ |
-| 18 E2E | → после push |
+| 18 E2E | ✅ |
 
 ## Pipeline
 
-`docker-publish.yml` → `deploy.yml` → `/opt/diaai` → `make stack-up-registry`
+```
+push main → Docker Publish → Deploy (workflow_run)
+  → SSH deploy@201.51.4.34
+  → git pull + make stack-*-registry + health
+```
 
-## Secrets
+## E2E
 
-`DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` — см. [github-secrets.md](../../../../devops/deploy/github-secrets.md)
+| Run | Commit | Result |
+|-----|--------|--------|
+| [28166137641](https://github.com/zatulik2606/diaai/actions/runs/28166137641) | `120710e` | FAIL — web cold start |
+| [28166245576](https://github.com/zatulik2606/diaai/actions/runs/28166245576) | `d96ee48` | FAIL — `set -e` + curl |
+| [28166334358](https://github.com/zatulik2606/diaai/actions/runs/28166334358) | `3e6e0da` | ✅ success |
+
+## Артефакты
+
+- `.github/workflows/deploy.yml`
+- [devops/deploy/github-secrets.md](../../../devops/deploy/github-secrets.md)
+
+## Область DevOps MVP
+
+**18/18 задач ✅** — local stack → GHCR → VPS → CD.
