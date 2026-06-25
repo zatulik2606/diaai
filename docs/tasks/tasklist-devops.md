@@ -56,7 +56,7 @@
 | Источник | Связь | Зависимости |
 |----------|-------|-------------|
 | [plan.md — Post-MVP](../plan.md#post-mvp-не-в-таблице-этапов) | Observability, full CI on PR | backend ✅ · frontend ✅ · database ✅ |
-| [architecture.md](../architecture.md) | compose diagram, `devops/`, GHCR, VPS | ✅ iter 0–1 · iter 2–4 📋 |
+| [architecture.md](../architecture.md) | compose diagram, `devops/`, GHCR, VPS | ✅ iter 0–4 |
 | [onboarding.md](../onboarding.md) | Docker stack «одной командой» (build + GHCR) | ✅ iter 0–1 |
 | [tasklist-backend.md](tasklist-backend.md) task-06 | `docker-compose.yml` только PG | iter 0 **расширяет** тот же корневой compose |
 | [tasklist-database.md](tasklist-database.md) | `make db-*`, миграции, seed | compose: migrate/seed при старте backend или init hook |
@@ -113,7 +113,7 @@ devops/
 
 - **`docker-compose.yml`** — полный stack (iter 0 ✅); iter 1 добавил режим `image:` **в этом же файле** (iter 1 ✅)
 - `.github/workflows/docker-publish.yml` — build/push GHCR (iter 1 ✅)
-- `.github/workflows/deploy.yml` — deploy на VPS (iter 4 📋)
+- `.github/workflows/deploy.yml` — deploy на VPS (iter 4 ✅)
 
 ## Make-команды (iter 0–1 ✅)
 
@@ -812,6 +812,15 @@ Idempotent bootstrap: Docker Engine, compose plugin, базовые утилит
 | Pipeline | push `main` → Docker Publish → Deploy |
 | Inventory | [inventory.example.md](../../devops/server/inventory.example.md) |
 | SSH | [server/README.md § Проверка SSH](../../devops/server/README.md#проверка-ssh) |
+
+### Чеклист приёмки (проверено 2026-06-07)
+
+- [x] **Сервер минимальной конфигурации, внешний IP** — VPS `8460897`, preset `4801` (2 vCPU / 4 GB / 50 GB), Ubuntu 24.04, IPv4 `201.51.4.34` · [inventory.example.md](../../devops/server/inventory.example.md)
+- [x] **Инструкция по SSH-ключам, вход по ssh** — admin + deploy · [twc-cli.md § SSH](../../docs/devops/twc-cli.md#ssh-ключи-admin--deploy) · [server/README.md § Проверка SSH](../../devops/server/README.md#проверка-ssh)
+- [x] **Docker/Compose на сервере, скрипт/инструкция воспроизводимы** — Docker 29.6, Compose v5.2 · [bootstrap.sh](../../devops/server/bootstrap.sh) · [deploy/README § Обязательная проверка](../../devops/deploy/README.md#обязательная-проверка-dod-iter-3)
+- [x] **Стек с GHCR поднимается, health и веб снаружи** — `make stack-health` OK · http://201.51.4.34:8000/health · http://201.51.4.34:3000
+- [x] **GitHub Secrets настроены** — `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` · [github-secrets.md](../../devops/deploy/github-secrets.md)
+- [x] **Workflow деплоя успешен, контейнеры обновляются** — [Deploy #28167868567](https://github.com/zatulik2606/diaai/actions/runs/28167868567) · backend/web пересозданы после CD
 
 План области: [impl/devops/plan.md](impl/devops/plan.md) · итог: [impl/devops/summary.md](impl/devops/summary.md)
 

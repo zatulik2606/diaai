@@ -28,9 +28,18 @@
 
 **SSH:** [server/README.md § Проверка SSH](../../../devops/server/README.md#проверка-ssh)
 
+## Чеклист приёмки ✅
+
+- [x] VPS минимальной конфигурации + публичный IP (`8460897`, `201.51.4.34`)
+- [x] SSH-ключи admin/deploy, инструкция и вход
+- [x] Docker/Compose + `bootstrap.sh`
+- [x] GHCR stack, health + web снаружи
+- [x] GitHub Secrets `DEPLOY_*`
+- [x] CD workflow green, контейнеры обновляются
+
 ## E2E CD
 
-Успешный run: [Deploy #28166334358](https://github.com/zatulik2606/diaai/actions/runs/28166334358) (commit `3e6e0da`).
+Последний успешный run: [Deploy #28167868567](https://github.com/zatulik2606/diaai/actions/runs/28167868567) (commit `18167f2`).
 
 Fixes по пути: compose `ports: !override`; wait web + `set -e` в deploy script.
 

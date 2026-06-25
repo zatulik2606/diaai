@@ -13,7 +13,7 @@
 | Этап | twc |
 |------|-----|
 | iter 0–1 (✅) | не требуется |
-| iter 2 (📋) | presets, SSH keys, `server create` |
+| iter 2 (✅) | presets, SSH keys, `server create` |
 | iter 3–4 | тот же сервер; CD через SSH + GHCR |
 
 ---

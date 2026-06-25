@@ -203,7 +203,7 @@ ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md
 | frontend | [tasklist-frontend.md](tasks/tasklist-frontend.md) | 10/10 ✅ |
 | database | [tasklist-database.md](tasks/tasklist-database.md) | 5/5 ✅ |
 | bot | [tasklist-bot.md](tasks/tasklist-bot.md) | MVP + backend + voice ✅ |
-| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | iter 0–3 ✅ · iter 4 📋 CD (15/18) |
+| devops | [tasklist-devops.md](tasks/tasklist-devops.md) | iter 0–4 ✅ · CD (18/18) |
 
 Workflow: [templates/workflow.md](templates/workflow.md).
 
