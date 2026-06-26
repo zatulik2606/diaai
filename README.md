@@ -34,7 +34,7 @@ flowchart LR
 | 1 | MVP Telegram-бота | ✅ Done |
 | 2 | Backend-ядро и БД | ✅ Done |
 | 3 | Миграция бота на backend | ✅ Done |
-| 4 | Analytics REST (`/api/v1/analytics/*`) | 📋 contract ✅, impl 🚧 |
+| 4 | Analytics REST (`/api/v1/analytics/*`) | 🚧 contract ✅ (task 09) · impl 📋 [tasks 10–12](docs/tasks/tasklist-backend.md) |
 | 5 | Web-интерфейс | ✅ Done |
 
 Дорожная карта: [docs/plan.md](docs/plan.md).
@@ -134,7 +134,7 @@ Web: `web/.env.local` — `BACKEND_URL`, `BACKEND_SERVICE_TOKEN` (server-only). 
 
 ```bash
 make test
-# 84 passed (67 backend + 17 bot)
+# 102 passed (85 backend + 17 bot)
 ```
 
 Только backend: `make backend-test`. Web: `make web-lint && make web-build`.
