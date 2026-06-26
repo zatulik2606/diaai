@@ -133,7 +133,7 @@ BFF routes: `web/app/api/auth/*`, `assistant/*`, `analytics/query`.
 
 | Префикс | Клиент | Статус | Назначение |
 |---------|--------|--------|------------|
-| `/health` | любой | ✅ | health check |
+| `/health` | любой | ✅ | readiness: `SELECT 1` → 200 или 503 |
 | `/api/v1/assistant/*` | bot, web (FAB) | ✅ | диалог LLM (D2) |
 | `/api/v1/events/*` | bot | ✅ | питание, инсулин (D1) |
 | `/api/v1/media/transcribe` | bot, web | ✅ | STT |
@@ -202,8 +202,10 @@ ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md
 | Ошибки в коде | GlitchTip EU (`GLITCHTIP_*`) | [devops/glitchtip/hosted.md](../devops/glitchtip/hosted.md) |
 | Smoke ingest | `GET /debug/glitchtip-test` + Bearer `GLITCHTIP_DEBUG_TOKEN` (404 без token) | [devops/monitoring/README.md](../devops/monitoring/README.md) |
 | Алерты | @diaaialarm_bot + bridge | [devops/monitoring/README.md](../devops/monitoring/README.md) |
-| Uptime | UptimeRobot (SaaS) | [devops/monitoring/uptimerobot.md](../devops/monitoring/uptimerobot.md) |
-| Логи | Dozzle (compose profile `monitoring`) | ADR-005 |
+| Uptime | Uptime Kuma (self-hosted) | [devops/monitoring/uptime-kuma.md](../devops/monitoring/uptime-kuma.md) |
+| Логи | Dozzle (compose profile `monitoring`) | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Метрики | Prometheus + Grafana + cAdvisor | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Runbook при инциденте | key-metrics (пороги, tunnels) | [devops/monitoring/key-metrics.md](../devops/monitoring/key-metrics.md) |
 
 Внутренний liveness: Docker healthchecks · `make stack-health` · CD smoke после деплоя.
 

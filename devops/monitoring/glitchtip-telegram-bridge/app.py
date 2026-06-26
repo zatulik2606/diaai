@@ -17,9 +17,14 @@ CHAT_ID = os.environ.get("TELEGRAM_ALARM_CHAT_ID", "")
 WEBHOOK_SECRET = os.environ.get("GLITCHTIP_WEBHOOK_SECRET", "")
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
+KUMA_MARKER = "[Uptime Kuma]"
 
 
 def format_alert(payload: dict) -> str:
+    text = (payload.get("text") or "").strip()
+    if KUMA_MARKER in text:
+        return text
+
     attachments = payload.get("attachments") or []
     if attachments:
         att = attachments[0]

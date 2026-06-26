@@ -69,5 +69,99 @@ services:
       - "${UPTIME_KUMA_BIND:-127.0.0.1:3002:3001}"
     restart: unless-stopped
 
+  prometheus:
+    profiles:
+      - monitoring
+    image: prom/prometheus:v3.2.1
+    volumes:
+      - ./devops/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle
+    ports:
+      - "${PROMETHEUS_BIND:-127.0.0.1:9090:9090}"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+
+  grafana:
+    profiles:
+      - monitoring
+    image: grafana/grafana:11.4.0
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./devops/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./devops/monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "${GRAFANA_BIND:-127.0.0.1:3001:3000}"
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+
+  loki:
+    profiles:
+      - monitoring
+    image: grafana/loki:3.4.2
+    volumes:
+      - ./devops/monitoring/loki-config.yml:/etc/loki/config.yml:ro
+      - loki_data:/loki
+    command:
+      - -config.file=/etc/loki/config.yml
+    ports:
+      - "${LOKI_BIND:-127.0.0.1:3100:3100}"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:3100/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  promtail:
+    profiles:
+      - monitoring
+    image: grafana/promtail:3.4.2
+    volumes:
+      - ./devops/monitoring/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - promtail_data:/var/lib/promtail
+    command:
+      - -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+  cadvisor:
+    profiles:
+      - monitoring
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    command:
+      - --docker_only=true
+      - --housekeeping_interval=30s
+      - --store_container_labels=true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "${CADVISOR_BIND:-127.0.0.1:8082:8080}"
+    privileged: true
+    devices:
+      - /dev/kmesg
+    restart: unless-stopped
+
 volumes:
   uptime_kuma_data:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  promtail_data:

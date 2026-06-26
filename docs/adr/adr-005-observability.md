@@ -98,6 +98,7 @@ flowchart TB
 |--------|-------------|------------|
 | `dozzle` | `127.0.0.1:8888` | UI логов контейнеров |
 | `glitchtip-telegram-bridge` | `:8080` (public для GlitchTip webhook) | GlitchTip JSON → Telegram |
+| `uptime-kuma` | `127.0.0.1:3002` | Uptime monitors + alerts (iter 2) |
 
 Файлы: [`devops/monitoring/compose.yml`](../../devops/monitoring/compose.yml) · guide: [`devops/monitoring/README.md`](../../devops/monitoring/README.md).
 
@@ -114,9 +115,11 @@ flowchart TB
 
 ## Последствия
 
-- UptimeRobot: 2 HTTP monitors (`/health`, `:3000`) — см. [`devops/monitoring/uptimerobot.md`](../../devops/monitoring/uptimerobot.md)
+- **Uptime (iter 2):** Uptime Kuma в profile `monitoring` — 2 HTTP monitors (`172.18.0.1:8000/health`, `web:3000/`); Telegram в UI Kuma — см. [`devops/monitoring/uptime-kuma.md`](../../devops/monitoring/uptime-kuma.md)
+- UptimeRobot (SaaS) — альтернатива из первоначального ADR; не используется на prod — см. [`uptimerobot.md`](../../devops/monitoring/uptimerobot.md)
 - GlitchTip: Alert receiver → Webhook URL `http://201.51.4.34:8080/webhook` (с secret при необходимости)
 - Prod: `make monitoring-up` после `stack-up-registry`; Dozzle — SSH tunnel `8888`
+- **Iter 3:** Prometheus + Grafana + dashboards в profile `monitoring` (см. [key-metrics.md](../../devops/monitoring/key-metrics.md))
 - `stack-health` остаётся для CD; не заменяет внешний uptime
 
 ## Отложено (post-MVP)
@@ -128,4 +131,4 @@ flowchart TB
 
 ## Связанные документы
 
-- [architecture.md](../architecture.md) · [devops/glitchtip/hosted.md](../../devops/glitchtip/hosted.md) · [devops/glitchtip/alerts-telegram.md](../../devops/glitchtip/alerts-telegram.md) · [devops/deploy/README.md](../../devops/deploy/README.md)
+- [architecture.md](../architecture.md) · [devops/glitchtip/hosted.md](../../devops/glitchtip/hosted.md) · [devops/glitchtip/alerts-telegram.md](../../devops/glitchtip/alerts-telegram.md) · [devops/deploy/README.md](../../devops/deploy/README.md) · [devops/monitoring/key-metrics.md](../../devops/monitoring/key-metrics.md)

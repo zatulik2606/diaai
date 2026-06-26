@@ -230,7 +230,7 @@ Trigger: **Deploy** после успешного **Docker Publish** на `main`
 
 ## 9. Observability (MVP)
 
-ADR: [adr-005-observability.md](../../docs/adr/adr-005-observability.md) · guide: [monitoring/README.md](../monitoring/README.md)
+ADR: [adr-005-observability.md](../../docs/adr/adr-005-observability.md) · guide: [monitoring/README.md](../monitoring/README.md) · **при инциденте:** [key-metrics.md](../monitoring/key-metrics.md)
 
 ### На VPS после деплоя
 
@@ -282,7 +282,24 @@ curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
 
 Ожидание: HTTP 200 + 2 issue в eu.glitchtip.com (backend + web). См. [monitoring/README.md § GlitchTip smoke](../monitoring/README.md#glitchtip-smoke-task-01--ingest).
 
-**ufw:** порт **8080** открыт для GlitchTip webhook; Dozzle **8888** только localhost (см. `compose.server.override.yml`).
+**ufw:** порт **8080** открыт для GlitchTip webhook; Dozzle **8888** и Kuma **3002** только localhost.
+
+**Uptime Kuma (task 05–06)** — после `make monitoring-up`:
+
+```bash
+# UI с Mac (не открывать :3002 в ufw)
+ssh -i ~/.ssh/diaai-deploy -L 3002:127.0.0.1:3002 deploy@201.51.4.34
+```
+
+Мониторы: `make kuma-bootstrap` · Telegram: `make kuma-notifications` (webhook → bridge). См. [monitoring/uptime-kuma.md](../monitoring/uptime-kuma.md).
+
+Smoke targets (из контейнера Kuma / с VPS):
+
+```bash
+curl -sf http://127.0.0.1:8000/health          # keyword "status":"ok"
+curl -sf -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/
+curl -sf -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3002/
+```
 
 ### Acceptance checklist
 
@@ -291,11 +308,13 @@ curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
 | 1 | GlitchTip ingest | debug curl → issue в eu.glitchtip.com | ✅ |
 | 2 | Bridge health | `curl -sf http://127.0.0.1:8080/health` + POST `/webhook` → Telegram | ✅ |
 | 3 | GlitchTip → Telegram + email | auto POST `:8080/webhook` + `:8000/.../email` от GlitchTip EU | ✅ |
-| 4 | UptimeRobot backend | monitor `http://IP:8000/health` keyword `"status":"ok"` Up | ☐ |
-| 5 | UptimeRobot web | monitor `http://IP:3000/` Up | ☐ |
-| 6 | Dozzle | `ssh -L 8888:127.0.0.1:8888 deploy@IP` → UI логов | ☐ |
+| 4 | Uptime Kuma (backend, frontend, postgres) | 3 monitor Up; Down → Telegram via bridge | ✅ |
+| 5 | Uptime Kuma alerts | `make kuma-notifications` → webhook `:8080` | ✅ |
+| 6 | Dozzle | `ssh -i ~/.ssh/diaai-deploy -L 18888:127.0.0.1:8888 deploy@IP` → UI логов | ✅ |
+| 7 | Prometheus + Grafana | tunnel `:13001` → Grafana; `/metrics` + targets UP | ✅ |
+| 8 | Grafana dashboards | folder **diaai**: RED + VPS host, live data | ☐ |
 
-UptimeRobot setup: [monitoring/uptimerobot.md](../monitoring/uptimerobot.md)
+Uptime Kuma setup: [monitoring/uptime-kuma.md](../monitoring/uptime-kuma.md) · UI: SSH tunnel `:3002`
 
 ---
 

@@ -37,6 +37,16 @@ async def glitchtip_test(
     return {"ok": True, "project": "diaai-backend"}
 
 
+@router.get("/error-test")
+async def error_test(
+    settings: Settings = Depends(get_settings),
+    credentials: HTTPAuthorizationCredentials | None = Depends(_bearer),
+) -> dict[str, bool | str]:
+    """Intentional 500 for Loki/GlitchTip smoke — token-protected."""
+    _verify_debug_token(credentials, settings)
+    raise RuntimeError("loki smoke test: intentional 500")
+
+
 def include_debug_routes(app, settings: Settings) -> None:
     if settings.glitchtip_debug_token:
         app.include_router(router)

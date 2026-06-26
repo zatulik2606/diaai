@@ -1,13 +1,15 @@
 # Monitoring (observability MVP)
 
-Стек сопровождения prod: [ADR-005](../../docs/adr/adr-005-observability.md).
+Стек сопровождения prod: [ADR-005](../../docs/adr/adr-005-observability.md). **При инциденте:** [key-metrics.md](key-metrics.md).
 
 | Категория | Инструмент | Где |
 |-----------|------------|-----|
 | Ошибки | GlitchTip EU | SaaS |
 | Алерты об ошибках | glitchtip-telegram-bridge / email-bridge | compose profile `monitoring` |
 | Uptime | Uptime Kuma | compose `monitoring` · [uptime-kuma.md](uptime-kuma.md) |
-| Логи | Dozzle | compose profile `monitoring` |
+| Логи | Dozzle + Loki (Promtail) | compose profile `monitoring` |
+| Метрики | Prometheus + Grafana + cAdvisor | compose profile `monitoring` · task 08 |
+| Runbook при инциденте | [key-metrics.md](key-metrics.md) | пороги, tunnels, чеклист 5 мин |
 
 ---
 
@@ -18,7 +20,9 @@
 make monitoring-up
 open http://127.0.0.1:8888   # Dozzle
 open http://127.0.0.1:3002   # Uptime Kuma
-curl -sf http://127.0.0.1:8080/health
+open http://127.0.0.1:3001   # Grafana (admin / GRAFANA_ADMIN_PASSWORD)
+open http://127.0.0.1:9090   # Prometheus UI
+curl -sf http://127.0.0.1:8000/metrics | head
 curl -sf http://127.0.0.1:8081/health
 curl -sf http://127.0.0.1:8000/health
 ```
@@ -31,7 +35,8 @@ curl -sf http://127.0.0.1:8000/health
 
 | Маршрут | Проект GlitchTip |
 |---------|------------------|
-| `GET /debug/glitchtip-test` (:8000) | `diaai-backend` |
+| `GET /debug/glitchtip-test` (:8000) | `diaai-backend` (info message) |
+| `GET /debug/error-test` (:8000) | intentional 500 → Loki + GlitchTip smoke |
 | `GET /api/debug/glitchtip-test` (:3000) | `diaai-web` |
 
 Если `GLITCHTIP_DEBUG_TOKEN` пуст → маршруты **404**.
@@ -60,7 +65,7 @@ curl -sf -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" \
 После app stack на VPS:
 
 ```bash
-ssh deploy@201.51.4.34
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34
 cd /opt/diaai
 git pull --ff-only origin main
 cp devops/deploy/compose.server.override.yml compose.override.yml
@@ -102,11 +107,62 @@ curl -sf -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8888/
 **Prod (VPS):** порт не открывать в ufw. Доступ через SSH tunnel:
 
 ```bash
-ssh -L 8888:127.0.0.1:8888 deploy@201.51.4.34
-# браузер → http://127.0.0.1:8888
+ssh -i ~/.ssh/diaai-deploy -L 18888:127.0.0.1:8888 deploy@201.51.4.34
+# браузер → http://127.0.0.1:18888
 ```
 
+> Локально `make monitoring-up` тоже слушает `:8888` — для prod tunnel используйте **18888** (аналог Kuma `:13002`).
+
 Переменная `DOZZLE_BIND=127.0.0.1:8888` в `.env` (см. `.env.example`).
+
+---
+
+## Prometheus + Grafana (task 08)
+
+Сервисы в `make monitoring-up`: Prometheus, Grafana, cAdvisor. Backend отдаёт **`GET /metrics`** (RED через `prometheus-fastapi-instrumentator`).
+
+| Сервис | Host bind (default) | Назначение |
+|--------|---------------------|------------|
+| Prometheus | `127.0.0.1:9090` | scrape backend, cAdvisor, self |
+| Grafana | `127.0.0.1:3001` | UI, datasource Prometheus |
+| cAdvisor | `127.0.0.1:8082` | container CPU/RAM |
+| Loki | `127.0.0.1:3100` | log storage (7d) |
+| Promtail | — | Docker logs → Loki |
+
+**Prod:** порты не открывать в ufw. SSH tunnels (не конфликтуют с local stack):
+
+```bash
+ssh -i ~/.ssh/diaai-deploy -L 13001:127.0.0.1:3001 -L 19090:127.0.0.1:9090 deploy@201.51.4.34
+# Grafana → http://127.0.0.1:13001  (admin / GRAFANA_ADMIN_PASSWORD из prod .env)
+# Prometheus → http://127.0.0.1:19090/targets
+```
+
+**`.env`:** `GRAFANA_ADMIN_PASSWORD` (обязательно на prod), `PROMETHEUS_BIND`, `GRAFANA_BIND`, `CADVISOR_BIND`.
+
+Smoke (VPS):
+
+```bash
+curl -sf http://127.0.0.1:8000/metrics | head
+curl -sf http://127.0.0.1:9090/-/healthy
+curl -sf http://127.0.0.1:3100/ready
+curl -sf -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3001/login
+curl -sf 'http://127.0.0.1:9090/api/v1/targets' | python3 -c "import sys,json; d=json.load(sys.stdin); print([(t['labels'].get('job'), t['health']) for t in d['data']['activeTargets']])"
+```
+
+Backend на prod (`network_mode: host`) — Prometheus scrape через `host.docker.internal:8000` (см. `prometheus.yml`).
+
+### Grafana dashboards (task 09)
+
+Provisioned datasources: **Prometheus** (default), **Loki** — Grafana → **Connections → Data sources** → Test.
+
+Provisioned dashboards → folder **diaai**:
+
+| Dashboard | UID | Панели |
+|-----------|-----|--------|
+| diaai Backend RED | `diaai-backend-red` | RPS, 5xx %, p50/p95, by handler |
+| diaai VPS Host | `diaai-vps-host` | CPU, RAM, disk, container CPU/RAM |
+
+После `make monitoring-up` → Grafana → **Dashboards → diaai**.
 
 ---
 
@@ -176,7 +232,7 @@ Hosted GlitchTip не шлёт email без своего SMTP. Bridge / backend 
 | 4 | (опционально) | Telegram + письмо на новый issue |
 
 ```bash
-ssh deploy@201.51.4.34
+ssh -i ~/.ssh/diaai-deploy deploy@201.51.4.34
 cd /opt/diaai
 
 # 1–2: ingest (Bearer из .env)
@@ -224,7 +280,7 @@ SaaS — см. [uptimerobot.md](uptimerobot.md).
 - [x] GlitchTip alert recipient → `:8080/webhook` + `:8000/.../email` (task 03)
 - [x] E2E iter 1 — [§ E2E iter 1](#e2e-iter-1-task-04--ingest--alert) (task 04)
 - [ ] Uptime Kuma monitors green (iter 2, task 06)
-- [ ] Dozzle через SSH tunnel (iter 3)
+- [ ] Dozzle через SSH tunnel `:18888` (iter 3, task 07)
 
 Acceptance: [../deploy/README.md](../deploy/README.md#9-observability-mvp)
 
@@ -234,7 +290,7 @@ Acceptance: [../deploy/README.md](../deploy/README.md#9-observability-mvp)
 
 | Target | Действие |
 |--------|----------|
-| `make monitoring-up` | Dozzle + bridge |
+| `make monitoring-up` | Dozzle + bridge + Kuma + Prometheus + Grafana + cAdvisor |
 | `make monitoring-down` | остановить monitoring |
 | `make monitoring-ps` | статус |
 | `make monitoring-logs` | логи (`SVC=...`) |
@@ -243,4 +299,4 @@ Acceptance: [../deploy/README.md](../deploy/README.md#9-observability-mvp)
 
 ## Отложено (post-MVP)
 
-Prometheus + Grafana, Loki, endpoint алертов в backend — см. ADR-005.
+Loki, endpoint алертов в backend — см. ADR-005. Dashboards JSON — task 09.

@@ -20,6 +20,7 @@ from backend.glitchtip_poller import start_glitchtip_poller
 from backend.glitchtip_webhook import include_glitchtip_webhook
 from backend.exceptions import AppError
 from backend.health import router as health_router
+from backend.metrics import setup_metrics
 from backend.schemas.errors import ErrorBody, ErrorDetail
 from backend.sentry_setup import init_sentry
 
@@ -129,6 +130,7 @@ def create_app() -> FastAPI:
     app.include_router(api_router, prefix="/api/v1")
     include_debug_routes(app, settings)
     include_glitchtip_webhook(app, settings)
+    setup_metrics(app)
     return app
 
 

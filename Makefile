@@ -155,6 +155,6 @@ sentry-install sentry-up sentry-down sentry-ps sentry-cloud-projects:
 glitchtip-up glitchtip-down glitchtip-ps glitchtip-logs glitchtip-pull:
 	$(MAKE) -C devops/glitchtip $@
 
-.PHONY: monitoring-up monitoring-down monitoring-ps monitoring-logs monitoring-build
-monitoring-up monitoring-down monitoring-ps monitoring-logs monitoring-build:
+.PHONY: monitoring-up monitoring-down monitoring-ps monitoring-logs monitoring-build kuma-bootstrap kuma-notifications
+monitoring-up monitoring-down monitoring-ps monitoring-logs monitoring-build kuma-bootstrap kuma-notifications:
 	$(MAKE) -C devops/monitoring $@

@@ -62,3 +62,22 @@ async def test_sentry_test_ok(monkeypatch) -> None:
     assert response.status_code == 200
     assert response.json() == {"ok": True, "project": "diaai-backend"}
     capture.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_error_test_returns_500(monkeypatch) -> None:
+    monkeypatch.setenv("GLITCHTIP_DEBUG_TOKEN", "expected-token")
+    get_settings = __import__("backend.config", fromlist=["get_settings"]).get_settings
+    get_settings.cache_clear()
+    app = __import__("backend.main", fromlist=["create_app"]).create_app()
+
+    from httpx import ASGITransport, AsyncClient
+
+    transport = ASGITransport(app=app, raise_app_exceptions=False)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.get(
+            "/debug/error-test",
+            headers={"Authorization": "Bearer expected-token"},
+        )
+    assert response.status_code == 500
+    assert response.json()["error"]["code"] == "INTERNAL_ERROR"

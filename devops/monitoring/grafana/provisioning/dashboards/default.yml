@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: diaai
+    orgId: 1
+    folder: diaai
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/dashboards
