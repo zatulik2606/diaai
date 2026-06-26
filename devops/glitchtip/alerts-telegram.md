@@ -70,7 +70,25 @@ bash devops/glitchtip/scripts/test-alarm-bot.sh
 
 GlitchTip шлёт **Slack-compatible JSON**; Telegram API — другой формат. Прямой URL `api.telegram.org` **не подходит**.
 
-**MVP (рекомендуется):** контейнер [`glitchtip-telegram-bridge`](../monitoring/glitchtip-telegram-bridge/) в profile `monitoring`:
+**MVP (рекомендуется):** webhook на **backend :8000** (порт уже открыт на prod):
+
+```
+http://201.51.4.34:8000/webhooks/glitchtip
+```
+
+Env на VPS в `/opt/diaai/.env`: `TELEGRAM_ALARM_BOT_TOKEN`, `TELEGRAM_ALARM_CHAT_ID`, опционально `GLITCHTIP_WEBHOOK_SECRET`.
+
+**Fallback (рекомендуется на prod):** hosted GlitchTip часто **не шлёт POST webhook** автоматически (worker), хотя Test API работает. Backend poller опрашивает GlitchTip API:
+
+```bash
+GLITCHTIP_API_TOKEN=          # Profile → Auth Tokens на eu.glitchtip.com
+GLITCHTIP_ORG=diaai
+GLITCHTIP_POLL_INTERVAL_SECONDS=60
+```
+
+При старте backend помечает текущие issues как «виденные», дальше шлёт Telegram только по **новым** issue.
+
+**Альтернатива:** контейнер [`glitchtip-telegram-bridge`](../monitoring/glitchtip-telegram-bridge/) — profile `monitoring`, порт **8080** (нужен ufw/Timeweb):
 
 ```bash
 make monitoring-up

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from collections.abc import AsyncIterator
@@ -15,6 +16,8 @@ from backend.api.v1.router import api_router
 from backend.config import get_settings, validate_service_token
 from backend.database import dispose_db, init_db
 from backend.debug_glitchtip import include_debug_routes
+from backend.glitchtip_poller import start_glitchtip_poller
+from backend.glitchtip_webhook import include_glitchtip_webhook
 from backend.exceptions import AppError
 from backend.schemas.errors import ErrorBody, ErrorDetail
 from backend.sentry_setup import init_sentry
@@ -28,12 +31,21 @@ init_sentry(get_settings())
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     validate_service_token(settings)
+    poller_task = start_glitchtip_poller(settings)
     if settings.database_url:
         init_db(settings.database_url)
         logger.info("Backend startup (database configured)")
     else:
         logger.warning("Backend startup without DATABASE_URL")
-    yield
+    try:
+        yield
+    finally:
+        if poller_task is not None:
+            poller_task.cancel()
+            try:
+                await poller_task
+            except asyncio.CancelledError:
+                pass
     await dispose_db()
     logger.info("Backend shutdown")
 
@@ -118,6 +130,7 @@ def create_app() -> FastAPI:
 
     app.include_router(api_router, prefix="/api/v1")
     include_debug_routes(app, settings)
+    include_glitchtip_webhook(app, settings)
     return app
 
 

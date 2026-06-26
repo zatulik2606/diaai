@@ -33,3 +33,28 @@ services:
       interval: 15s
       timeout: 5s
       retries: 3
+
+  glitchtip-email-bridge:
+    profiles:
+      - monitoring
+    build:
+      context: devops/monitoring/glitchtip-email-bridge
+      dockerfile: Dockerfile
+    environment:
+      GLITCHTIP_ALERT_EMAIL_TO: ${GLITCHTIP_ALERT_EMAIL_TO:-}
+      GLITCHTIP_ALERT_EMAIL_FROM: ${GLITCHTIP_ALERT_EMAIL_FROM:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_USE_TLS: ${SMTP_USE_TLS:-true}
+      GLITCHTIP_WEBHOOK_SECRET: ${GLITCHTIP_WEBHOOK_SECRET:-}
+      PORT: "8081"
+    ports:
+      - "${GLITCHTIP_EMAIL_BRIDGE_BIND:-8081:8081}"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3

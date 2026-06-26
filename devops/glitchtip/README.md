@@ -6,6 +6,7 @@ Error tracking для **diaai-backend** и **diaai-web**. SDK — Sentry-compati
 |----------|------------|
 | **[hosted.md](hosted.md)** | **Облако EU/US** (без VPS) — проверено |
 | **[alerts-telegram.md](alerts-telegram.md)** | **@diaaialarm_bot** — алерты GlitchTip |
+| **[alerts-email.md](alerts-email.md)** | **SMTP bridge** — email-алерты GlitchTip |
 | **[timeweb-deploy.md](timeweb-deploy.md)** | self-hosted на Timeweb |
 | [inventory.example.md](inventory.example.md) | VPS inventory |
 | [dsn.env.example](dsn.env.example) | DSN шаблон |

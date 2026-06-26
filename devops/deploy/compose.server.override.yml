@@ -10,6 +10,14 @@ services:
     ports: !override
       - "127.0.0.1:5433:5432"
 
-  dozzle:
-    ports: !override
-      - "127.0.0.1:8888:8080"
+  # Host network: Timeweb blocks SMTP from Docker bridge; Mail.ru reachable via IPv6 on host.
+  backend:
+    network_mode: host
+    environment:
+      DATABASE_URL: postgresql+asyncpg://diaai:diaai@127.0.0.1:5433/diaai
+      BACKEND_HOST: 0.0.0.0
+      BACKEND_PORT: 8000
+
+  web:
+    environment:
+      BACKEND_URL: http://172.18.0.1:8000

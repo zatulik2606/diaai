@@ -28,6 +28,22 @@ class Settings(BaseSettings):
     glitchtip_traces_sample_rate: float = 0.01
     glitchtip_release: str = ""
     glitchtip_debug_token: str = ""
+    glitchtip_url: str = "https://eu.glitchtip.com"
+    glitchtip_org: str = "diaai"
+    glitchtip_api_token: str = ""
+    glitchtip_poll_interval_seconds: int = 60
+    telegram_alarm_bot_token: str = ""
+    telegram_alarm_chat_id: str = ""
+    glitchtip_webhook_secret: str = ""
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_use_tls: bool = True
+    glitchtip_alert_email_to: str = ""
+    glitchtip_alert_email_from: str = ""
+    glitchtip_smtp_relay_url: str = ""
+    smtp_relay_token: str = ""
 
 
 def validate_service_token(settings: Settings) -> None:

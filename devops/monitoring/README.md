@@ -5,7 +5,7 @@
 | Категория | Инструмент | Где |
 |-----------|------------|-----|
 | Ошибки | GlitchTip EU | SaaS |
-| Алерты об ошибках | glitchtip-telegram-bridge | compose profile `monitoring` |
+| Алерты об ошибках | glitchtip-telegram-bridge / email-bridge | compose profile `monitoring` |
 | Uptime | UptimeRobot | SaaS · [uptimerobot.md](uptimerobot.md) |
 | Логи | Dozzle | compose profile `monitoring` |
 
@@ -18,6 +18,7 @@
 make monitoring-up
 open http://127.0.0.1:8888   # Dozzle
 curl -sf http://127.0.0.1:8080/health
+curl -sf http://127.0.0.1:8081/health
 ```
 
 ---
@@ -54,12 +55,14 @@ GlitchTip шлёт Slack-compatible JSON; Telegram API — другой форм
 
 1. Project → **Alerts** → **Alert recipients** → **Add**
 2. Type: **Webhook** (General / Slack-compatible)
-3. URL:
-   - без secret: `http://201.51.4.34:8080/webhook`
-   - с secret: `http://201.51.4.34:8080/webhook?secret=YOUR_SECRET`
+3. URL (prod, порт **8000** открыт):
+   - `http://201.51.4.34:8000/webhooks/glitchtip`
+   - с secret: `http://201.51.4.34:8000/webhooks/glitchtip?secret=YOUR_SECRET`
 4. Trigger: new issue / regression (по необходимости)
 
-**ufw:** порт **8080** должен быть открыт для ingest GlitchTip (или reverse proxy на 443 позже).
+**Альтернатива:** bridge на `:8080` — нужен открытый порт в ufw/Timeweb (см. ниже).
+
+**ufw:** для bridge — порт **8080**; backend webhook **8000** уже доступен снаружи.
 
 ### Проверка
 
@@ -74,6 +77,18 @@ curl -X POST http://127.0.0.1:8080/webhook \
 Ожидание: сообщение в Telegram.
 
 Подробнее: [../glitchtip/alerts-telegram.md](../glitchtip/alerts-telegram.md)
+
+---
+
+## GlitchTip → Email bridge
+
+Hosted GlitchTip не шлёт email без своего SMTP. Bridge / backend endpoint принимает webhook и отправляет письмо через **ваш SMTP**.
+
+**Prod:** `http://201.51.4.34:8000/webhooks/glitchtip/email` (второй webhook recipient в alert rule).
+
+**Локально:** `:8081/webhook` — `make monitoring-up`.
+
+Подробнее: [../glitchtip/alerts-email.md](../glitchtip/alerts-email.md)
 
 ---
 
