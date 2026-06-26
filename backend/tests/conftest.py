@@ -110,7 +110,13 @@ async def db_engine():
 
 
 @pytest.fixture
-async def client(app, db_session_factory):
+async def client(app, db_engine, db_session_factory):
+    import backend.database as db_module
+
+    prev_engine, prev_local = db_module.engine, db_module.AsyncSessionLocal
+    db_module.engine = db_engine
+    db_module.AsyncSessionLocal = db_session_factory
+
     async def override_get_db():
         async with db_session_factory() as session:
             try:
@@ -133,6 +139,8 @@ async def client(app, db_session_factory):
         yield ac
 
     app.dependency_overrides.clear()
+    db_module.engine = prev_engine
+    db_module.AsyncSessionLocal = prev_local
 
 
 @pytest.fixture

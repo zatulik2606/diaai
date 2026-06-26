@@ -69,12 +69,16 @@ def _check_secret(
 
 def _webhook_ready(settings: Settings) -> None:
     if not settings.telegram_alarm_bot_token or not settings.telegram_alarm_chat_id:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Not configured")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Not configured"
+        )
 
 
 def _email_ready(settings: Settings) -> None:
     if not settings.glitchtip_alert_email_to or not settings.smtp_host:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Not configured")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Not configured"
+        )
 
 
 @router.api_route("/glitchtip/email", methods=["GET", "HEAD"])

@@ -97,7 +97,7 @@ Web (server route): `GET /api/debug/glitchtip-test` с тем же Bearer — [d
 
 ## API и авторизация
 
-- **`GET /health`** — без auth, health check.
+- **`GET /health`** — без auth; `SELECT 1` в PostgreSQL → **200** `{"status":"ok","database":"ok",…}` или **503** `{"status":"unavailable","database":"down"}`.
 - **`/api/v1/*`** — заголовок `Authorization: Bearer <BACKEND_SERVICE_TOKEN>`.
 - Пользователь идентифицируется полем **`telegram_id`** в JSON body (POST) или query (GET).
 - Опционально: `X-Request-Id` (UUID) для трассировки.

@@ -29,7 +29,13 @@ async def test_poll_once_primes_without_sending(monkeypatch):
     )
     poller = GlitchTipPoller(settings)
     poller.fetch_issues = lambda: _async_issues(  # type: ignore[method-assign]
-        [{"id": "1", "metadata": {"type": "Exception", "value": "first"}, "permalink": "https://x/1"}]
+        [
+            {
+                "id": "1",
+                "metadata": {"type": "Exception", "value": "first"},
+                "permalink": "https://x/1",
+            }
+        ]
     )
     calls: list[str] = []
     monkeypatch.setattr(
@@ -56,8 +62,16 @@ async def test_poll_once_sends_new_issue(monkeypatch):
     poller._seen.add("1")
     poller.fetch_issues = lambda: _async_issues(  # type: ignore[method-assign]
         [
-            {"id": "1", "metadata": {"type": "Exception", "value": "old"}, "permalink": "https://x/1"},
-            {"id": "2", "metadata": {"type": "Exception", "value": "new issue"}, "permalink": "https://x/2"},
+            {
+                "id": "1",
+                "metadata": {"type": "Exception", "value": "old"},
+                "permalink": "https://x/1",
+            },
+            {
+                "id": "2",
+                "metadata": {"type": "Exception", "value": "new issue"},
+                "permalink": "https://x/2",
+            },
         ]
     )
     calls: list[str] = []

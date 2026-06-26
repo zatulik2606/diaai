@@ -4,12 +4,12 @@
 
 ## Обзор
 
-Рабочий план области **observability**: довести до prod стек из ADR-005 — **GlitchTip EU** (ошибки, Sentry-compatible SDK), **UptimeRobot** (доступность), **Dozzle** (логи), **Prometheus + Grafana** (метрики и дашборды).
+Рабочий план области **observability**: довести до prod стек из ADR-005 — **GlitchTip EU** (ошибки), **Uptime Kuma** (доступность, self-hosted), **Dozzle** (логи), **Prometheus + Grafana** (метрики и дашборды).
 
 | Итерация | Фокус | Инструменты |
 |----------|-------|-------------|
 | **1** | Отслеживание ошибок + алерты в Telegram | GlitchTip, `sentry-sdk`, `@sentry/nextjs`, `@diaaialarm_bot`, bridge |
-| **2** | Мониторинг доступности | UptimeRobot (SaaS) |
+| **2** | Мониторинг доступности | Uptime Kuma (compose `monitoring`) |
 | **3** | Логи и метрики | Dozzle, Prometheus, Grafana |
 | **3.1** | Справочник ключевых метрик | docs |
 
@@ -21,10 +21,10 @@
 | `@diaaialarm_bot` + `TELEGRAM_ALARM_*` | ✅ | ✅ |
 | `glitchtip-telegram-bridge` + Dozzle | ✅ `make monitoring-up` | ✅ `:8080` + `:8888` localhost |
 | GlitchTip → webhook → Telegram | ✅ UI `:8080/webhook` | ✅ auto POST GlitchTip EU |
-| UptimeRobot monitors | 📋 | 📋 |
+| Uptime Kuma monitors | 📋 | 📋 |
 | Prometheus + Grafana + dashboards | 📋 | 📋 |
 
-**Прогресс:** **3 / 10** задач · iter 1 🚧
+**Прогресс:** **5 / 10** задач · iter 2 🚧
 
 > **Scope MVP:** без self-hosted GlitchTip, ELK, Loki. Prometheus/Grafana — в profile `monitoring` на prod-VPS (см. ADR-005 «отложено» — осознанное расширение iter 3 по запросу на дашборды).
 
@@ -48,8 +48,8 @@
 
 | # | Название | Задачи | Статус | Документы |
 |---|----------|--------|--------|-----------|
-| 1 | Отслеживание ошибок + алерты | 01–04 | 🚧 In Progress | [plan](impl/observability/iteration-1-error-tracking/plan.md) · [summary](impl/observability/iteration-1-error-tracking/summary.md) |
-| 2 | Мониторинг доступности | 05–06 | 📋 Planned | [plan](impl/observability/iteration-2-uptime/plan.md) · [summary](impl/observability/iteration-2-uptime/summary.md) |
+| 1 | Отслеживание ошибок + алерты | 01–04 | ✅ Done | [plan](impl/observability/iteration-1-error-tracking/plan.md) · [summary](impl/observability/iteration-1-error-tracking/summary.md) |
+| 2 | Мониторинг доступности | 05–06 | 🚧 In Progress | [plan](impl/observability/iteration-2-uptime/plan.md) · [summary](impl/observability/iteration-2-uptime/summary.md) |
 | 3 | Логи и метрики | 07–09 | 📋 Planned | [plan](impl/observability/iteration-3-logs-metrics/plan.md) · [summary](impl/observability/iteration-3-logs-metrics/summary.md) |
 | 3.1 | Ключевые метрики (docs) | 10 | 📋 Planned | [plan](impl/observability/iteration-3-metrics-guide/plan.md) · [summary](impl/observability/iteration-3-metrics-guide/summary.md) |
 
@@ -60,9 +60,9 @@
 | 01 | GlitchTip на prod: env, ingest backend + web | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md) |
 | 02 | Monitoring stack на prod: bridge + alarm bot | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md) |
 | 03 | GlitchTip Alert receivers → webhook | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md) |
-| 04 | E2E: ошибка → GlitchTip → Telegram | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md) |
-| 05 | UptimeRobot: monitors + alert contact | 📋 | [план](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/plan.md) · [summary](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/summary.md) |
-| 06 | Uptime acceptance + prod checklist | 📋 | [план](impl/observability/iteration-2-uptime/tasks/task-06-uptime-verify/plan.md) · [summary](impl/observability/iteration-2-uptime/tasks/task-06-uptime-verify/summary.md) |
+| 04 | E2E: ошибка → GlitchTip → Telegram | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md) |
+| 05 | `/health` + DB probe; Uptime Kuma compose | ✅ | [план](impl/observability/iteration-2-uptime/tasks/task-05-health-kuma/plan.md) · [summary](impl/observability/iteration-2-uptime/tasks/task-05-health-kuma/summary.md) |
+| 06 | Kuma monitors + Telegram; acceptance §9 п.4–5 | 📋 | [план](impl/observability/iteration-2-uptime/tasks/task-06-uptime-verify/plan.md) · [summary](impl/observability/iteration-2-uptime/tasks/task-06-uptime-verify/summary.md) |
 | 07 | Dozzle на prod + SSH tunnel | 📋 | [план](impl/observability/iteration-3-logs-metrics/tasks/task-07-dozzle-prod/plan.md) · [summary](impl/observability/iteration-3-logs-metrics/tasks/task-07-dozzle-prod/summary.md) |
 | 08 | Prometheus + Grafana (compose monitoring) | 📋 | [план](impl/observability/iteration-3-logs-metrics/tasks/task-08-prometheus-grafana/plan.md) · [summary](impl/observability/iteration-3-logs-metrics/tasks/task-08-prometheus-grafana/summary.md) |
 | 09 | Grafana dashboards: FastAPI + VPS | 📋 | [план](impl/observability/iteration-3-logs-metrics/tasks/task-09-grafana-dashboards/plan.md) · [summary](impl/observability/iteration-3-logs-metrics/tasks/task-09-grafana-dashboards/summary.md) |
@@ -72,7 +72,7 @@
 
 ---
 
-## Итерация 1 — Отслеживание ошибок + алерты 🚧
+## Итерация 1 — Отслеживание ошибок + алерты ✅
 
 **Ценность:** узнавать о 500 и падениях React **до** пользователей; алерт в Telegram с ссылкой на issue в GlitchTip.
 
@@ -169,92 +169,63 @@ E2E ✅ 2026-06-26 — auto POST от `165.227.159.10` (GlitchTip EU).
 
 ---
 
-## Задача 04: E2E — GlitchTip → Telegram 📋
+## Задача 04: E2E — GlitchTip → Telegram ✅
 
-📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md) — runbook + summaries; smoke через task 01 debug + task 03 webhook.
+✅ [План](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md) · [Summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md)
+
+Runbook: [monitoring/README.md § E2E iter 1](../../devops/monitoring/README.md#e2e-iter-1-task-04--ingest--alert). Smoke VPS 2026-06-07 (debug 200); webhook delivery — task 03 + логи `165.227.159.10`.
 
 ### Документы
 
-- 📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md)
-- 📝 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md)
+- ✅ [План](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md)
+- ✅ [Summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md)
 
 ---
 
 ## Итерация 2 — Мониторинг доступности 📋
 
-**Ценность:** узнать о падении VPS/контейнера/порта **снаружи**, когда `stack-health` уже не поможет.
+**Ценность:** алерт при недоступности backend (в т.ч. БД) или web; история проверок в UI Kuma.
+
+**План итерации:** [impl/observability/iteration-2-uptime/plan.md](impl/observability/iteration-2-uptime/plan.md)
+
+**Отклонение от ADR-005:** Uptime **Kuma** (self-hosted, `:3002`) вместо UptimeRobot SaaS.
 
 **Результат итерации:**
-- UptimeRobot пингует `:8000/health` и `:3000`
-- алерт в Telegram/email при Down
+- `GET /health` — `SELECT 1` → 200 или 503
+- Uptime Kuma в `make monitoring-up`; UI `127.0.0.1:3002` (SSH tunnel)
+- мониторы: backend `/health` (keyword `"status":"ok"`), web `/`
+- Telegram — **пользователь** в UI Kuma (token + chat_id)
 - acceptance §9 пункты 4–5 ✅
+
+**Skill:** `docker-expert` (task 05)
 
 → [iteration-2-uptime/plan.md](impl/observability/iteration-2-uptime/plan.md)
 
 ---
 
-## Задача 05: UptimeRobot — monitors + alert contact 📋
+## Задача 05: `/health` + Uptime Kuma ✅
 
-### Цель
+✅ [План](impl/observability/iteration-2-uptime/tasks/task-05-health-kuma/plan.md) · [Summary](impl/observability/iteration-2-uptime/tasks/task-05-health-kuma/summary.md)
 
-Два HTTP monitor'а и канал оповещения настроены по [uptimerobot.md](../../devops/monitoring/uptimerobot.md).
-
-### Подготовка (пользователь)
-
-- [ ] Регистрация на [uptimerobot.com](https://uptimerobot.com/)
-- [ ] Alert Contact: **Telegram** (рекомендуется) или email
-- [ ] Monitor `diaai-backend-health`: `http://201.51.4.34:8000/health`, keyword `"status":"ok"`
-- [ ] Monitor `diaai-web`: `http://201.51.4.34:3000/`, interval 5 min
-
-### Состав работ
-
-- [ ] Проверить monitors **Up** с dashboard UptimeRobot
-- [ ] Test alert: Pause monitor → уведомление → Resume
-- [ ] Дополнить [uptimerobot.md](../../devops/monitoring/uptimerobot.md) при расхождениях
-
-### Артефакты
-
-- UptimeRobot dashboard — 2 monitors green
-- скрин или заметка в task summary (без секретов)
-
-### Definition of Done
-
-**Пользователь:** оба monitor Up; тестовый Down → alert получен.
-
-### Skill
-
-—
+`/health` с `SELECT 1`; `uptime-kuma` в compose (`:3002`). Runbook: [uptime-kuma.md](../../devops/monitoring/uptime-kuma.md).
 
 ### Документы
 
-- 📋 [План](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/plan.md)
-- 📝 [Summary](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/summary.md)
+- ✅ [План](impl/observability/iteration-2-uptime/tasks/task-05-health-kuma/plan.md)
+- ✅ [Summary](impl/observability/iteration-2-uptime/tasks/task-05-health-kuma/summary.md)
 
 ---
 
-## Задача 06: Uptime acceptance + prod checklist 📋
+## Задача 06: Kuma monitors + acceptance 📋
 
-### Цель
+📋 [План](impl/observability/iteration-2-uptime/tasks/task-06-uptime-verify/plan.md) — мониторы в UI, Telegram, §9 п.4–5.
 
-Закрыть observability acceptance по доступности; response time виден в UptimeRobot как грубая метрика latency.
+### Подготовка (пользователь)
 
-### Состав работ
-
-- [ ] Обновить [deploy/README.md §9](../../devops/deploy/README.md) — пункты 4–5 ✅
-- [ ] Связать UptimeRobot alerts с `@diaaialarm_bot` (если ещё не сделано в task 05)
-- [ ] Iteration 2 summary
-
-### Артефакты
-
-- [iteration-2 summary](impl/observability/iteration-2-uptime/summary.md)
-
-### Definition of Done
-
-**Пользователь:** мониторинг доступности работает 24/7 без участия агента.
-
-### Skill
-
-—
+- [ ] Kuma → Notifications → Telegram (token + chat_id)
+- [ ] Monitor `diaai-backend-health`: `http://172.18.0.1:8000/health`, keyword `"status":"ok"`
+- [ ] Monitor `diaai-web`: `http://web:3000/` (или `172.18.0.1:3000`)
+- [ ] Pause monitor → alert → Resume
 
 ### Документы
 
@@ -409,7 +380,7 @@ Profile `monitoring` дополнен Prometheus + Grafana (+ cAdvisor/node expo
 
 - [ ] Создать [`devops/monitoring/key-metrics.md`](../../devops/monitoring/key-metrics.md)
 - [ ] Разделы:
-  - **Availability** — UptimeRobot, что значит Down
+  - **Availability** — Uptime Kuma, что значит Down
   - **Errors** — GlitchTip issue rate, новые regressions
   - **Backend RED** — RPS, error rate %, p95 latency (пороги для MVP)
   - **VPS/Container** — CPU >80%, RAM >85%, disk >90%

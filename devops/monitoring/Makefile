@@ -5,7 +5,7 @@ MONITORING_PROFILE = --profile monitoring
 .PHONY: monitoring-up monitoring-down monitoring-ps monitoring-logs monitoring-build
 
 monitoring-up:
-	cd $(REPO_ROOT) && COMPOSE_PROFILES=monitoring docker compose $(MONITORING_COMPOSE) up -d --build dozzle glitchtip-telegram-bridge
+	cd $(REPO_ROOT) && COMPOSE_PROFILES=monitoring docker compose $(MONITORING_COMPOSE) up -d --build dozzle glitchtip-telegram-bridge uptime-kuma
 
 monitoring-down:
 	cd $(REPO_ROOT) && docker compose $(MONITORING_COMPOSE) $(MONITORING_PROFILE) down

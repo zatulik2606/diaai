@@ -6,7 +6,7 @@
 |-----------|------------|-----|
 | Ошибки | GlitchTip EU | SaaS |
 | Алерты об ошибках | glitchtip-telegram-bridge / email-bridge | compose profile `monitoring` |
-| Uptime | UptimeRobot | SaaS · [uptimerobot.md](uptimerobot.md) |
+| Uptime | Uptime Kuma | compose `monitoring` · [uptime-kuma.md](uptime-kuma.md) |
 | Логи | Dozzle | compose profile `monitoring` |
 
 ---
@@ -17,8 +17,10 @@
 # из корня репо — app stack уже running
 make monitoring-up
 open http://127.0.0.1:8888   # Dozzle
+open http://127.0.0.1:3002   # Uptime Kuma
 curl -sf http://127.0.0.1:8080/health
 curl -sf http://127.0.0.1:8081/health
+curl -sf http://127.0.0.1:8000/health
 ```
 
 ---
@@ -46,6 +48,8 @@ curl -sf -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" \
 ```
 
 Ожидание: HTTP 200, JSON `{ "ok": true, "project": "diaai-backend|diaai-web" }`; issue в [eu.glitchtip.com](https://eu.glitchtip.com) ≤1 min.
+
+**Backend `/health`:** `SELECT 1` → 200 `{"status":"ok","database":"ok",…}` или 503 при недоступной БД. Keyword для Kuma: `"status":"ok"`.
 
 Подробнее: [../glitchtip/hosted.md](../glitchtip/hosted.md) · tasklist observability task 01.
 
@@ -160,20 +164,67 @@ Hosted GlitchTip не шлёт email без своего SMTP. Bridge / backend 
 
 ---
 
-## UptimeRobot
+## E2E iter 1 (task 04 — ingest → alert)
 
-Внешние HTTP checks — см. [uptimerobot.md](uptimerobot.md).
+Полная проверка цепочки observability iter 1 на **VPS** (после tasks 01–03). Секреты — только из `/opt/diaai/.env`, не в git.
+
+| # | Шаг | Ожидание |
+|---|-----|----------|
+| 1 | Debug backend | HTTP 200, issue в GlitchTip `diaai-backend` |
+| 2 | Debug web | HTTP 200, issue в GlitchTip `diaai-web` |
+| 3 | GlitchTip alert rule | auto POST на bridge + email endpoint |
+| 4 | (опционально) | Telegram + письмо на новый issue |
+
+```bash
+ssh deploy@201.51.4.34
+cd /opt/diaai
+
+# 1–2: ingest (Bearer из .env)
+TOKEN=$(grep ^GLITCHTIP_DEBUG_TOKEN= /opt/diaai/.env | cut -d= -f2)
+curl -sf -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8000/debug/glitchtip-test
+curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
+  http://127.0.0.1:3000/api/debug/glitchtip-test
+
+# 3: auto webhook от GlitchTip EU (≤1–2 min, rule «1 event / 1 min»)
+docker logs diaai-glitchtip-telegram-bridge-1 --since 5m 2>&1 | grep -a "POST /webhook"
+docker logs diaai-backend-1 --since 5m 2>&1 | grep -a "POST /webhooks/glitchtip/email"
+
+# Bridge health (task 02)
+curl -sf http://127.0.0.1:8080/health
+```
+
+**Ожидание шага 3:** в логах bridge — `165.227.159.10 - "POST /webhook HTTP/1.1" 200`; в backend — `POST /webhooks/glitchtip/email HTTP/1.1" 200`. IP — worker GlitchTip EU.
+
+**Telegram:** сообщение от `@diaaialarm_bot` с ссылкой на issue в [eu.glitchtip.com](https://eu.glitchtip.com).
+
+**Если webhook не пришёл:** alert rule throttling (1/min), issue уже существует (не «new»), ufw `:8080`, recipients в UI — см. [alerts-telegram.md](../glitchtip/alerts-telegram.md) §4.1.
+
+Acceptance §9 пункты 1–3: [deploy/README.md §9](../deploy/README.md#9-observability-mvp).
+
+---
+
+## Uptime Kuma
+
+Self-hosted мониторинг доступности — см. [uptime-kuma.md](uptime-kuma.md). UI: `127.0.0.1:3002` (`UPTIME_KUMA_BIND`).
+
+---
+
+## UptimeRobot (альтернатива, не iter 2)
+
+SaaS — см. [uptimerobot.md](uptimerobot.md).
 
 ---
 
 ## Prod checklist
 
-- [ ] `make stack-up-registry && make stack-health`
-- [ ] `make monitoring-up` — Dozzle + bridge (task 02)
-- [ ] `curl -sf http://127.0.0.1:8080/health` + POST `/webhook` → Telegram
-- [ ] UptimeRobot monitors green
-- [x] GlitchTip alert recipient → `:8080/webhook` + `:8000/.../email` (task 03) ✅
-- [ ] Dozzle через SSH tunnel
+- [x] `make stack-up-registry && make stack-health` (iter 1)
+- [x] `make monitoring-up` — Dozzle + bridge (task 02)
+- [x] `uptime-kuma` в monitoring stack (task 05) — `:3002` localhost
+- [x] debug curl backend + web → GlitchTip (task 01)
+- [x] GlitchTip alert recipient → `:8080/webhook` + `:8000/.../email` (task 03)
+- [x] E2E iter 1 — [§ E2E iter 1](#e2e-iter-1-task-04--ingest--alert) (task 04)
+- [ ] Uptime Kuma monitors green (iter 2, task 06)
+- [ ] Dozzle через SSH tunnel (iter 3)
 
 Acceptance: [../deploy/README.md](../deploy/README.md#9-observability-mvp)
 
