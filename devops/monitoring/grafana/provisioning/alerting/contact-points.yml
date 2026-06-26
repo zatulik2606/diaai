@@ -1,0 +1,14 @@
+# Grafana → Telegram via glitchtip-telegram-bridge (same @diaaialarm_bot as Kuma/GlitchTip)
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: diaai-telegram
+    receivers:
+      - uid: diaai_telegram_webhook
+        type: webhook
+        disableResolveMessage: false
+        settings:
+          url: http://glitchtip-telegram-bridge:8080/webhook
+          httpMethod: POST
+          maxAlerts: "10"

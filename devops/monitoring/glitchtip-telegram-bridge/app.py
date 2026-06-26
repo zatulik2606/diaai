@@ -18,9 +18,36 @@ WEBHOOK_SECRET = os.environ.get("GLITCHTIP_WEBHOOK_SECRET", "")
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
 KUMA_MARKER = "[Uptime Kuma]"
+GRAFANA_MARKER = "[Grafana]"
+
+
+def _format_grafana(payload: dict) -> str | None:
+    alerts = payload.get("alerts")
+    if not isinstance(alerts, list) or "status" not in payload:
+        return None
+
+    status = payload.get("status", "firing")
+    title = (payload.get("title") or payload.get("message") or "Grafana alert").strip()
+    prefix = GRAFANA_MARKER if status == "firing" else f"{GRAFANA_MARKER} resolved"
+    lines = [f"{prefix} {title}"]
+
+    for alert in alerts[:3]:
+        labels = alert.get("labels") or {}
+        annotations = alert.get("annotations") or {}
+        name = labels.get("alertname") or "alert"
+        if annotations.get("summary"):
+            lines.append(f"{name}: {annotations['summary']}")
+        elif annotations.get("description"):
+            lines.append(f"{name}: {annotations['description']}")
+
+    return "\n".join(lines)
 
 
 def format_alert(payload: dict) -> str:
+    grafana = _format_grafana(payload)
+    if grafana:
+        return grafana
+
     text = (payload.get("text") or "").strip()
     if KUMA_MARKER in text:
         return text

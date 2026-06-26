@@ -9,7 +9,8 @@
 | Uptime | Uptime Kuma | compose `monitoring` · [uptime-kuma.md](uptime-kuma.md) |
 | Логи | Dozzle + Loki (Promtail) | compose profile `monitoring` |
 | Метрики | Prometheus + Grafana + cAdvisor | compose profile `monitoring` · task 08 |
-| Runbook при инциденте | [key-metrics.md](key-metrics.md) | пороги, tunnels, чеклист 5 мин |
+| Grafana alerting | provisioned rules → bridge `[Grafana]` | `grafana/provisioning/alerting/` |
+| Runbook при инциденте | [key-metrics.md](key-metrics.md) | пороги, tunnels, LogQL, чеклист 5 мин |
 
 ---
 
@@ -160,9 +161,48 @@ Provisioned dashboards → folder **diaai**:
 | Dashboard | UID | Панели |
 |-----------|-----|--------|
 | diaai Backend RED | `diaai-backend-red` | RPS, 5xx %, p50/p95, by handler |
+| diaai FastAPI Observability | `diaai-fastapi-observability` | totals, 2xx/5xx %, p99, RPS, CPU/RAM (Grafana.com #22676) |
 | diaai VPS Host | `diaai-vps-host` | CPU, RAM, disk, container CPU/RAM |
 
 После `make monitoring-up` → Grafana → **Dashboards → diaai**.
+
+### Grafana alerting (5xx / latency)
+
+Provisioned в `grafana/provisioning/alerting/` → Telegram через **glitchtip-telegram-bridge** (префикс `[Grafana]`).
+
+| Rule | Условие | For |
+|------|---------|-----|
+| Backend 5xx rate > 5% | PromQL RED, окно 5m | 5m |
+| Backend p95 latency > 2s | histogram_quantile 0.95 | 5m |
+
+**UI:** Alerting → Alert rules → folder **diaai** · Contact points → **diaai-telegram**.
+
+**Тест 5xx alert** (prod, token из `/opt/diaai/.env`):
+
+```bash
+# ~7 min intentional 5xx → alert через ~6–7 min (for 5m + PromQL window)
+TOKEN=$(grep ^GLITCHTIP_DEBUG_TOKEN= /opt/diaai/.env | cut -d= -f2-)
+end=$(($(date +%s)+420))
+while [ $(date +%s) -lt $end ]; do
+  for i in $(seq 1 8); do
+    curl -s -o /dev/null -H "Authorization: Bearer $TOKEN" \
+      http://127.0.0.1:8000/debug/error-test &
+  done
+  wait
+done
+```
+
+Локально (если backend up): `hey -z 420s -c 5 -q 10 -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" http://127.0.0.1:8000/debug/error-test`
+
+Ожидание: Telegram **`[Grafana] … Backend 5xx rate > 5%`**.
+
+**Silence после теста:** Alerting → **Silences** → New → matcher `alertname=Backend 5xx rate > 5%` → Duration 1h.
+
+**Нагрузка без ошибок (RED graphs):**
+
+```bash
+hey -z 60s -c 10 -q 20 http://127.0.0.1:8000/openapi.json
+```
 
 ---
 
@@ -279,10 +319,12 @@ SaaS — см. [uptimerobot.md](uptimerobot.md).
 - [x] debug curl backend + web → GlitchTip (task 01)
 - [x] GlitchTip alert recipient → `:8080/webhook` + `:8000/.../email` (task 03)
 - [x] E2E iter 1 — [§ E2E iter 1](#e2e-iter-1-task-04--ingest--alert) (task 04)
-- [ ] Uptime Kuma monitors green (iter 2, task 06)
-- [ ] Dozzle через SSH tunnel `:18888` (iter 3, task 07)
+- [x] Uptime Kuma monitors green (iter 2, task 06)
+- [x] Dozzle через SSH tunnel `:18888` (iter 3, task 07)
+- [x] Grafana dashboards + FastAPI Observability (task 09)
+- [x] Loki Explore + Grafana alerting (prod 2026-06-26)
 
-Acceptance: [../deploy/README.md](../deploy/README.md#9-observability-mvp)
+Acceptance: [../deploy/README.md §9](../deploy/README.md#9-observability-mvp)
 
 ---
 
@@ -299,4 +341,4 @@ Acceptance: [../deploy/README.md](../deploy/README.md#9-observability-mvp)
 
 ## Отложено (post-MVP)
 
-Loki, endpoint алертов в backend — см. ADR-005. Dashboards JSON — task 09.
+Observability на отдельной VM / Grafana Cloud; self-hosted GlitchTip; backend webhook endpoint вместо bridge — см. [ADR-005](../../docs/adr/adr-005-observability.md).

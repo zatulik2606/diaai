@@ -22,12 +22,13 @@
 | `glitchtip-telegram-bridge` + Dozzle | ✅ `make monitoring-up` | ✅ `:8080` + `:8888` localhost |
 | GlitchTip → webhook → Telegram | ✅ UI `:8080/webhook` | ✅ auto POST GlitchTip EU |
 | Uptime Kuma monitors | ✅ | ✅ 3 monitor + bridge alerts |
-| Prometheus + Grafana + dashboards | ✅ compose | ✅ localhost |
+| Prometheus + Grafana + dashboards | ✅ compose + prod | ✅ |
+| Loki + Grafana alerts | ✅ compose + prod | ✅ |
 | Runbook key-metrics | ✅ | ✅ |
 
-**Прогресс:** **10 / 10** задач · observability MVP ✅
+**Прогресс:** **10 / 10** задач · observability MVP ✅ (prod verified 2026-06-26)
 
-> **Scope MVP:** без self-hosted GlitchTip, ELK, Loki. Prometheus/Grafana — в profile `monitoring` на prod-VPS (см. ADR-005 «отложено» — осознанное расширение iter 3 по запросу на дашборды).
+> **Scope MVP:** без self-hosted GlitchTip и ELK. На prod-VPS в profile `monitoring`: Dozzle, **Loki**, Prometheus, Grafana (dashboards + **alerting**), Kuma, bridge — см. [ADR-005](../adr/adr-005-observability.md).
 
 ## Легенда статусов
 
@@ -282,9 +283,12 @@ ssh -i ~/.ssh/diaai-deploy -L 13001:127.0.0.1:3001 -L 19090:127.0.0.1:9090 deplo
 
 Grafana → **Dashboards → diaai**:
 - `diaai Backend RED` — RPS, 5xx %, p50/p95
+- `diaai FastAPI Observability` — totals, 2xx/5xx %, p99, RPS, CPU/RAM (Grafana.com #22676)
 - `diaai VPS Host` — CPU, RAM, disk, cgroup top
 
-Tunnel: `ssh -i ~/.ssh/diaai-deploy -L 13001:127.0.0.1:3001 deploy@201.51.4.34`
+**Grafana alerting:** rules 5xx rate >5% · p95 >2s → **diaai-telegram** → bridge `[Grafana]`. Smoke: `/debug/error-test` — см. [monitoring/README § alerting](../../devops/monitoring/README.md#grafana-alerting-5xx--latency).
+
+Tunnel: `ssh -i ~/.ssh/diaai-deploy -L 13001:127.0.0.1:3001 -L 19090:127.0.0.1:9090 deploy@201.51.4.34`
 
 ### Документы
 
@@ -331,3 +335,14 @@ Runbook: [devops/monitoring/key-metrics.md](../../devops/monitoring/key-metrics.
 | `make monitoring-down` | остановить monitoring profile |
 | `make monitoring-ps` | статус |
 | `make monitoring-logs SVC=...` | логи |
+
+## Prod acceptance (post-close)
+
+Полный чеклист: [devops/deploy/README.md §9](../../devops/deploy/README.md#9-observability-mvp) · runbook: [key-metrics.md](../../devops/monitoring/key-metrics.md).
+
+| # | Критерий | Статус |
+|---|----------|--------|
+| 1–6 | GlitchTip · bridge · Kuma · Dozzle | ✅ |
+| 7–8 | Prometheus/Grafana · dashboards (RED + FastAPI + VPS) | ✅ 2026-06-26 |
+| 9 | Loki Explore `{service="backend"} \|= "500 Internal Server Error"` | ✅ |
+| 10 | Grafana alert 5xx → Telegram `[Grafana]` | ✅ |

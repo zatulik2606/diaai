@@ -15,7 +15,7 @@
 | database | [tasklist-database.md](tasks/tasklist-database.md) | параллельно этапу 2 ✅ (5/5) |
 | frontend (web) | [tasklist-frontend.md](tasks/tasklist-frontend.md) | этап 5 ✅ (iter 0–9) |
 | devops | [tasklist-devops.md](tasks/tasklist-devops.md) | **18/18 ✅** · VPS + CD · [summary](tasks/impl/devops/summary.md) |
-| observability | [tasklist-observability.md](tasks/tasklist-observability.md) | ADR-005 · iter 1–3 📋 |
+| observability | [tasklist-observability.md](tasks/tasklist-observability.md) | ADR-005 · iter 1–3 ✅ |
 
 Один продуктовый этап может затрагивать несколько областей; database и frontend ведут **свои** итерации внутри tasklist'ов.
 
@@ -187,7 +187,7 @@ flowchart LR
 | Backend analytics REST (этап 4) | 📋 Planned | [tasklist-backend.md](tasks/tasklist-backend.md) 09–12 |
 | Консультации D5/D6, Doc2–Doc4 | 📋 Planned | [user-scenarios.md](spec/user-scenarios.md) |
 | Production deploy (VPS + GHA CD) | ✅ iter 0–4 Done | [tasklist-devops.md](tasks/tasklist-devops.md) |
-| Observability (GlitchTip, uptime, logs, metrics) | 📋 iter 1–3 | [tasklist-observability.md](tasks/tasklist-observability.md) · [ADR-005](adr/adr-005-observability.md) |
+| Observability (GlitchTip, uptime, logs, metrics, alerting) | ✅ iter 1–3 Done | [tasklist-observability.md](tasks/tasklist-observability.md) · [ADR-005](adr/adr-005-observability.md) |
 | Structured photo fields в assistant | 📋 Planned | backend README → iter 11 |
 
 ---
@@ -210,7 +210,7 @@ flowchart LR
 | [tasks/tasklist-frontend.md](tasks/tasklist-frontend.md) | web iter 0–9 ✅ |
 | [tasks/tasklist-database.md](tasks/tasklist-database.md) | полноценный слой данных PostgreSQL ✅ |
 | [tasks/tasklist-devops.md](tasks/tasklist-devops.md) | DevOps **18/18 ✅** · stack, GHCR, VPS, CD |
-| [tasks/tasklist-observability.md](tasks/tasklist-observability.md) | Observability ADR-005 · iter 1–3 📋 |
+| [tasks/tasklist-observability.md](tasks/tasklist-observability.md) | Observability ADR-005 · iter 1–3 ✅ |
 | [onboarding.md](onboarding.md) · [smoke-test.md](smoke-test.md) | вход разработчика · one-session проверка |
 | [spec/](spec/) | продуктовые сценарии и требования к данным |
 | [api/api-contract.md](api/api-contract.md) | REST API v1 — контракт, endpoint'ы, примеры |

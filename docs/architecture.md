@@ -195,19 +195,21 @@ ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md
 
 ---
 
-## Observability (prod MVP)
+## Observability (prod MVP ✅ 2026-06-26)
 
 | Категория | Инструмент | Документ |
 |-----------|------------|----------|
 | Ошибки в коде | GlitchTip EU (`GLITCHTIP_*`) | [devops/glitchtip/hosted.md](../devops/glitchtip/hosted.md) |
-| Smoke ingest | `GET /debug/glitchtip-test` + Bearer `GLITCHTIP_DEBUG_TOKEN` (404 без token) | [devops/monitoring/README.md](../devops/monitoring/README.md) |
-| Алерты | @diaaialarm_bot + bridge | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Smoke ingest / 500 | `GET /debug/glitchtip-test`, `GET /debug/error-test` + Bearer `GLITCHTIP_DEBUG_TOKEN` | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Алерты | @diaaialarm_bot + bridge (GlitchTip · Kuma · **Grafana** `[Grafana]`) | [devops/monitoring/README.md](../devops/monitoring/README.md) |
 | Uptime | Uptime Kuma (self-hosted) | [devops/monitoring/uptime-kuma.md](../devops/monitoring/uptime-kuma.md) |
-| Логи | Dozzle (compose profile `monitoring`) | [devops/monitoring/README.md](../devops/monitoring/README.md) |
-| Метрики | Prometheus + Grafana + cAdvisor | [devops/monitoring/README.md](../devops/monitoring/README.md) |
-| Runbook при инциденте | key-metrics (пороги, tunnels) | [devops/monitoring/key-metrics.md](../devops/monitoring/key-metrics.md) |
+| Логи (live) | Dozzle (SSH tunnel `:18888`) | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Логи (search) | Loki + Promtail → Grafana Explore | [devops/monitoring/key-metrics.md](../devops/monitoring/key-metrics.md) |
+| Метрики | Prometheus + Grafana + cAdvisor; dashboards RED / FastAPI / VPS | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Grafana alerting | 5xx rate >5% · p95 >2s (for 5m) → Telegram | [devops/monitoring/README.md](../devops/monitoring/README.md) |
+| Runbook при инциденте | key-metrics (пороги, tunnels, LogQL) | [devops/monitoring/key-metrics.md](../devops/monitoring/key-metrics.md) |
 
-Внутренний liveness: Docker healthchecks · `make stack-health` · CD smoke после деплоя.
+Acceptance: [devops/deploy/README.md §9](../devops/deploy/README.md#9-observability-mvp). Внутренний liveness: Docker healthchecks · `make stack-health` · CD smoke после деплоя.
 
 ---
 

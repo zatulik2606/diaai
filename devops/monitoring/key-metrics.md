@@ -98,6 +98,8 @@ flowchart LR
 | p95 latency | > 0.5 s | > 2 s | stat «p95 latency» |
 | RPS | резкий drop или spike | — | stat «RPS» + graph by handler |
 
+**Grafana alerts** (→ Telegram `[Grafana]`): 5xx rate **> 5%** for **5m**; p95 **> 2s** for **5m**. Silence после smoke — Alerting → Silences.
+
 ### PromQL (Explore / Prometheus)
 
 ```promql

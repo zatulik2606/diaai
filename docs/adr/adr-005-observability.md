@@ -47,62 +47,79 @@
 
 | Вариант | Тип | Плюсы | Минусы |
 |---------|-----|-------|--------|
-| **Dozzle** ✅ | Self-hosted | ~20 MB, один UI, 1 контейнер | без search/retention |
+| **Dozzle** ✅ | Self-hosted | ~20 MB, live tail всех контейнеров | без search/retention |
+| **Loki + Promtail** ✅ (iter 3) | Self-hosted | LogQL в Grafana Explore, 7d retention | ~100–200 MB RAM |
 | Grafana Cloud (Loki) | SaaS | search, retention | лимиты free |
-| Loki + Promtail + Grafana | Self-hosted | полный контроль | тяжело для 4 GB VPS |
 
 ### 4. Metrics / performance (RED)
 
 | Вариант | Тип | Плюсы | Минусы |
 |---------|-----|-------|--------|
+| **Prometheus + Grafana + cAdvisor** ✅ (iter 3) | Self-hosted | RED, host/container, alerting | ~500 MB RAM на 4 GB VPS |
 | **GlitchTip traces 1%** ✅ | SaaS | уже есть, без новой инфры | не host/PG metrics |
 | Grafana Cloud free | SaaS | Prometheus dashboards | лимиты |
-| Prometheus + Grafana + cAdvisor | Self-hosted | полный контроль | ~500 MB–1 GB; не на prod MVP |
 
 ## Решение
 
-### Финальный MVP-стек
+### Финальный MVP-стек (prod verified 2026-06-26)
 
 | Категория | Инструмент | Где | Алерт |
 |-----------|------------|-----|-------|
 | Ошибки в коде | **GlitchTip EU** | SaaS | Telegram (bridge) |
-| Доступность | **UptimeRobot** | SaaS | Telegram / email |
-| Логи | **Dozzle** | compose profile `monitoring` | — |
-| Метрики/latency | **GlitchTip traces 1%** + UptimeRobot response time | SaaS | GlitchTip / UptimeRobot |
-| Канал алертов | **@diaaialarm_bot** | `.env` | единая точка |
+| Доступность | **Uptime Kuma** | compose profile `monitoring` | Telegram (bridge) |
+| Логи (live) | **Dozzle** | compose profile `monitoring` | — |
+| Логи (search) | **Loki + Promtail** | compose profile `monitoring` | — |
+| Метрики RED | **Prometheus + Grafana + cAdvisor** | compose profile `monitoring` | Grafana rules → bridge |
+| Трейсы (sample) | **GlitchTip traces 1%** | SaaS | GlitchTip |
+| Канал алертов | **@diaaialarm_bot** | `.env` | GlitchTip · Kuma · Grafana |
 
 ```mermaid
 flowchart TB
   subgraph vps [diaai-prod VPS]
     App["postgres + backend + web"]
-    Dozzle["Dozzle localhost:8888"]
+    Dozzle["Dozzle :8888"]
+    Loki["Loki + Promtail"]
+    Prom["Prometheus :9090"]
+    Graf["Grafana :3001"]
     Bridge["glitchtip-telegram-bridge :8080"]
+    Kuma["Uptime Kuma :3002"]
     App --> Dozzle
+    App --> Loki
+    App -->|GET /metrics| Prom
+    Prom --> Graf
+    Loki --> Graf
+    Graf -->|alert webhook| Bridge
+    Kuma -->|down| Bridge
   end
 
   subgraph saas [SaaS]
     GT[GlitchTip EU]
-    UR[UptimeRobot]
   end
 
   App -->|errors/traces| GT
-  UR -->|HTTP checks| App
+  Kuma -->|HTTP checks| App
   GT -->|webhook| Bridge
   Bridge --> TG["Telegram alarm bot"]
-  UR -->|alert| TG
 ```
 
 ### Docker Compose (profile `monitoring`)
 
-| Сервис | Порт (prod) | Назначение |
-|--------|-------------|------------|
-| `dozzle` | `127.0.0.1:8888` | UI логов контейнеров |
-| `glitchtip-telegram-bridge` | `:8080` (public для GlitchTip webhook) | GlitchTip JSON → Telegram |
-| `uptime-kuma` | `127.0.0.1:3002` | Uptime monitors + alerts (iter 2) |
+| Сервис | Порт (prod, localhost) | Назначение |
+|--------|--------------------------|------------|
+| `dozzle` | `8888` | live tail логов контейнеров |
+| `glitchtip-telegram-bridge` | `:8080` (public для webhooks) | GlitchTip / Grafana / Kuma → Telegram |
+| `uptime-kuma` | `3002` | HTTP monitors + alerts (iter 2) |
+| `prometheus` | `9090` | scrape backend `/metrics`, cAdvisor |
+| `grafana` | `3001` | dashboards + alerting + Loki Explore |
+| `loki` | `3100` | log storage (7d) |
+| `promtail` | — | Docker logs → Loki |
+| `cadvisor` | `8082` | container CPU/RAM |
 
-Файлы: [`devops/monitoring/compose.yml`](../../devops/monitoring/compose.yml) · guide: [`devops/monitoring/README.md`](../../devops/monitoring/README.md).
+SSH tunnels (prod): Grafana **13001**, Prometheus **19090**, Dozzle **18888**, Kuma **13002**.
 
-**Не поднимать на diaai-prod (4 GB):** self-hosted GlitchTip, ELK, full Prometheus stack.
+Файлы: [`devops/monitoring/compose.yml`](../../devops/monitoring/compose.yml) · guide: [`devops/monitoring/README.md`](../../devops/monitoring/README.md) · runbook: [`key-metrics.md`](../../devops/monitoring/key-metrics.md).
+
+**Не поднимать на diaai-prod (4 GB):** self-hosted GlitchTip, ELK.
 
 ### Env (prod `.env`)
 
@@ -115,19 +132,21 @@ flowchart TB
 
 ## Последствия
 
-- **Uptime (iter 2):** Uptime Kuma в profile `monitoring` — 2 HTTP monitors (`172.18.0.1:8000/health`, `web:3000/`); Telegram в UI Kuma — см. [`devops/monitoring/uptime-kuma.md`](../../devops/monitoring/uptime-kuma.md)
+- **Uptime (iter 2):** Uptime Kuma — 3 monitors (backend, web, postgres); alerts → bridge — см. [`devops/monitoring/uptime-kuma.md`](../../devops/monitoring/uptime-kuma.md)
 - UptimeRobot (SaaS) — альтернатива из первоначального ADR; не используется на prod — см. [`uptimerobot.md`](../../devops/monitoring/uptimerobot.md)
 - GlitchTip: Alert receiver → Webhook URL `http://201.51.4.34:8080/webhook` (с secret при необходимости)
-- Prod: `make monitoring-up` после `stack-up-registry`; Dozzle — SSH tunnel `8888`
-- **Iter 3:** Prometheus + Grafana + dashboards в profile `monitoring` (см. [key-metrics.md](../../devops/monitoring/key-metrics.md))
-- `stack-health` остаётся для CD; не заменяет внешний uptime
+- Prod: `make monitoring-up` после `stack-up-registry`; UI — SSH tunnels (см. [key-metrics.md](../../devops/monitoring/key-metrics.md))
+- **Iter 3:** Prometheus + Grafana + Loki + dashboards (RED, FastAPI Observability, VPS host) — provisioned JSON в `grafana/`
+- **Grafana alerting (iter 3):** provisioned rules `Backend 5xx rate > 5%`, `Backend p95 latency > 2s` → contact point **diaai-telegram** → bridge (префикс `[Grafana]`); smoke: `GET /debug/error-test`
+- **Loki Explore:** `{service="backend"} |= "500 Internal Server Error"` (не label `status=500` — см. [key-metrics.md](../../devops/monitoring/key-metrics.md))
+- `stack-health` остаётся для CD; не заменяет Kuma uptime
 
 ## Отложено (post-MVP)
 
-- Prometheus + Grafana на отдельной VM или Grafana Cloud
-- Loki / полноценный log search
+- Observability stack на отдельной VM или Grafana Cloud (разгрузка 4 GB VPS)
 - Self-hosted GlitchTip / Sentry
-- FastAPI endpoint для алертов внутри backend (вместо bridge-контейнера)
+- FastAPI endpoint для алертов в backend (вместо bridge-контейнера)
+- UptimeRobot как внешний SaaS-check (Kuma уже на prod)
 
 ## Связанные документы
 

@@ -288,7 +288,8 @@ curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
 
 ```bash
 # UI с Mac (не открывать :3002 в ufw)
-ssh -i ~/.ssh/diaai-deploy -L 3002:127.0.0.1:3002 deploy@201.51.4.34
+ssh -i ~/.ssh/diaai-deploy -L 13002:127.0.0.1:3002 deploy@201.51.4.34
+# браузер → http://127.0.0.1:13002
 ```
 
 Мониторы: `make kuma-bootstrap` · Telegram: `make kuma-notifications` (webhook → bridge). См. [monitoring/uptime-kuma.md](../monitoring/uptime-kuma.md).
@@ -311,10 +312,14 @@ curl -sf -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3002/
 | 4 | Uptime Kuma (backend, frontend, postgres) | 3 monitor Up; Down → Telegram via bridge | ✅ |
 | 5 | Uptime Kuma alerts | `make kuma-notifications` → webhook `:8080` | ✅ |
 | 6 | Dozzle | `ssh -i ~/.ssh/diaai-deploy -L 18888:127.0.0.1:8888 deploy@IP` → UI логов | ✅ |
-| 7 | Prometheus + Grafana | tunnel `:13001` → Grafana; `/metrics` + targets UP | ✅ |
-| 8 | Grafana dashboards | folder **diaai**: RED + VPS host, live data | ☐ |
+| 7 | Prometheus + Grafana | tunnel `:13001` → Grafana; `:19090` → Prometheus; `/metrics` + target `diaai-backend` UP | ✅ |
+| 8 | Grafana dashboards | folder **diaai**: RED + FastAPI Observability + VPS host, live data under load | ✅ |
+| 9 | Loki Explore | Grafana → Explore → Loki: `{service="backend"} \|= "500 Internal Server Error"` | ✅ |
+| 10 | Grafana alerting | load on `/debug/error-test` → Telegram `[Grafana] Backend 5xx rate > 5%` | ✅ |
 
-Uptime Kuma setup: [monitoring/uptime-kuma.md](../monitoring/uptime-kuma.md) · UI: SSH tunnel `:3002`
+Tunnels: Grafana **13001**, Prometheus **19090**, Dozzle **18888**, Kuma **13002** — см. [monitoring/key-metrics.md](../monitoring/key-metrics.md).
+
+Uptime Kuma setup: [monitoring/uptime-kuma.md](../monitoring/uptime-kuma.md) · UI: SSH tunnel `:13002`
 
 ---
 
