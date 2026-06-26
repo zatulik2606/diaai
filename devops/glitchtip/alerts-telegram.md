@@ -72,39 +72,73 @@ GlitchTip шлёт **Slack-compatible JSON**; Telegram API — другой фо
 
 **Prerequisite:** task 02 — `make monitoring-up` на VPS, bridge `:8080` healthy, ufw `8080/tcp`.
 
-**Рекомендуется (task 03):** webhook на **bridge :8080**:
+**Prod URL (Telegram через bridge):**
 
 ```
 http://201.51.4.34:8080/webhook
 ```
 
-1. GlitchTip → Project → **Alerts → Alert recipients → Webhook**
-2. URL: `http://201.51.4.34:8080/webhook` (или `?secret=` если задан `GLITCHTIP_WEBHOOK_SECRET`)
-3. Проверка:
+Env на VPS: `TELEGRAM_ALARM_BOT_TOKEN`, `TELEGRAM_ALARM_CHAT_ID`, `GLITCHTIP_BRIDGE_BIND=8080:8080`.
+
+---
+
+## 4.1 Task 03 — настройка в GlitchTip UI (eu.glitchtip.com)
+
+Повторить для **обоих** проектов: `diaai-backend` и `diaai-web`.
+
+### Шаг A — Alert rule
+
+1. **Organization `diaai` → Projects →** выберите проект
+2. **Settings** → **Project Alerts**
+3. **Create New Alert** (или редактировать существующее)
+4. Условие (hosted GlitchTip — **quantity + timespan**):
+   - **Quantity:** `1` event
+   - **Timespan:** `1` minute
+5. Save
+
+### Шаг B — Webhook recipient (Telegram)
+
+1. **Add An Alert Recipient**
+2. Type: **Webhook** / **General (Slack-compatible)**
+3. URL: `http://201.51.4.34:8080/webhook`  
+   С secret: `http://201.51.4.34:8080/webhook?secret=YOUR_SECRET`
+4. Submit
+
+### Шаг C — Email (опционально, второй recipient)
+
+```
+http://201.51.4.34:8000/webhooks/glitchtip/email
+```
+
+См. [alerts-email.md](alerts-email.md).
+
+### Шаг D — Удалить старый Telegram URL
+
+Если был `http://201.51.4.34:8000/webhooks/glitchtip` — **удалите** или замените на `:8080/webhook`.
+
+### Smoke после UI
 
 ```bash
+TOKEN=$(grep ^GLITCHTIP_DEBUG_TOKEN= /opt/diaai/.env | cut -d= -f2)
+curl -sf -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8000/debug/glitchtip-test
+# ≤1–2 min → Telegram без ручного curl /webhook
+docker logs diaai-glitchtip-telegram-bridge-1 --since 5m | grep POST
+```
+
+---
+
+## 4.2 Ручная проверка bridge
+
+```bash
+curl -sf http://127.0.0.1:8080/health
 curl -X POST http://127.0.0.1:8080/webhook \
   -H 'Content-Type: application/json' \
   -d '{"attachments":[{"title":"Test","title_link":"https://eu.glitchtip.com","text":"manual"}]}'
 ```
 
-Env на VPS: `TELEGRAM_ALARM_BOT_TOKEN`, `TELEGRAM_ALARM_CHAT_ID`, `GLITCHTIP_BRIDGE_BIND=8080:8080`.
+**Альтернатива — backend :8000:** `http://201.51.4.34:8000/webhooks/glitchtip`
 
-**Альтернатива — backend :8000** (без bridge-контейнера):
-
-```
-http://201.51.4.34:8000/webhooks/glitchtip
-```
-
-Email alerts: `http://201.51.4.34:8000/webhooks/glitchtip/email` — [alerts-email.md](alerts-email.md).
-
-**Fallback:** hosted GlitchTip часто **не шлёт POST webhook** автоматически (worker). Backend poller:
-
-```bash
-GLITCHTIP_API_TOKEN=          # Profile → Auth Tokens на eu.glitchtip.com
-GLITCHTIP_ORG=diaai
-GLITCHTIP_POLL_INTERVAL_SECONDS=60
-```
+**Fallback:** backend poller — `GLITCHTIP_API_TOKEN`, `GLITCHTIP_ORG=diaai` в `.env`.
 
 Подробно: [../monitoring/README.md](../monitoring/README.md) · ADR: [adr-005-observability.md](../../docs/adr/adr-005-observability.md)
 

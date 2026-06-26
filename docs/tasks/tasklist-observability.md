@@ -149,14 +149,21 @@ curl -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" http://127.0.0.1:3000/api
 
 ---
 
-## Задача 03: GlitchTip Alert receivers → webhook 📋
+## Задача 03: GlitchTip Alert receivers → webhook 🚧
 
-📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) — **только пользователь** (GlitchTip UI) + docs.
+📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · 🚧 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md)
+
+**Runbook UI:** [devops/glitchtip/alerts-telegram.md §4.1](../../devops/glitchtip/alerts-telegram.md#41-task-03--настройка-в-glitchtip-ui-euglitchtipcom)
+
+1. `diaai-backend` + `diaai-web` → webhook `http://201.51.4.34:8080/webhook`
+2. Rule: 1 event / 1 min
+3. Удалить старый `:8000/webhooks/glitchtip`
+4. Напиши «готово» → E2E smoke
 
 ### Документы
 
 - 📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md)
-- 📝 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md)
+- 🚧 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md)
 
 ---
 
