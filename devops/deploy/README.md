@@ -240,13 +240,35 @@ ssh deploy@201.51.4.34 'cd /opt/diaai && make monitoring-up && make monitoring-p
 
 `.env` на сервере должен содержать `TELEGRAM_ALARM_*`, `GLITCHTIP_*`, опционально `GLITCHTIP_WEBHOOK_SECRET`.
 
+**GlitchTip ingest (task 01)** — обязательные переменные в `/opt/diaai/.env`:
+
+| Variable | Назначение |
+|----------|------------|
+| `GLITCHTIP_DSN` | backend → проект `diaai-backend` |
+| `GLITCHTIP_WEB_DSN`, `NEXT_PUBLIC_GLITCHTIP_DSN` | web server + browser → `diaai-web` |
+| `GLITCHTIP_URL` | `https://eu.glitchtip.com` |
+| `GLITCHTIP_ENVIRONMENT` | `production` на prod |
+| `GLITCHTIP_DEBUG_TOKEN` | Bearer для debug smoke (не в git) |
+| `DIAAI_WEB_IMAGE` | `ghcr.io/zatulik2606/diaai-web:main` |
+
+Smoke на VPS (после `docker compose up -d backend web`):
+
+```bash
+TOKEN=$(grep ^GLITCHTIP_DEBUG_TOKEN= /opt/diaai/.env | cut -d= -f2)
+curl -sf -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8000/debug/glitchtip-test
+curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
+  http://127.0.0.1:3000/api/debug/glitchtip-test
+```
+
+Ожидание: HTTP 200 + 2 issue в eu.glitchtip.com (backend + web). См. [monitoring/README.md § GlitchTip smoke](../monitoring/README.md#glitchtip-smoke-task-01--ingest).
+
 **ufw:** порт **8080** открыт для GlitchTip webhook; Dozzle **8888** только localhost (см. `compose.server.override.yml`).
 
 ### Acceptance checklist
 
 | # | Критерий | Как проверить | Статус |
 |---|----------|---------------|--------|
-| 1 | GlitchTip ingest | test event в UI eu.glitchtip.com | ☐ |
+| 1 | GlitchTip ingest | debug curl выше → issue в eu.glitchtip.com (backend + web) | ☐ |
 | 2 | Bridge health | `curl -sf http://127.0.0.1:8080/health` на VPS | ☐ |
 | 3 | GlitchTip → Telegram | POST `/webhook` или новый issue в GlitchTip | ☐ |
 | 4 | UptimeRobot backend | monitor `http://IP:8000/health` keyword `"status":"ok"` Up | ☐ |

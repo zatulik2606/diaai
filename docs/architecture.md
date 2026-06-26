@@ -200,6 +200,7 @@ ADR: [adr-001-database.md](adr/adr-001-database.md) · [adr-002-backend-stack.md
 | Категория | Инструмент | Документ |
 |-----------|------------|----------|
 | Ошибки в коде | GlitchTip EU (`GLITCHTIP_*`) | [devops/glitchtip/hosted.md](../devops/glitchtip/hosted.md) |
+| Smoke ingest | `GET /debug/glitchtip-test` + Bearer `GLITCHTIP_DEBUG_TOKEN` (404 без token) | [devops/monitoring/README.md](../devops/monitoring/README.md) |
 | Алерты | @diaaialarm_bot + bridge | [devops/monitoring/README.md](../devops/monitoring/README.md) |
 | Uptime | UptimeRobot (SaaS) | [devops/monitoring/uptimerobot.md](../devops/monitoring/uptimerobot.md) |
 | Логи | Dozzle (compose profile `monitoring`) | ADR-005 |

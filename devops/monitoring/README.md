@@ -23,6 +23,34 @@ curl -sf http://127.0.0.1:8081/health
 
 ---
 
+## GlitchTip smoke (task 01 — ingest)
+
+Защищённые debug-маршруты шлют тестовое событие в GlitchTip EU. DSN — в `.env`; token **не коммитить**.
+
+| Маршрут | Проект GlitchTip |
+|---------|------------------|
+| `GET /debug/glitchtip-test` (:8000) | `diaai-backend` |
+| `GET /api/debug/glitchtip-test` (:3000) | `diaai-web` |
+
+Если `GLITCHTIP_DEBUG_TOKEN` пуст → маршруты **404**.
+
+```bash
+# Backend
+curl -sf -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" \
+  http://127.0.0.1:8000/debug/glitchtip-test
+
+# Web (server-only route)
+curl -sf -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" \
+  -H "Accept: application/json" \
+  http://127.0.0.1:3000/api/debug/glitchtip-test
+```
+
+Ожидание: HTTP 200, JSON `{ "ok": true, "project": "diaai-backend|diaai-web" }`; issue в [eu.glitchtip.com](https://eu.glitchtip.com) ≤1 min.
+
+Подробнее: [../glitchtip/hosted.md](../glitchtip/hosted.md) · tasklist observability task 01.
+
+---
+
 ## Dozzle — логи контейнеров
 
 - UI: `http://127.0.0.1:8888` (по умолчанию только localhost)

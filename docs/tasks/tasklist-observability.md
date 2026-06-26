@@ -17,14 +17,14 @@
 
 | Компонент | Локально | Prod |
 |-----------|----------|------|
-| GlitchTip ingest (backend/web) | ✅ `GLITCHTIP_*` | 📋 `.env` на VPS |
+| GlitchTip ingest (backend/web) | ✅ `GLITCHTIP_*` | ✅ debug smoke |
 | `@diaaialarm_bot` + `TELEGRAM_ALARM_*` | ✅ | 📋 |
 | `glitchtip-telegram-bridge` + Dozzle | ✅ `make monitoring-up` | 📋 |
 | GlitchTip → webhook → Telegram | 📋 UI eu.glitchtip.com | 📋 |
 | UptimeRobot monitors | 📋 | 📋 |
 | Prometheus + Grafana + dashboards | 📋 | 📋 |
 
-**Прогресс:** **0 / 10** задач · iter 1–3 📋
+**Прогресс:** **1 / 10** задач · iter 1 🚧
 
 > **Scope MVP:** без self-hosted GlitchTip, ELK, Loki. Prometheus/Grafana — в profile `monitoring` на prod-VPS (см. ADR-005 «отложено» — осознанное расширение iter 3 по запросу на дашборды).
 
@@ -57,7 +57,7 @@
 
 | Задача | Описание | Статус | Документы |
 |--------|----------|--------|-----------|
-| 01 | GlitchTip на prod: env, ingest backend + web | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md) |
+| 01 | GlitchTip на prod: env, ingest backend + web | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md) |
 | 02 | Monitoring stack на prod: bridge + alarm bot | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md) |
 | 03 | GlitchTip Alert receivers → webhook | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md) |
 | 04 | E2E: ошибка → GlitchTip → Telegram | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md) |
@@ -91,34 +91,37 @@
 
 ---
 
-## Задача 01: GlitchTip ingest + debug endpoint 📋
+## Задача 01: GlitchTip ingest + debug endpoint ✅
 
 ### Цель
 
 Ingest backend/web в GlitchTip EU; безопасная проверка через **`GET /debug/glitchtip-test`** (Bearer `GLITCHTIP_DEBUG_TOKEN`). DSN — у пользователя.
 
-📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md)
+✅ [План](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md) · [Summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md)
 
 ### Подготовка (пользователь)
 
-- [ ] DSN → `GLITCHTIP_DSN`, `GLITCHTIP_WEB_DSN`, `NEXT_PUBLIC_GLITCHTIP_DSN` в `.env` / prod
-- [ ] `GLITCHTIP_DEBUG_TOKEN=$(openssl rand -hex 32)` в `.env` и `web/.env.local`
-- [ ] Rebuild web после `NEXT_PUBLIC_*`
+- [x] DSN → `GLITCHTIP_DSN`, `GLITCHTIP_WEB_DSN`, `NEXT_PUBLIC_GLITCHTIP_DSN` в `.env` / prod
+- [x] `GLITCHTIP_DEBUG_TOKEN` в `.env` / prod (не в git)
+- [x] Rebuild web — `ghcr.io/zatulik2606/diaai-web:main` на VPS
 
 ### Состав работ (агент)
 
-- [ ] `backend/debug_glitchtip.py` + mount в `main.py` (404 если token пуст)
-- [ ] `web/app/api/debug/glitchtip-test/route.ts`
-- [ ] `GLITCHTIP_DEBUG_TOKEN` в `.env.example`, `web/.env.example`
-- [ ] pytest `backend/tests/test_debug_glitchtip.py`
-- [ ] docs: backend README, architecture observability
+- [x] `backend/debug_glitchtip.py` + mount в `main.py` (404 если token пуст)
+- [x] `web/app/api/debug/glitchtip-test/route.ts`
+- [x] `GLITCHTIP_DEBUG_TOKEN` в `.env.example`, `web/.env.example`
+- [x] pytest `backend/tests/test_debug_glitchtip.py`
+- [x] docs: backend README, monitoring README, architecture, deploy §9
+- [x] CI: build-args GlitchTip DSN в `docker-publish.yml` (web)
 
-### Smoke (пользователь)
+### Smoke (prod)
 
 ```bash
 curl -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" http://127.0.0.1:8000/debug/glitchtip-test
 curl -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" http://127.0.0.1:3000/api/debug/glitchtip-test
 ```
+
+✅ VPS 2026-06-26
 
 ### Skill
 
@@ -126,8 +129,8 @@ curl -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" http://127.0.0.1:3000/api
 
 ### Документы
 
-- 📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md)
-- 📝 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md)
+- ✅ [План](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md)
+- ✅ [Summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md)
 
 ---
 

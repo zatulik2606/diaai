@@ -67,5 +67,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_GLITCHTIP_DSN=${{ matrix.service == 'web' && secrets.NEXT_PUBLIC_GLITCHTIP_DSN || '' }}
+            GLITCHTIP_DSN=${{ matrix.service == 'web' && secrets.GLITCHTIP_WEB_DSN || '' }}
+            GLITCHTIP_URL=${{ matrix.service == 'web' && 'https://eu.glitchtip.com' || '' }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}

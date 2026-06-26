@@ -55,8 +55,21 @@ ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 | `GLITCHTIP_DSN` | нет | GlitchTip (проект `diaai-backend`); пусто = выкл. · [devops/glitchtip/hosted.md](../devops/glitchtip/hosted.md) |
 | `GLITCHTIP_ENVIRONMENT` | нет | default `development` |
 | `GLITCHTIP_TRACES_SAMPLE_RATE` | нет | default `0.01` (1% transactions); GlitchTip: `auto_session_tracking=False` в коде |
+| `GLITCHTIP_DEBUG_TOKEN` | нет | Bearer для `GET /debug/glitchtip-test`; пусто = маршрут **404** (не регистрируется) |
 
 События питания/инсулина (`/api/v1/events/*`) работают без OpenRouter.
+
+### GlitchTip smoke (debug endpoint)
+
+Требует `GLITCHTIP_DSN` и непустой `GLITCHTIP_DEBUG_TOKEN`. Ответ не содержит DSN.
+
+```bash
+curl -sf -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" \
+  http://127.0.0.1:8000/debug/glitchtip-test
+# → {"ok":true,"project":"diaai-backend"}
+```
+
+Web (server route): `GET /api/debug/glitchtip-test` с тем же Bearer — [devops/monitoring/README.md](../devops/monitoring/README.md).
 
 ## Команды Makefile
 
