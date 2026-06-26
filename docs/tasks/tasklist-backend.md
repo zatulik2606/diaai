@@ -6,7 +6,7 @@
 
 Рабочий план backend: итерации **1–3** ✅ (01–08). Бот — клиент backend API; unit-тесты bot в `tests/`. **Backend delivery complete** — следующий этап: итерация 4 (аналитика).
 
-**Прогресс:** **9 / 12** задач (01–09 ✅) · **`make test`** — 84 (67 backend + 17 bot) · [`backend/README.md`](../../backend/README.md)
+**Прогресс:** **12 / 12** задач (01–12 ✅) · **`make test`** — 109 (92 backend + 17 bot) · [`backend/README.md`](../../backend/README.md)
 
 **Зависимость:** [database iter 5](tasklist-database.md#итерация-5-orm-репозитории-backend-) ✅ — 9 таблиц, ORM/repos готовы для задач 09–12.
 
@@ -21,7 +21,7 @@
 | 1 | Основание | 01–02 | ✅ Done | [plan](impl/backend/iteration-1-foundation/plan.md) · [summary](impl/backend/iteration-1-foundation/summary.md) |
 | 2 | Реализация ядра | 03–05 | ✅ Done | [plan](impl/backend/iteration-2-core/plan.md) · [summary](impl/backend/iteration-2-core/summary.md) |
 | 3 | Поставка | 06–08 | ✅ Done | [plan](impl/backend/iteration-3-delivery/plan.md) · [summary](impl/backend/iteration-3-delivery/summary.md) |
-| 4 | Аналитика | 09–12 | 🚧 In Progress (09 ✅) | [plan](impl/backend/iteration-4-analytics/plan.md) · [summary](impl/backend/iteration-4-analytics/summary.md) |
+| 4 | Аналитика | 09–12 | ✅ Done | [plan](impl/backend/iteration-4-analytics/plan.md) · [summary](impl/backend/iteration-4-analytics/summary.md) |
 
 ## Связь с plan.md
 
@@ -29,7 +29,7 @@
 |---------|----------|-------------|
 | [Итерация 2](../plan.md#итерация-2--backend-ядро-и-бд) | backend итерации 1–2 ✅ (01–05) | [iteration-2 summary](impl/backend/iteration-2-core/summary.md) ✅ |
 | [Итерация 3](../plan.md#итерация-3--миграция-бота-на-backend) | task-06–08 ✅ + [tasklist-bot.md](tasklist-bot.md) ✅ | [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) ✅ |
-| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) | iteration-4 🚧 (09 ✅, 10–12 📋) | [iteration-3 summary](impl/backend/iteration-3-delivery/summary.md) ✅ |
+| [Итерация 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) | iteration-4 ✅ (09–12) | [iteration-4 summary](impl/backend/iteration-4-analytics/summary.md) ✅ |
 
 ## Легенда статусов
 
@@ -50,9 +50,9 @@
 | 07 | Рефакторинг бота → API | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-07-bot-refactor/summary.md) |
 | 08 | Качество и инженерные практики | ✅ Done | [план](impl/backend/iteration-3-delivery/tasks/task-08-quality/plan.md) · [summary](impl/backend/iteration-3-delivery/tasks/task-08-quality/summary.md) |
 | 09 | Контракты аналитики | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-09-analytics-contracts/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-09-analytics-contracts/summary.md) |
-| 10 | Снимки прогресса | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/plan.md) |
-| 11 | Сигналы и рекомендации | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/plan.md) |
-| 12 | Тесты и документация | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/plan.md) |
+| 10 | Снимки прогресса | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/summary.md) |
+| 11 | Сигналы и рекомендации | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/summary.md) |
+| 12 | Тесты и документация | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/summary.md) |
 
 Задачи выполняются **последовательно** (01 → 12). Итерации **1–3** закрыты ✅; **4** — следующая.
 
@@ -403,9 +403,9 @@
 | Задача | Описание | Статус | Документы |
 |--------|----------|--------|-----------|
 | 09 | Контракты аналитики | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-09-analytics-contracts/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-09-analytics-contracts/summary.md) |
-| 10 | Снимки прогресса | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/plan.md) |
-| 11 | Сигналы и рекомендации | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/plan.md) |
-| 12 | Тесты и документация | 📋 Planned | [план](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/plan.md) |
+| 10 | Снимки прогресса | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-10-progress-snapshots/summary.md) |
+| 11 | Сигналы и рекомендации | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/summary.md) |
+| 12 | Тесты и документация | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/summary.md) |
 
 - 📋 [План итерации](impl/backend/iteration-4-analytics/plan.md) · 📝 [Summary](impl/backend/iteration-4-analytics/summary.md)
-- Сводка области: [impl/backend/summary.md](impl/backend/summary.md) (delivery 01–08 ✅; iter 4 🚧)
+- Сводка области: [impl/backend/summary.md](impl/backend/summary.md) (delivery 01–08 ✅; iter 4 ✅)

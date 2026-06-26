@@ -97,6 +97,42 @@ class FoodEventRepository:
         )
         return float(result or 0)
 
+    async def sum_nutrition_in_window(
+        self,
+        user_ids: list[UUID],
+        from_dt: datetime,
+        to_dt: datetime,
+    ) -> dict[str, float | None]:
+        if not user_ids:
+            return {
+                "xe": 0.0,
+                "bje": 0.0,
+                "proteins": None,
+                "fats": None,
+                "carbs": None,
+            }
+        result = await self._session.execute(
+            select(
+                func.coalesce(func.sum(FoodEvent.xe), 0),
+                func.coalesce(func.sum(FoodEvent.bje), 0),
+                func.sum(FoodEvent.proteins),
+                func.sum(FoodEvent.fats),
+                func.sum(FoodEvent.carbs),
+            ).where(
+                FoodEvent.user_id.in_(user_ids),
+                FoodEvent.recorded_at >= from_dt,
+                FoodEvent.recorded_at < to_dt,
+            )
+        )
+        row = result.one()
+        return {
+            "xe": round(float(row[0]), 1),
+            "bje": round(float(row[1]), 1),
+            "proteins": round(float(row[2]), 1) if row[2] is not None else None,
+            "fats": round(float(row[3]), 1) if row[3] is not None else None,
+            "carbs": round(float(row[4]), 1) if row[4] is not None else None,
+        }
+
     async def count_distinct_users_in_window(
         self,
         user_ids: list[UUID],

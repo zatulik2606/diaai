@@ -1,24 +1,28 @@
 # Итерация backend 4: Summary
 
-**Статус:** 📋 Planned
+**Статус:** ✅ Done (tasks 09–12)
 
-## Что сделано
+## Сделано
 
-_(заполняется после завершения итерации)_
+| Task | Результат |
+|------|-----------|
+| 09 | OpenAPI + scenarios analytics |
+| 10 | `GET /api/v1/analytics/progress` — агрегация food/insulin, snapshot override |
+| 11 | `GET /analytics/signals`, `/analytics/recommendations` — rule-based, guard без доз |
+| 12 | `test_analytics_api.py` (7), docs sync, `make test` 109 passed |
 
-## Отклонения от плана
+## Код
 
-_(нет)_
+- `backend/api/v1/analytics.py`, `backend/services/analytics_service.py`, `backend/schemas/analytics.py`
+- `FoodEventRepository.sum_nutrition_in_window`, `RecommendationRepository.list_by_user_paged`
 
-## Решения
+## Отклонения
 
-_(нет)_
+Нет — migrations не требовались (таблицы из `002`).
 
-## Проблемы
+## Smoke
 
-_(нет)_
-
-## Ссылки
-
-- 📋 [План итерации](plan.md)
-- 📋 [План области backend](../plan.md)
+```bash
+curl -s -H "Authorization: Bearer $BACKEND_SERVICE_TOKEN" \
+  "http://127.0.0.1:8000/api/v1/analytics/progress?telegram_id=900000001&period=week"
+```

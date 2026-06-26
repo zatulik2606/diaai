@@ -140,6 +140,19 @@ curl -s "$BASE/api/v1/events/food?telegram_id=123456789" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+**Analytics REST (demo `@ivan_p`, telegram_id `900000001`):**
+
+```bash
+curl -s "$BASE/api/v1/analytics/progress?telegram_id=900000001&period=week" \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -s "$BASE/api/v1/analytics/signals?telegram_id=900000001&period=week" \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -s "$BASE/api/v1/analytics/recommendations?telegram_id=900000001&limit=10" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
 **Web dashboard (demo doctor `@doctor_ivanov`, telegram_id `162684825`):**
 
 ```bash

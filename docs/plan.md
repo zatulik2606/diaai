@@ -48,7 +48,7 @@ flowchart LR
     E1["1. MVP бота\n✅ Done"]
     E2["2. Backend + БД\n✅ Done"]
     E3["3. Bot → Backend\n✅ Done"]
-    E4["4. Analytics REST\n🚧 09 ✅"]
+    E4["4. Analytics REST\n✅ Done"]
     E5["5. Web UI\n✅ Done"]
     DB["Database\n✅ 5/5"]
 
@@ -66,7 +66,7 @@ flowchart LR
 | 1 | MVP Telegram-бота | Запустить первый клиент с диалогом и анализом фото | ✅ Done | [tasklist-bot.md](tasks/tasklist-bot.md) |
 | 2 | Backend-ядро и БД | Вынести данные и логику сопровождения в единый backend | ✅ Done | [tasklist-backend.md](tasks/tasklist-backend.md) · [tasklist-database.md](tasks/tasklist-database.md) |
 | 3 | Миграция бота на backend | Сделать бота тонким клиентом без локального состояния | ✅ Done | [tasklist-bot.md](tasks/tasklist-bot.md) · [tasklist-backend.md](tasks/tasklist-backend.md) |
-| 4 | Аналитика и динамика (backend REST) | `/api/v1/analytics/*`: снимки, сигналы, рекомендации | 🚧 In Progress (09 ✅, 10–12 📋) | [tasklist-backend.md](tasks/tasklist-backend.md) iter 4 |
+| 4 | Аналитика и динамика (backend REST) | `/api/v1/analytics/*`: снимки, сигналы, рекомендации | ✅ Done | [tasklist-backend.md](tasks/tasklist-backend.md) iter 4 |
 | 5 | Веб-интерфейс | Dashboard, leaderboard, chat, voice, Text-to-SQL | ✅ Done | [tasklist-frontend.md](tasks/tasklist-frontend.md) |
 
 **Не в таблице (закрыто в tasklist'ах):** database 5/5 ✅ · bot voice ✅ (frontend iter 8) · web analytics NL ✅ (frontend iter 9, `/api/v1/web/analytics/query`).
@@ -141,9 +141,9 @@ flowchart LR
 
 ---
 
-### Итерация 4 — Аналитика и динамика (backend REST) `🚧 In Progress`
+### Итерация 4 — Аналитика и динамика (backend REST) `✅ Done`
 
-**Прогресс:** task 09 (контракты) ✅ · tasks 10–12 (impl) 📋
+**Прогресс:** tasks 09–12 ✅ — [summary](tasks/impl/backend/iteration-4-analytics/summary.md)
 
 **Ценность:** единый analytics API для бота и клиентов — тренды, сигналы, справочные рекомендации (без назначения доз).
 

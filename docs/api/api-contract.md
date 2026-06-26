@@ -2,13 +2,13 @@
 
 Описание REST API backend для MVP. Machine-readable: [openapi.yaml](openapi.yaml) (tags: `system`, `assistant`, `media`, `events`, `analytics`, `web`). Соглашения и коды ошибок: [conventions.md](conventions.md).
 
-**Статус:** bot endpoint'ы ✅ (backend iter 2–3) · web `/api/v1/web/*` ✅ (frontend iter 1) · analytics `/api/v1/analytics/*` 📋 contract (backend iter 4, task 09 ✅ → impl 10–11).
+**Статус:** bot endpoint'ы ✅ (backend iter 2–3) · web `/api/v1/web/*` ✅ (frontend iter 1) · analytics `/api/v1/analytics/*` ✅ (backend iter 4).
 
 **Клиенты:**
 
 | Клиент | Endpoint'ы | Статус |
 |--------|------------|--------|
-| Telegram-бот | `/api/v1/assistant/*`, `/api/v1/events/*`, `/api/v1/analytics/*` | ✅ assistant/events · 📋 analytics (iter 4) |
+| Telegram-бот | `/api/v1/assistant/*`, `/api/v1/events/*`, `/api/v1/analytics/*` | ✅ assistant/events/analytics |
 | Web (Next.js) | `/api/v1/web/*` + reuse `POST /assistant/messages` | ✅ [frontend-contract.md](frontend-contract.md) |
 
 Продуктовые требования web UI — [frontend-requirements.md](../spec/frontend-requirements.md).
@@ -46,7 +46,7 @@
 
 **Вне scope v1:** JWT/web-session на backend, CRUD консультаций Doc3–Doc4.
 
-**Analytics vs web:** dashboard KPI — `/api/v1/web/*` ✅; unified bot API — `/api/v1/analytics/*` 📋 impl (контракт task 09). Text-to-SQL — `/api/v1/web/analytics/query` (doctor, отдельный контур).
+**Analytics vs web:** dashboard KPI — `/api/v1/web/*` ✅; unified bot API — `/api/v1/analytics/*` ✅. Text-to-SQL — `/api/v1/web/analytics/query` (doctor, отдельный контур).
 
 **Web:** детальные контракты, JSON-примеры и PG mapping — [frontend-contract.md](frontend-contract.md).
 
@@ -88,7 +88,7 @@ Doctor dashboard/leaderboard: query `doctor_telegram_id`. Patient dashboard: que
 
 Полные параметры и структуры ответов — [frontend-contract.md](frontend-contract.md).
 
-### Analytics (`/api/v1/analytics/*`) — 📋 contract ✅, impl task 10–11
+### Analytics (`/api/v1/analytics/*`) — ✅ impl
 
 | Method | Path | Auth | Success | Сценарий | Описание |
 |--------|------|------|---------|----------|----------|

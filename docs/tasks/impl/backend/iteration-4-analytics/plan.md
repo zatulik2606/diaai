@@ -10,7 +10,7 @@ REST API `/api/v1/analytics/*`: снимки прогресса, сигналы,
 
 ## Статус
 
-🚧 **In Progress** — task 09 ✅ · tasks 10–12 📋
+✅ **Done** — tasks 09–12
 
 ## Ценность
 
@@ -66,10 +66,10 @@ flowchart TB
 ## Критерии завершения итерации
 
 - [x] OpenAPI + scenarios analytics (task 09)
-- [ ] `GET /analytics/progress` — impl + tests
-- [ ] `GET /analytics/signals`, `/analytics/recommendations` — impl + tests
-- [ ] Guard: рекомендации без назначения доз
-- [ ] `make lint && make test` green; [summary.md](summary.md) ✅
+- [x] `GET /analytics/progress` — impl + tests
+- [x] `GET /analytics/signals`, `/analytics/recommendations` — impl + tests
+- [x] Guard: рекомендации без назначения доз
+- [x] `make lint && make test` green; [summary.md](summary.md) ✅
 
 ## Dev quick start (после task 10)
 

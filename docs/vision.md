@@ -158,7 +158,7 @@ flowchart TB
 | Этап | Состояние |
 |------|-----------|
 | **MVP (было)** | Telegram-бот автономно; история в RAM; прямой LLM |
-| **Сейчас** | bot + backend + web → PostgreSQL; web iter 0–9 ✅; voice ✅; Text-to-SQL ✅; backend analytics REST 📋 |
+| **Сейчас** | bot + backend + web → PostgreSQL; web iter 0–9 ✅; voice ✅; Text-to-SQL ✅; backend analytics REST ✅ |
 | **Следующее** | `/api/v1/analytics/*`, consultations UI (D5/D6, Doc2–Doc4), production deploy |
 
 MVP — первый шаг: проверка сценариев и ценности. Дальше — analytics REST и консультации без смены продуктовой модели.

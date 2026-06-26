@@ -9,7 +9,7 @@
 - **Версия:** v1 (`/api/v1/…`)
 - **Клиент MVP:** Telegram-бот → backend (service token); Next.js BFF → web routes
 - **Сценарии:** A — вопрос ассистенту; B — фиксация питания и инсулина; C — analytics (D3/D4); Web — dashboard, leaderboard, auth, history
-- **Analytics REST:** `/api/v1/analytics/*` — contract ✅ (task 09), impl 📋 (task 10–11). Web dashboard — `/api/v1/web/*` ✅
+- **Analytics REST:** `/api/v1/analytics/*` — ✅ impl (iter 4). Web dashboard — `/api/v1/web/*` ✅
 - **Вне scope v1:** JWT/web-session на backend, CRUD консультаций
 
 ## Базовый URL и версионирование
