@@ -172,7 +172,7 @@ Hosted GlitchTip не шлёт email без своего SMTP. Bridge / backend 
 - [ ] `make monitoring-up` — Dozzle + bridge (task 02)
 - [ ] `curl -sf http://127.0.0.1:8080/health` + POST `/webhook` → Telegram
 - [ ] UptimeRobot monitors green
-- [ ] GlitchTip alert recipient → `:8080/webhook` (task 03)
+- [x] GlitchTip alert recipient → `:8080/webhook` + `:8000/.../email` (task 03) ✅
 - [ ] Dozzle через SSH tunnel
 
 Acceptance: [../deploy/README.md](../deploy/README.md#9-observability-mvp)

@@ -43,7 +43,12 @@ SMTP_USE_TLS=true
 http://201.51.4.34:8000/webhooks/glitchtip/email
 ```
 
-Telegram остаётся на `/webhooks/glitchtip` — в GlitchTip можно добавить **два** webhook recipient в одном alert rule.
+Telegram остаётся на bridge `:8080/webhook` — в GlitchTip **два** webhook recipient в одном alert rule:
+
+| Recipient | URL |
+|-----------|-----|
+| Telegram | `http://201.51.4.34:8080/webhook` |
+| Email | `http://201.51.4.34:8000/webhooks/glitchtip/email` |
 
 ### GlitchTip UI
 

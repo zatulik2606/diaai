@@ -116,14 +116,28 @@ http://201.51.4.34:8000/webhooks/glitchtip/email
 
 Если был `http://201.51.4.34:8000/webhooks/glitchtip` — **удалите** или замените на `:8080/webhook`.
 
+### GlitchTip UI (task 03) — два webhook recipient в одном alert rule
+
+| Канал | URL | Куда |
+|-------|-----|------|
+| Telegram | `http://201.51.4.34:8080/webhook` | bridge → `@diaaialarm_bot` |
+| Email | `http://201.51.4.34:8000/webhooks/glitchtip/email` | backend → Mail.ru SMTP |
+
+Настроить для **diaai-backend** и **diaai-web**. Rule: **1 event / 1 minute**.
+
 ### Smoke после UI
 
 ```bash
 TOKEN=$(grep ^GLITCHTIP_DEBUG_TOKEN= /opt/diaai/.env | cut -d= -f2)
 curl -sf -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8000/debug/glitchtip-test
-# ≤1–2 min → Telegram без ручного curl /webhook
-docker logs diaai-glitchtip-telegram-bridge-1 --since 5m | grep POST
+curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
+  http://127.0.0.1:3000/api/debug/glitchtip-test
+# ≤1–2 min → Telegram + email (без ручного curl)
+docker logs diaai-glitchtip-telegram-bridge-1 --since 5m | tail -20
+docker logs diaai-backend-1 --since 5m | grep "POST /webhooks/glitchtip"
 ```
+
+Ожидание: `165.227.159.10` (GlitchTip EU) → `POST /webhook` и `POST /webhooks/glitchtip/email`.
 
 ---
 

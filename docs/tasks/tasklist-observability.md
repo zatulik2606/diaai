@@ -20,11 +20,11 @@
 | GlitchTip ingest (backend/web) | ✅ `GLITCHTIP_*` | ✅ debug smoke |
 | `@diaaialarm_bot` + `TELEGRAM_ALARM_*` | ✅ | ✅ |
 | `glitchtip-telegram-bridge` + Dozzle | ✅ `make monitoring-up` | ✅ `:8080` + `:8888` localhost |
-| GlitchTip → webhook → Telegram | 📋 UI eu.glitchtip.com | 📋 |
+| GlitchTip → webhook → Telegram | ✅ UI `:8080/webhook` | ✅ auto POST GlitchTip EU |
 | UptimeRobot monitors | 📋 | 📋 |
 | Prometheus + Grafana + dashboards | 📋 | 📋 |
 
-**Прогресс:** **2 / 10** задач · iter 1 🚧
+**Прогресс:** **3 / 10** задач · iter 1 🚧
 
 > **Scope MVP:** без self-hosted GlitchTip, ELK, Loki. Prometheus/Grafana — в profile `monitoring` на prod-VPS (см. ADR-005 «отложено» — осознанное расширение iter 3 по запросу на дашборды).
 
@@ -59,7 +59,7 @@
 |--------|----------|--------|-----------|
 | 01 | GlitchTip на prod: env, ingest backend + web | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md) |
 | 02 | Monitoring stack на prod: bridge + alarm bot | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md) |
-| 03 | GlitchTip Alert receivers → webhook | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md) |
+| 03 | GlitchTip Alert receivers → webhook | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md) |
 | 04 | E2E: ошибка → GlitchTip → Telegram | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md) |
 | 05 | UptimeRobot: monitors + alert contact | 📋 | [план](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/plan.md) · [summary](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/summary.md) |
 | 06 | Uptime acceptance + prod checklist | 📋 | [план](impl/observability/iteration-2-uptime/tasks/task-06-uptime-verify/plan.md) · [summary](impl/observability/iteration-2-uptime/tasks/task-06-uptime-verify/summary.md) |
@@ -149,21 +149,23 @@ curl -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" http://127.0.0.1:3000/api
 
 ---
 
-## Задача 03: GlitchTip Alert receivers → webhook 🚧
+## Задача 03: GlitchTip Alert receivers → webhook ✅
 
-📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · 🚧 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md)
+✅ [План](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · [Summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md)
 
-**Runbook UI:** [devops/glitchtip/alerts-telegram.md §4.1](../../devops/glitchtip/alerts-telegram.md#41-task-03--настройка-в-glitchtip-ui-euglitchtipcom)
+**Prod recipients (оба проекта):**
 
-1. `diaai-backend` + `diaai-web` → webhook `http://201.51.4.34:8080/webhook`
-2. Rule: 1 event / 1 min
-3. Удалить старый `:8000/webhooks/glitchtip`
-4. Напиши «готово» → E2E smoke
+| Канал | URL |
+|-------|-----|
+| Telegram | `http://201.51.4.34:8080/webhook` |
+| Email | `http://201.51.4.34:8000/webhooks/glitchtip/email` |
+
+E2E ✅ 2026-06-26 — auto POST от `165.227.159.10` (GlitchTip EU).
 
 ### Документы
 
-- 📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md)
-- 🚧 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md)
+- ✅ [План](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md)
+- ✅ [Summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md)
 
 ---
 

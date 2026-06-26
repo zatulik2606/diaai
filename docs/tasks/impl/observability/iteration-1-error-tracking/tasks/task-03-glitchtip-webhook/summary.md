@@ -1,36 +1,35 @@
 # Task 03 summary — GlitchTip Alert receivers → webhook
 
-## Статус
+## Сделано
 
-🚧 **Ожидает:** настройка UI в eu.glitchtip.com пользователем → E2E smoke.
+### GlitchTip UI (пользователь)
 
-## Агент (docs)
+- **Telegram:** `http://201.51.4.34:8080/webhook` — проекты `diaai-backend`, `diaai-web`
+- **Email:** `http://201.51.4.34:8000/webhooks/glitchtip/email` — второй recipient в alert rule
+- Alert rule: **1 event / 1 minute**
 
-- [`devops/glitchtip/alerts-telegram.md`](../../../../../../../devops/glitchtip/alerts-telegram.md) — § 4.1 пошаговый runbook (alert rule + webhook `:8080`)
-- [`devops/deploy/README.md`](../../../../../../../devops/deploy/README.md) §9 пункт 3 — ссылка на runbook
+### Документация (агент)
 
-## Пользователь — checklist UI
+- [`devops/glitchtip/alerts-telegram.md`](../../../../../../../devops/glitchtip/alerts-telegram.md) — § 4.1 UI runbook
+- [`devops/deploy/README.md`](../../../../../../../devops/deploy/README.md) §9 пункт 3
 
-Для **diaai-backend** и **diaai-web**:
+### E2E smoke (2026-06-26, VPS)
 
-1. Project Settings → **Project Alerts**
-2. Rule: **1 event / 1 minute**
-3. Recipient: Webhook → `http://201.51.4.34:8080/webhook`
-4. Удалить старый `:8000/webhooks/glitchtip` (если есть)
-5. Email (опционально): второй recipient → `:8000/webhooks/glitchtip/email`
+| Шаг | Результат |
+|-----|-----------|
+| `POST /webhooks/glitchtip/email` (manual) | 200 `{"ok":true}` |
+| Debug backend + web | 200, events в GlitchTip |
+| Auto `POST /webhook` → bridge | `165.227.159.10` ×2 → 200 |
+| Auto `POST /webhooks/glitchtip/email` | `165.227.159.10` ×2 → 200 |
 
-## E2E smoke (после UI)
+GlitchTip EU worker доставляет оба webhook автоматически (без ручного curl после ingest).
 
-```bash
-ssh deploy@201.51.4.34
-TOKEN=$(grep ^GLITCHTIP_DEBUG_TOKEN= /opt/diaai/.env | cut -d= -f2)
-curl -sf -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8000/debug/glitchtip-test
-# ≤2 min: Telegram от @diaaialarm_bot
-docker logs diaai-glitchtip-telegram-bridge-1 --since 5m | grep 'POST /webhook'
-```
+## Verify
 
-## Definition of Done
+- Bridge logs: `165.227.159.10 - "POST /webhook HTTP/1.1" 200`
+- Backend logs: `165.227.159.10 - "POST /webhooks/glitchtip/email HTTP/1.1" 200`
+- Telegram + email — пользователь подтвердил настройку UI
 
-- [ ] UI настроен (backend + web)
-- [ ] Auto webhook → bridge → Telegram (без ручного curl)
-- [ ] Tasklist 3/10 ✅
+## Следующая задача
+
+Task 04 — E2E runbook + закрытие acceptance §9 (пункты 1–3).

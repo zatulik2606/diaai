@@ -288,9 +288,9 @@ curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
 
 | # | Критерий | Как проверить | Статус |
 |---|----------|---------------|--------|
-| 1 | GlitchTip ingest | debug curl выше → issue в eu.glitchtip.com (backend + web) | ☐ |
+| 1 | GlitchTip ingest | debug curl → issue в eu.glitchtip.com | ✅ |
 | 2 | Bridge health | `curl -sf http://127.0.0.1:8080/health` + POST `/webhook` → Telegram | ✅ |
-| 3 | GlitchTip → Telegram | debug curl → auto `POST :8080/webhook` → Telegram (см. [alerts-telegram.md §4.1](../glitchtip/alerts-telegram.md#41-task-03--настройка-в-glitchtip-ui-euglitchtipcom)) | ☐ |
+| 3 | GlitchTip → Telegram + email | auto POST `:8080/webhook` + `:8000/.../email` от GlitchTip EU | ✅ |
 | 4 | UptimeRobot backend | monitor `http://IP:8000/health` keyword `"status":"ok"` Up | ☐ |
 | 5 | UptimeRobot web | monitor `http://IP:3000/` Up | ☐ |
 | 6 | Dozzle | `ssh -L 8888:127.0.0.1:8888 deploy@IP` → UI логов | ☐ |

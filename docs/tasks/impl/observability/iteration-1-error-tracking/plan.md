@@ -89,8 +89,8 @@ flowchart LR
 - [x] **Агент:** task 01 `plan.md` → реализация → `summary.md`
 - [x] Backend: `GET /debug/glitchtip-test` + Bearer → issue в GlitchTip `diaai-backend`
 - [x] Web: `GET /api/debug/glitchtip-test` + Bearer → issue в GlitchTip `diaai-web`
-- [ ] Prod: bridge healthy; GlitchTip webhook → Telegram
-- [ ] [deploy/README.md §9](../../../../devops/deploy/README.md) пункты 1–3 ✅
+- [x] Prod: bridge healthy; GlitchTip webhook → Telegram + email (task 03)
+- [x] [deploy/README.md §9](../../../../devops/deploy/README.md) пункты 1–3 ✅
 
 ## Документы задач
 
