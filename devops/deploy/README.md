@@ -235,10 +235,30 @@ ADR: [adr-005-observability.md](../../docs/adr/adr-005-observability.md) · guid
 ### На VPS после деплоя
 
 ```bash
-ssh deploy@201.51.4.34 'cd /opt/diaai && make monitoring-up && make monitoring-ps'
+ssh deploy@201.51.4.34 'cd /opt/diaai && git pull --ff-only && cp devops/deploy/compose.server.override.yml compose.override.yml && make stack-up-registry && make monitoring-up && make monitoring-ps'
 ```
 
-`.env` на сервере должен содержать `TELEGRAM_ALARM_*`, `GLITCHTIP_*`, опционально `GLITCHTIP_WEBHOOK_SECRET`.
+`.env` на сервере: `TELEGRAM_ALARM_*`, `GLITCHTIP_*`, `DOZZLE_BIND`, `GLITCHTIP_BRIDGE_BIND`, опционально `GLITCHTIP_WEBHOOK_SECRET`.
+
+**Monitoring stack (task 02)** — env в `/opt/diaai/.env`:
+
+| Variable | Назначение |
+|----------|------------|
+| `TELEGRAM_ALARM_BOT_TOKEN`, `TELEGRAM_ALARM_CHAT_ID` | bridge → `@diaaialarm_bot` |
+| `DOZZLE_BIND` | `127.0.0.1:8888` (не открывать в ufw) |
+| `GLITCHTIP_BRIDGE_BIND` | `8080:8080` |
+| `DIAAI_BACKEND_IMAGE`, `DIAAI_WEB_IMAGE` | `ghcr.io/zatulik2606/diaai-*:main` |
+
+Smoke bridge (на VPS):
+
+```bash
+curl -sf http://127.0.0.1:8080/health
+curl -X POST http://127.0.0.1:8080/webhook \
+  -H 'Content-Type: application/json' \
+  -d '{"attachments":[{"title":"bridge prod test","title_link":"https://eu.glitchtip.com","text":"manual"}]}'
+```
+
+Ожидание: HTTP 200 + сообщение в Telegram. См. [monitoring/README.md § Prod sequence](../monitoring/README.md#prod-sequence-task-02--monitoring-stack).
 
 **GlitchTip ingest (task 01)** — обязательные переменные в `/opt/diaai/.env`:
 
@@ -269,7 +289,7 @@ curl -sf -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
 | # | Критерий | Как проверить | Статус |
 |---|----------|---------------|--------|
 | 1 | GlitchTip ingest | debug curl выше → issue в eu.glitchtip.com (backend + web) | ☐ |
-| 2 | Bridge health | `curl -sf http://127.0.0.1:8080/health` на VPS | ☐ |
+| 2 | Bridge health | `curl -sf http://127.0.0.1:8080/health` + POST `/webhook` → Telegram | ✅ |
 | 3 | GlitchTip → Telegram | POST `/webhook` или новый issue в GlitchTip | ☐ |
 | 4 | UptimeRobot backend | monitor `http://IP:8000/health` keyword `"status":"ok"` Up | ☐ |
 | 5 | UptimeRobot web | monitor `http://IP:3000/` Up | ☐ |

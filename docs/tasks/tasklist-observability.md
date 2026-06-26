@@ -18,13 +18,13 @@
 | Компонент | Локально | Prod |
 |-----------|----------|------|
 | GlitchTip ingest (backend/web) | ✅ `GLITCHTIP_*` | ✅ debug smoke |
-| `@diaaialarm_bot` + `TELEGRAM_ALARM_*` | ✅ | 📋 |
-| `glitchtip-telegram-bridge` + Dozzle | ✅ `make monitoring-up` | 📋 |
+| `@diaaialarm_bot` + `TELEGRAM_ALARM_*` | ✅ | ✅ |
+| `glitchtip-telegram-bridge` + Dozzle | ✅ `make monitoring-up` | ✅ `:8080` + `:8888` localhost |
 | GlitchTip → webhook → Telegram | 📋 UI eu.glitchtip.com | 📋 |
 | UptimeRobot monitors | 📋 | 📋 |
 | Prometheus + Grafana + dashboards | 📋 | 📋 |
 
-**Прогресс:** **1 / 10** задач · iter 1 🚧
+**Прогресс:** **2 / 10** задач · iter 1 🚧
 
 > **Scope MVP:** без self-hosted GlitchTip, ELK, Loki. Prometheus/Grafana — в profile `monitoring` на prod-VPS (см. ADR-005 «отложено» — осознанное расширение iter 3 по запросу на дашборды).
 
@@ -58,7 +58,7 @@
 | Задача | Описание | Статус | Документы |
 |--------|----------|--------|-----------|
 | 01 | GlitchTip на prod: env, ingest backend + web | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-01-glitchtip-prod/summary.md) |
-| 02 | Monitoring stack на prod: bridge + alarm bot | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md) |
+| 02 | Monitoring stack на prod: bridge + alarm bot | ✅ | [план](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md) |
 | 03 | GlitchTip Alert receivers → webhook | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-03-glitchtip-webhook/summary.md) |
 | 04 | E2E: ошибка → GlitchTip → Telegram | 📋 | [план](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/plan.md) · [summary](impl/observability/iteration-1-error-tracking/tasks/task-04-error-alert-e2e/summary.md) |
 | 05 | UptimeRobot: monitors + alert contact | 📋 | [план](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/plan.md) · [summary](impl/observability/iteration-2-uptime/tasks/task-05-uptimerobot/summary.md) |
@@ -134,14 +134,18 @@ curl -H "Authorization: Bearer $GLITCHTIP_DEBUG_TOKEN" http://127.0.0.1:3000/api
 
 ---
 
-## Задача 02: Monitoring stack на prod — bridge 📋
+## Задача 02: Monitoring stack на prod — bridge ✅
 
-📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md) — код bridge уже в репо; агент: docs + `.env.example`; пользователь: `make monitoring-up`, ufw :8080.
+📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md) · ✅ [Summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md)
+
+На VPS: `make monitoring-up` → Dozzle (`127.0.0.1:8888`) + bridge (`:8080/webhook` → Telegram). Smoke POST `/webhook` ✅ 2026-06-26.
+
+**Пользователь:** ufw `8080/tcp`; task 03 — GlitchTip webhook URL.
 
 ### Документы
 
-- 📋 [План](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md)
-- 📝 [Summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md)
+- ✅ [План](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/plan.md)
+- ✅ [Summary](impl/observability/iteration-1-error-tracking/tasks/task-02-bridge-prod/summary.md)
 
 ---
 

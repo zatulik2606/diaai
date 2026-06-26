@@ -70,28 +70,12 @@ bash devops/glitchtip/scripts/test-alarm-bot.sh
 
 GlitchTip шлёт **Slack-compatible JSON**; Telegram API — другой формат. Прямой URL `api.telegram.org` **не подходит**.
 
-**MVP (рекомендуется):** webhook на **backend :8000** (порт уже открыт на prod):
+**Prerequisite:** task 02 — `make monitoring-up` на VPS, bridge `:8080` healthy, ufw `8080/tcp`.
+
+**Рекомендуется (task 03):** webhook на **bridge :8080**:
 
 ```
-http://201.51.4.34:8000/webhooks/glitchtip
-```
-
-Env на VPS в `/opt/diaai/.env`: `TELEGRAM_ALARM_BOT_TOKEN`, `TELEGRAM_ALARM_CHAT_ID`, опционально `GLITCHTIP_WEBHOOK_SECRET`.
-
-**Fallback (рекомендуется на prod):** hosted GlitchTip часто **не шлёт POST webhook** автоматически (worker), хотя Test API работает. Backend poller опрашивает GlitchTip API:
-
-```bash
-GLITCHTIP_API_TOKEN=          # Profile → Auth Tokens на eu.glitchtip.com
-GLITCHTIP_ORG=diaai
-GLITCHTIP_POLL_INTERVAL_SECONDS=60
-```
-
-При старте backend помечает текущие issues как «виденные», дальше шлёт Telegram только по **новым** issue.
-
-**Альтернатива:** контейнер [`glitchtip-telegram-bridge`](../monitoring/glitchtip-telegram-bridge/) — profile `monitoring`, порт **8080** (нужен ufw/Timeweb):
-
-```bash
-make monitoring-up
+http://201.51.4.34:8080/webhook
 ```
 
 1. GlitchTip → Project → **Alerts → Alert recipients → Webhook**
@@ -102,6 +86,24 @@ make monitoring-up
 curl -X POST http://127.0.0.1:8080/webhook \
   -H 'Content-Type: application/json' \
   -d '{"attachments":[{"title":"Test","title_link":"https://eu.glitchtip.com","text":"manual"}]}'
+```
+
+Env на VPS: `TELEGRAM_ALARM_BOT_TOKEN`, `TELEGRAM_ALARM_CHAT_ID`, `GLITCHTIP_BRIDGE_BIND=8080:8080`.
+
+**Альтернатива — backend :8000** (без bridge-контейнера):
+
+```
+http://201.51.4.34:8000/webhooks/glitchtip
+```
+
+Email alerts: `http://201.51.4.34:8000/webhooks/glitchtip/email` — [alerts-email.md](alerts-email.md).
+
+**Fallback:** hosted GlitchTip часто **не шлёт POST webhook** автоматически (worker). Backend poller:
+
+```bash
+GLITCHTIP_API_TOKEN=          # Profile → Auth Tokens на eu.glitchtip.com
+GLITCHTIP_ORG=diaai
+GLITCHTIP_POLL_INTERVAL_SECONDS=60
 ```
 
 Подробно: [../monitoring/README.md](../monitoring/README.md) · ADR: [adr-005-observability.md](../../docs/adr/adr-005-observability.md)
