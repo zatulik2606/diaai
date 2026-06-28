@@ -4,10 +4,11 @@ import base64
 import logging
 
 from aiogram import F, Router
-from aiogram.filters import CommandStart
+from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 
 from diaai.backend_client import BackendClient, BackendClientError
+from diaai.commands import EXAMPLE_TEXT, HELP_TEXT
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,15 @@ def build_handlers(backend_client: BackendClient) -> Router:
             "Отправь вопрос текстом или фото. Это справочная информация, не замена врачу."
         )
 
-    @router.message(F.text)
+    @router.message(Command("help"))
+    async def help_handler(message: Message) -> None:
+        await message.answer(HELP_TEXT)
+
+    @router.message(Command("example"))
+    async def example_handler(message: Message) -> None:
+        await message.answer(EXAMPLE_TEXT)
+
+    @router.message(F.text & ~F.text.startswith("/"))
     async def text_handler(message: Message) -> None:
         user_text = (message.text or "").strip()
         if not user_text:
