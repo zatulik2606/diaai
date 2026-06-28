@@ -52,7 +52,7 @@
 
 **Web-экран (черновик):** Dashboard с переключателем периода.
 
-*Зависимость:* dashboard KPI через `/api/v1/web/patient/dashboard/*` ✅; полный analytics REST (`/api/v1/analytics/*`, сигналы) — [plan iter 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) 📋.
+*Зависимость:* dashboard KPI через `/api/v1/web/patient/dashboard/*` ✅; полный analytics REST (`/api/v1/analytics/*`, сигналы) — [plan iter 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) ✅.
 
 ---
 
@@ -68,7 +68,7 @@
 
 **Web-экран (черновик):** Блок «Рекомендации» на dashboard или отдельная вкладка.
 
-*Зависимость:* [plan iter 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) — таблица `recommendations` в PG ✅, API и UI 📋.
+*Зависимость:* [plan iter 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) — таблица `recommendations` в PG ✅, API ✅ (`GET /api/v1/analytics/recommendations`); UI на dashboard — post-MVP.
 
 ### D5 — Запись к доктору
 
@@ -181,8 +181,8 @@
 | D1 — дневник | ✅ events API | ✅ dashboard submissions |
 | D2 — ассистент | ✅ | ✅ `/chat`, FAB |
 | D7 — фото | ✅ | ✅ `/chat` (текст + voice); upload фото — post-MVP |
-| D3 — динамика | 📋 iter 4 REST | ✅ dashboard KPI/matrix *(web API)* |
-| D4 — рекомендации | 📋 iter 4 | 📋 iter 4 *(нет UI)* |
+| D3 — динамика | ✅ iter 4 REST | ✅ dashboard KPI/matrix *(web API)* |
+| D4 — рекомендации | ✅ iter 4 API | 📋 UI *(нет блока на dashboard)* |
 | D5, D6 — консультации | 📋 post-MVP | 📋 post-MVP |
 | Doc1 — список пациентов | — | ⚠️ частично: `/leaderboard` *(не полный Doc1)* |
 | Doc2 — обзор пациента | — | 📋 post-MVP |

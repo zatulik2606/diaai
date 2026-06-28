@@ -20,11 +20,14 @@
 
 | | |
 |--|--|
-| IPv4 | `201.51.4.34` |
+| IPv4 | `201.51.4.34` (Timeweb Cloud, preset 4801: 2 vCPU / 4 GB / 50 GB) |
 | OS | Ubuntu 24.04 |
 | Web | http://201.51.4.34:3000 |
 | API | http://201.51.4.34:8000/health |
-| CD | push `main` → publish → deploy |
+| Доступ | по IP, **без custom domain** (`diaai.ai` отложен) |
+| CD | push `main` → publish → deploy (`git reset --hard origin/main`) |
+| Monitoring | **вариант 1:** app + Grafana/Prometheus/Loki/Kuma/Dozzle на том же VPS; GlitchTip — hosted EU + bridge `:8080` |
+| RAM (snapshot 2026-06-28) | app ~680 MB · monitoring ~450 MB · host ~1.4/3.8 GB + **swap 2 GB** (`bootstrap.sh`) · disk ~18/48 GB |
 
 **SSH:** [server/README.md § Проверка SSH](../../../devops/server/README.md#проверка-ssh)
 
@@ -41,7 +44,7 @@
 
 Последний успешный run: [Deploy #28167868567](https://github.com/zatulik2606/diaai/actions/runs/28167868567) (commit `18167f2`).
 
-Fixes по пути: compose `ports: !override`; wait web + `set -e` в deploy script.
+Fixes по пути: compose `ports: !override`; wait web + `set -e` в deploy script; CD `git fetch + reset --hard origin/main + clean -fd` (локальные правки на VPS блокировали `git pull --ff-only`).
 
 ## Отклонения
 
@@ -63,4 +66,4 @@ Fixes по пути: compose `ports: !override`; wait web + `set -e` в deploy s
 
 ## Post-MVP
 
-HTTPS reverse proxy, K8s, managed PostgreSQL, CI lint/test on PR — см. tasklist.
+HTTPS reverse proxy / custom domain, K8s, managed PostgreSQL, CI lint/test on PR — см. tasklist.

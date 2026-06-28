@@ -17,7 +17,7 @@ Push `main` → GHCR → автодеплой на VPS (SSH, без ручног
 ```
 push main → Docker Publish → Deploy (workflow_run)
   → SSH deploy@201.51.4.34
-  → git pull + make stack-*-registry + health
+  → git fetch + reset --hard origin/main + clean -fd + make stack-*-registry + health
 ```
 
 ## E2E

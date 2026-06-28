@@ -12,6 +12,8 @@
 | Grafana alerting | provisioned rules → bridge `[Grafana]` | `grafana/provisioning/alerting/` |
 | Runbook при инциденте | [key-metrics.md](key-metrics.md) | пороги, tunnels, LogQL, чеклист 5 мин |
 
+**Prod (вариант 1):** app + monitoring на **одном VPS** Timeweb (4 GB). Отдельный VPS / managed Grafana у Timeweb не используем. Запас по RAM — **swap 2 GB** (`bootstrap.sh` → `/swapfile`); UI только через SSH-тunnel (`127.0.0.1`).
+
 ---
 
 ## Быстрый старт (локально)

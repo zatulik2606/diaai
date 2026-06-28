@@ -12,6 +12,7 @@ set -euo pipefail
 DEPLOY_USER="${DEPLOY_USER:-deploy}"
 DEPLOY_PUBKEY_FILE="${DEPLOY_PUBKEY_FILE:-/tmp/diaai-deploy.pub}"
 APP_DIR="${APP_DIR:-/opt/diaai}"
+SWAP_GB="${SWAP_GB:-2}"
 
 log() { echo "[bootstrap] $*"; }
 
@@ -78,6 +79,19 @@ setup_app_dir() {
   chown "${DEPLOY_USER}:${DEPLOY_USER}" "${APP_DIR}"
 }
 
+setup_swap() {
+  if [[ -f /swapfile ]] || swapon --show 2>/dev/null | grep -q /swapfile; then
+    log "Swap already configured"
+    return
+  fi
+  log "Adding ${SWAP_GB}G swap (app + monitoring on 4 GB VPS)..."
+  fallocate -l "${SWAP_GB}G" /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+}
+
 setup_ufw() {
   log "Configuring ufw (22, 3000, 8000)..."
   ufw default deny incoming
@@ -97,6 +111,7 @@ verify() {
   curl --version | head -1
   id "${DEPLOY_USER}"
   groups "${DEPLOY_USER}"
+  swapon --show || true
   log "Done."
 }
 
@@ -106,6 +121,7 @@ main() {
   install_docker
   setup_deploy_user
   setup_app_dir
+  setup_swap
   setup_ufw
   verify
 }

@@ -63,8 +63,8 @@
 
 | Сущность | Таблица | Сценарии | REST / UI |
 |----------|---------|----------|-----------|
-| ProgressSnapshot | `progress_snapshots` | D3, Doc2 | web dashboard ✅ · `/api/v1/analytics/*` 📋 |
-| Recommendation | `recommendations` | D4 | iter 4 📋 |
+| ProgressSnapshot | `progress_snapshots` | D3, Doc2 | web dashboard ✅ · `/api/v1/analytics/*` ✅ |
+| Recommendation | `recommendations` | D4 | iter 4 ✅ |
 | PhotoAnalysis | `photo_analyses` | D2, D7 | assistant persist ✅ |
 | Consultation | `consultations` | D5, D6, Doc3, Doc4 | seed ✅ · UI post-MVP 📋 |
 | User.display_name, doctor | `users` | Doc1, web auth | seed + `/web/auth/resolve` ✅ |
@@ -73,7 +73,7 @@
 
 | Тема | Сценарии | Статус |
 |------|----------|--------|
-| Analytics REST (signals, recommendations API) | D3, D4 | backend iter 4 📋 |
+| Analytics REST (signals, recommendations API) | D3, D4 | backend iter 4 ✅ |
 | Consultations UI + workflow | D5, D6, Doc2–Doc4 | post-MVP 📋 |
 | Web photo upload в chat | D7 | post-MVP 📋 |
 

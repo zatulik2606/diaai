@@ -30,7 +30,7 @@ Prod-цепочка **GlitchTip EU → webhook → Telegram + email** работ
 - **Backend `network_mode: host`** на prod — SMTP через IPv6 (Timeweb); web ходит на backend через `172.18.0.1:8000`.
 - **Debug endpoints** — только с `Authorization: Bearer GLITCHTIP_DEBUG_TOKEN`; без token маршруты 404.
 - **Два канала алертов:** bridge `:8080` (Telegram) + backend email webhook; оба настроены как GlitchTip recipients.
-- **Deploy workflow:** периодически падает на `git pull` из‑за локальных правок на VPS — образы обновлялись вручную `docker pull`.
+- **Deploy workflow:** CD использует `git fetch + reset --hard origin/main + clean -fd` (fix 2026-06-28); раньше падал на `git pull` из‑за локальных правок на VPS.
 
 ## Out of scope (iter 2+)
 

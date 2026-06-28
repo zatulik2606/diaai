@@ -832,7 +832,8 @@ Idempotent bootstrap: Docker Engine, compose plugin, базовые утилит
 |------|--------|
 | Kubernetes / Fly / Railway | 📋 Planned |
 | Managed PostgreSQL | 📋 Planned |
-| Observability: logs, metrics, alerts | 📋 Planned |
+| Observability: logs, metrics, alerts | ✅ Done | [tasklist-observability.md](tasklist-observability.md) |
+| Custom domain / HTTPS reverse proxy | 📋 Planned | доступ по IP; домен отложен |
 | Full CI: lint/test in GHA on every PR | 📋 Planned |
 | GitHub Environments (staging/prod), Vault | 📋 Planned |
 

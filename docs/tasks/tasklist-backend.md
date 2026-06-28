@@ -4,7 +4,7 @@
 
 ## Обзор
 
-Рабочий план backend: итерации **1–3** ✅ (01–08). Бот — клиент backend API; unit-тесты bot в `tests/`. **Backend delivery complete** — следующий этап: итерация 4 (аналитика).
+Рабочий план backend: итерации **1–4** ✅ (01–12). Бот — клиент backend API; unit-тесты bot в `tests/`. **Backend area complete** — analytics REST `/api/v1/analytics/*` ✅.
 
 **Прогресс:** **12 / 12** задач (01–12 ✅) · **`make test`** — 109 (92 backend + 17 bot) · [`backend/README.md`](../../backend/README.md)
 
@@ -54,7 +54,7 @@
 | 11 | Сигналы и рекомендации | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-11-recommendations-signals/summary.md) |
 | 12 | Тесты и документация | ✅ Done | [план](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/plan.md) · [summary](impl/backend/iteration-4-analytics/tasks/task-12-docs-and-quality/summary.md) |
 
-Задачи выполняются **последовательно** (01 → 12). Итерации **1–3** закрыты ✅; **4** — следующая.
+Задачи выполняются **последовательно** (01 → 12). Итерации **1–4** закрыты ✅.
 
 ---
 
@@ -384,17 +384,17 @@
 
 ---
 
-## Блок 4: Аналитика (задачи 09–12) 🚧
+## Блок 4: Аналитика (задачи 09–12) ✅
 
 → [iteration-4-analytics/plan.md](impl/backend/iteration-4-analytics/plan.md) · [summary](impl/backend/iteration-4-analytics/summary.md)
 
 **Зависимость:** [database iter 5](tasklist-database.md#итерация-5-orm-репозитории-backend-) ✅ (`progress_snapshots`, `recommendations`, `consultations`, `photo_analyses`).
 
-**Прогресс блока:** 1 / 4 (task 09 ✅)
+**Прогресс блока:** 4 / 4 ✅
 
 ---
 
-## Итерация 4: Аналитика 🚧 (task 09 ✅)
+## Итерация 4: Аналитика ✅
 
 → [plan.md, итерация 4](../plan.md#итерация-4--аналитика-и-динамика-backend-rest) · [iteration-4 plan](impl/backend/iteration-4-analytics/plan.md)
 

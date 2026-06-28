@@ -158,10 +158,10 @@ flowchart TB
 | Этап | Состояние |
 |------|-----------|
 | **MVP (было)** | Telegram-бот автономно; история в RAM; прямой LLM |
-| **Сейчас** | bot + backend + web → PostgreSQL; web iter 0–9 ✅; voice ✅; Text-to-SQL ✅; backend analytics REST ✅ |
-| **Следующее** | `/api/v1/analytics/*`, consultations UI (D5/D6, Doc2–Doc4), production deploy |
+| **Сейчас** | bot + backend + web → PostgreSQL; web iter 0–9 ✅; voice ✅; Text-to-SQL ✅; backend analytics REST ✅; prod VPS + CD + observability ✅ |
+| **Следующее** | consultations UI (D5/D6, Doc2–Doc4); custom domain / HTTPS (сейчас — IP `201.51.4.34`) |
 
-MVP — первый шаг: проверка сценариев и ценности. Дальше — analytics REST и консультации без смены продуктовой модели.
+MVP — первый шаг: проверка сценариев и ценности. Analytics REST и prod deploy закрыты; дальше — консультации без смены продуктовой модели.
 
 ---
 
@@ -349,7 +349,7 @@ OpenRouter и LLM — на стороне backend (см. [backend/README.md](../
 make db-reset && make backend-run   # PostgreSQL + API :8000
 make run                            # бот (отдельный терминал)
 make web-dev                        # web :3000 — см. web/README.md
-make test                           # 84 tests
+make test                           # 109 tests
 ```
 
-Локальный чеклист: [smoke-test.md](smoke-test.md). Production deploy (bot + backend + web) — post-MVP, см. [plan.md](plan.md#post-mvp-не-в-таблице-этапов).
+Локальный чеклист: [smoke-test.md](smoke-test.md). Production: http://201.51.4.34:3000 · `:8000/health` — [devops/deploy/README.md](../devops/deploy/README.md).

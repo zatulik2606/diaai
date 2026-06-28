@@ -80,8 +80,9 @@ export BASE=http://127.0.0.1:8000
 | 3 | Leaderboard | `curl -s "$BASE/api/v1/web/leaderboard?doctor_telegram_id=162684825" -H "Authorization: Bearer $TOKEN"` | `table` |
 | 4 | Assistant | `curl -s -X POST "$BASE/api/v1/assistant/messages" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"telegram_id":900000001,"text":"Привет"}'` | `reply` |
 | 5 | Analytics NL (doctor) | `curl -s -X POST "$BASE/api/v1/web/analytics/query?doctor_telegram_id=162684825" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"question":"Сколько ХЕ за 7 дней у пациентов?"}'` | HTTP 200, `answer` |
-
-> `/api/v1/analytics/progress` — contract only (impl task 10); не включать в smoke до impl.
+| 6 | Analytics progress | `curl -s "$BASE/api/v1/analytics/progress?telegram_id=900000001&period=week" -H "Authorization: Bearer $TOKEN"` | `period`, `metrics` |
+| 7 | Analytics signals | `curl -s "$BASE/api/v1/analytics/signals?telegram_id=900000001&period=week" -H "Authorization: Bearer $TOKEN"` | `signals` array |
+| 8 | Analytics recommendations | `curl -s "$BASE/api/v1/analytics/recommendations?telegram_id=900000001&limit=5" -H "Authorization: Bearer $TOKEN"` | `items` array |
 
 Demo users: `@ivan_p` (900000001), `@doctor_ivanov` (162684825).
 
@@ -120,7 +121,7 @@ make run              # нужен TELEGRAM_BOT_TOKEN + backend :8000
 ## 6. Quality gate
 
 ```bash
-make format && make lint && make test    # 84 tests
+make format && make lint && make test    # 109 tests
 make web-lint && make web-build
 ```
 
@@ -140,7 +141,7 @@ make web-lint && make web-build
 
 ## Production VPS (Timeweb Cloud)
 
-Stack на VPS: [devops/deploy/README.md](devops/deploy/README.md). После `make stack-up-registry` и `make db-seed` (нужен `uv` на сервере):
+Stack на VPS: [devops/deploy/README.md](devops/deploy/README.md). Доступ по **IP** (без custom domain): web `:3000`, API `:8000`. После `make stack-up-registry` и `make db-seed` (нужен `uv` на сервере):
 
 | Проверка | Команда / URL |
 |----------|----------------|
@@ -148,5 +149,7 @@ Stack на VPS: [devops/deploy/README.md](devops/deploy/README.md). После `
 | Web | http://201.51.4.34:3000/login → `ivan_p` → `/dashboard` |
 | Login API | `curl -sf -X POST http://201.51.4.34:3000/api/auth/login -H 'Content-Type: application/json' -d '{"username":"ivan_p"}'` → `{"ok":true,"role":"diabetic"}` |
 | Postgres снаружи | порт 5433 **не** в ufw; bind `127.0.0.1` only |
+| Monitoring UI | SSH tunnel only — [monitoring/README.md](../devops/monitoring/README.md) |
+| GlitchTip | hosted EU (SaaS); bridge на VPS `:8080` |
 
-На сервере: `cd /opt/diaai && make stack-health`.
+На сервере: `cd /opt/diaai && make stack-health`. Ресурсы (snapshot 2026-06-28): app ~680 MB RAM, monitoring ~450 MB, swap 2 GB — см. [devops/monitoring/README.md](../devops/monitoring/README.md).

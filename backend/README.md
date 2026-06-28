@@ -78,7 +78,7 @@ Web (server route): `GET /api/debug/glitchtip-test` с тем же Bearer — [d
 | `make backend-install` | `uv sync` — зависимости |
 | `make backend-run` | uvicorn с reload |
 | `make backend-migrate` | `alembic upgrade head` |
-| `make backend-test` | pytest (**67** backend tests; full suite: `make test` → 84) |
+| `make backend-test` | pytest (**92** backend tests; full suite: `make test` → 109) |
 | `make backend-lint` | ruff check |
 | `make backend-format` | ruff format |
 | `make backend-openapi-export` | dump `/openapi.json` для diff (не коммитить) |

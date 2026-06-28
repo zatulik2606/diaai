@@ -149,10 +149,10 @@
 |---|--------|-------|--------|
 | P3-1 | tasklist-database: tasklist-web → frontend | [tasks/tasklist-database.md](tasks/tasklist-database.md) | ✅ |
 | P3-2 | Исторические summary: footnote «снимок на дату iter» или не трогать | `docs/tasks/impl/**/summary.md` | 📋 |
-| P3-3 | ADR-002, impl/backend/plan.md — counts 84 | [adr/adr-002-backend-stack.md](adr/adr-002-backend-stack.md), [tasks/impl/backend/plan.md](tasks/impl/backend/plan.md) | 📋 |
+| P3-3 | ADR-002, impl/backend/plan.md — counts 84 | [adr/adr-002-backend-stack.md](adr/adr-002-backend-stack.md), [tasks/impl/backend/plan.md](tasks/impl/backend/plan.md) | ✅ |
 | P3-4 | tasklist-backend closed tasks — «45 tests» в тексте задач 07–08 | [tasks/tasklist-backend.md](tasks/tasklist-backend.md) | 📋 |
-| P3-5 | api-contract.md MVP table — строка analytics impl после task 10–11 | [api/api-contract.md](api/api-contract.md) | 📋 |
-| P3-6 | backend/README analytics curl после impl iter 4 | [backend/README.md](../backend/README.md) | 📋 |
+| P3-5 | api-contract.md MVP table — строка analytics impl после task 10–11 | [api/api-contract.md](api/api-contract.md) | ✅ |
+| P3-6 | backend/README analytics curl после impl iter 4 | [backend/README.md](../backend/README.md) | ✅ |
 | P3-7 | spec/user-scenarios — link doc-audit | [spec/user-scenarios.md](spec/user-scenarios.md) | ✅ |
 
 ---
@@ -164,7 +164,7 @@
 | Product plan vs 4 области | только bot/backend/web | + database, post-MVP, footnotes |
 | Web до analytics REST | не описано | plan.md + user-scenarios |
 | Consultations D5/D6 | «iter 5» | post-MVP явно |
-| `/analytics/*` vs `/web/*` | смешение | разделено; contract task 09 ✅; **impl 📋** (task 10–11) |
+| `/analytics/*` vs `/web/*` | смешение | разделено; contract + **impl ✅** (iter 4 tasks 10–12) |
 | Prompt path analytics_sql | runtime bug | fix в коде: `prompts/analytics_sql.txt` ✅ |
 | README без architecture.md | ссылка только на vision | [architecture.md](architecture.md) ✅ |
 
@@ -177,9 +177,9 @@
 | Task | Docs | Статус |
 |------|------|--------|
 | 09 Контракты | scenarios, api-contract, openapi, api-contracts, data-model cross-ref | ✅ |
-| 10 Progress impl | backend/README curl, api-contract «impl ✅» | 📋 |
-| 11 Signals/recs | scenarios уже описаны | 📋 |
-| 12 Close iter 4 | iteration-4 summary, tasklist-backend, plan iter 4 → Done | 📋 |
+| 10 Progress impl | backend/README curl, api-contract «impl ✅» | ✅ |
+| 11 Signals/recs | scenarios уже описаны | ✅ |
+| 12 Close iter 4 | iteration-4 summary, tasklist-backend, plan iter 4 → Done | ✅ |
 
 ---
 
@@ -224,5 +224,5 @@
 - [architecture.md](architecture.md) — компоненты и API
 - [plan.md](plan.md) — product roadmap
 - [onboarding.md](onboarding.md) · [smoke-test.md](smoke-test.md) — вход разработчика
-- [tasks/tasklist-backend.md](tasks/tasklist-backend.md) — backend iter 4 (09 ✅, 10–12 📋)
+- [tasks/tasklist-backend.md](tasks/tasklist-backend.md) — backend iter 4 ✅ (09–12)
 - [tasks/impl/backend/iteration-4-analytics/plan.md](tasks/impl/backend/iteration-4-analytics/plan.md)

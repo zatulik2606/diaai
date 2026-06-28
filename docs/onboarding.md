@@ -252,7 +252,7 @@ Spec-driven workflow ([templates/workflow.md](templates/workflow.md)):
 ### Quality gate
 
 ```bash
-make format && make lint && make test    # 84 tests
+make format && make lint && make test    # 109 tests
 make web-lint && make web-build          # если меняли web/
 ```
 

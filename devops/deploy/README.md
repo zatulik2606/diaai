@@ -37,11 +37,13 @@ sudo -u deploy git clone https://github.com/zatulik2606/diaai.git /opt/diaai
 cd /opt/diaai
 ```
 
-Обновление кода (до CD iter 4):
+Обновление кода (ручное, вне CD):
 
 ```bash
-sudo -u deploy git -C /opt/diaai pull --ff-only
+sudo -u deploy bash -c 'cd /opt/diaai && git fetch origin main && git reset --hard origin/main && git clean -fd'
 ```
+
+> **CD (§8)** использует тот же `fetch + reset --hard + clean -fd` — локальные правки на VPS не блокируют deploy (раньше падало на `git pull --ff-only`).
 
 ---
 
@@ -224,6 +226,16 @@ flowchart LR
 | `.github/workflows/deploy.yml` | SSH → `/opt/diaai` |
 | [github-secrets.md](github-secrets.md) | `DEPLOY_*`, `GLITCHTIP_*` DSN (manual) |
 
+На VPS deploy-скрипт синхронизирует репозиторий с `origin/main`:
+
+```bash
+git fetch origin main
+git reset --hard origin/main
+git clean -fd
+```
+
+**Почему не `git pull --ff-only`:** на prod накапливались локальные изменения (ручные правки, untracked) — pull отклонялся и CD падал. `reset --hard` + `clean -fd` приводит `/opt/diaai` к точному состоянию `main` перед `make stack-pull-registry`. Локальные секреты в `.env` не затрагиваются (не в git).
+
 Trigger: **Deploy** после успешного **Docker Publish** на `main`, или `workflow_dispatch`.
 
 ---
@@ -235,7 +247,7 @@ ADR: [adr-005-observability.md](../../docs/adr/adr-005-observability.md) · guid
 ### На VPS после деплоя
 
 ```bash
-ssh deploy@201.51.4.34 'cd /opt/diaai && git pull --ff-only && cp devops/deploy/compose.server.override.yml compose.override.yml && make stack-up-registry && make monitoring-up && make monitoring-ps'
+ssh deploy@201.51.4.34 'cd /opt/diaai && git fetch origin main && git reset --hard origin/main && git clean -fd && cp devops/deploy/compose.server.override.yml compose.override.yml && make stack-up-registry && make monitoring-up && make monitoring-ps'
 ```
 
 `.env` на сервере: `TELEGRAM_ALARM_*`, `GLITCHTIP_*`, `DOZZLE_BIND`, `GLITCHTIP_BRIDGE_BIND`, опционально `GLITCHTIP_WEBHOOK_SECRET`.

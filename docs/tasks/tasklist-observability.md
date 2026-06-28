@@ -28,6 +28,8 @@
 
 **Прогресс:** **10 / 10** задач · observability MVP ✅ (prod verified 2026-06-26)
 
+**Prod-стратегия (2026-06-28, вариант 1):** app + monitoring stack на **одном VPS** `201.51.4.34` (2 vCPU / 4 GB). Отдельный VPS или managed Grafana у Timeweb **не** используем. Запас по RAM — **swap 2 GB** (`devops/server/bootstrap.sh`, `SWAP_GB=2`); UI monitoring — только SSH tunnel. GlitchTip — **hosted EU** (SaaS), bridge на VPS. Snapshot RAM: app ~680 MB, monitoring ~450 MB, host ~1.4/3.8 GB до swap — [monitoring/README.md](../../devops/monitoring/README.md) · [key-metrics.md](../../devops/monitoring/key-metrics.md).
+
 > **Scope MVP:** без self-hosted GlitchTip и ELK. На prod-VPS в profile `monitoring`: Dozzle, **Loki**, Prometheus, Grafana (dashboards + **alerting**), Kuma, bridge — см. [ADR-005](../adr/adr-005-observability.md).
 
 ## Легенда статусов

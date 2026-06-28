@@ -136,7 +136,7 @@ Web DTO: [frontend-contract.md](../api/frontend-contract.md).
 
 ## Contract tests (task-04–08 ✅)
 
-Реализация: `backend/tests/` + `tests/` — **84** теста (`make test`: 67 backend + 17 bot).
+Реализация: `backend/tests/` + `tests/` — **109** тестов (`make test`: 92 backend + 17 bot).
 
 | Группа | Файл | Коды |
 |--------|------|------|
@@ -145,6 +145,7 @@ Web DTO: [frontend-contract.md](../api/frontend-contract.md).
 | Сценарий A | `test_assistant.py` | 200, 400, headers |
 | Media STT | `test_media_transcribe.py` | 200, 401, 422 |
 | Analytics query | `test_analytics_query.py` | golden 3, guardrails, 401, 422 |
+| Analytics REST | `test_analytics_api.py` | progress, signals, recommendations; 401, 403, 422 |
 | Сценарий B | `test_events.py`, `test_events_domain.py` | 201/200, 403/404 |
 | Web API | `test_web_api.py` | 200 auth/dashboard/leaderboard/history; 403 non-doctor; 404 auth |
 
@@ -156,5 +157,5 @@ Web DTO: [frontend-contract.md](../api/frontend-contract.md).
 | [docs/api/README.md](../api/README.md) | индекс API |
 | [conventions.md](../api/conventions.md) | коды ошибок, auth, правила изменений |
 | [openapi.yaml](../api/openapi.yaml) | OpenAPI 3.1 |
-| [tasklist-backend.md](../tasks/tasklist-backend.md) | task-02 … task-08 ✅ |
+| [tasklist-backend.md](../tasks/tasklist-backend.md) | task-02 … task-12 ✅ |
 | [backend-structure.md](backend-structure.md) | структура FastAPI backend, design review |

@@ -34,6 +34,8 @@ devops/server/
 
 Рекомендуемый: **2453** (2 vCPU, 4 GB, 50 GB, `ru-1`). Минимум: **2451** (2 GB, без bot).
 
+**4 GB preset:** app + monitoring stack на одном хосте; `bootstrap.sh` создаёт **swap 2 GB** (защита от OOM при Loki/Prometheus).
+
 ## Production VPS (iter 2 ✅)
 
 | | |

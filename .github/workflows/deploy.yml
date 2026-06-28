@@ -32,7 +32,9 @@ jobs:
           script: |
             set -euo pipefail
             cd /opt/diaai
-            git pull --ff-only origin main
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
             cp devops/deploy/compose.server.override.yml compose.override.yml
             export PATH="$HOME/.local/bin:$PATH"
             make stack-pull-registry

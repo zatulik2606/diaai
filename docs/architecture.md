@@ -138,12 +138,12 @@ BFF routes: `web/app/api/auth/*`, `assistant/*`, `analytics/query`.
 | `/api/v1/events/*` | bot | ✅ | питание, инсулин (D1) |
 | `/api/v1/media/transcribe` | bot, web | ✅ | STT |
 | `/api/v1/web/*` | web BFF | ✅ | dashboard, leaderboard, chat history, Text-to-SQL |
-| `/api/v1/analytics/*` | bot (целевой) | 📋 contract; impl iter 4 task 10–11 | progress, signals, recommendations |
+| `/api/v1/analytics/*` | bot (целевой) | ✅ | progress, signals, recommendations |
 
 **Не путать:**
 
 - `/api/v1/web/analytics/query` — Text-to-SQL (doctor/diabetic viewer), ADR-004
-- `/api/v1/analytics/progress` — unified analytics REST (контракт ✅, код 📋)
+- `/api/v1/analytics/progress` — unified analytics REST ✅ (iter 4 tasks 10–12)
 
 Карта endpoint'ов: [api-contract.md](api/api-contract.md) · [openapi.yaml](api/openapi.yaml).
 

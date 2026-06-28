@@ -13,7 +13,7 @@
 | **C. LLM → SQL + guard** | LLM пишет SELECT, backend валидирует и выполняет | гибкие ad-hoc вопросы | риск плохого SQL | ✅ **iter 9 (текущее)** |
 | **D. Assistant tool** | tool `query_analytics` в чате D2 | единый UX с ассистентом | guardrails + UI таблицы в чате | ❌ out of scope iter 9 |
 | **E. RAG по схеме** | retrieval релевантных колонок и few-shot Q→SQL | точнее на больших схемах | сложнее инфра | 📋 post-MVP |
-| **F. Materialized views** | `progress_snapshots`, REST analytics | быстрые агрегаты | не отвечает на произвольный NL | 📋 backend iter 4 |
+| **F. Materialized views** | `progress_snapshots`, REST analytics | быстрые агрегаты | не отвечает на произвольный NL | ✅ backend iter 4 |
 
 **Принято (ADR-004):** **C** — dedicated UI «Вопрос по данным», не tool в чате.
 

@@ -139,6 +139,16 @@ make test
 
 Только backend: `make backend-test`. Web: `make web-lint && make web-build`.
 
+## Production
+
+| | |
+|--|--|
+| Web | http://201.51.4.34:3000 |
+| API | http://201.51.4.34:8000/health |
+| Доступ | по IP (custom domain отложен) |
+| Deploy | push `main` → GHCR → CD — [devops/deploy/README.md](devops/deploy/README.md) |
+| Monitoring | тот же VPS + swap 2 GB — [devops/monitoring/README.md](devops/monitoring/README.md) |
+
 ## Документация
 
 | Документ | Назначение |

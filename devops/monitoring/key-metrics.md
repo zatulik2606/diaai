@@ -142,7 +142,7 @@ histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="diaa
 
 | Паттерн | Действие |
 |---------|----------|
-| RAM > 85% | `docker stats`; перезапуск тяжёлых контейнеров; проверить OOM в Dozzle |
+| RAM > 85% | `docker stats`; перезапуск тяжёлых контейнеров; проверить OOM в Dozzle; на prod есть **swap 2 GB** (`swapon --show`)
 | CPU > 80% sustained | кто грузит — cgroup panels; LLM spike на backend |
 | Disk > 90% | `df -h`; docker system prune; логи postgres |
 
