@@ -37,14 +37,15 @@ jobs:
             git clean -fd
             cp devops/deploy/compose.server.override.yml compose.override.yml
             export PATH="$HOME/.local/bin:$PATH"
-            make stack-pull-registry
-            make stack-up-registry
+            make stack-pull-registry-bot
+            make stack-up-registry-bot
             echo "Waiting for web (Next.js start)..."
             for i in $(seq 1 45); do
               if curl -sf -o /dev/null http://127.0.0.1:3000/; then break; fi
               sleep 2
             done
             make stack-health
+            docker compose --profile bot ps bot | grep -q Up
 
       - name: Smoke (public endpoints)
         env:

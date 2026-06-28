@@ -215,9 +215,9 @@ flowchart LR
   push[push main] --> publish[Docker Publish]
   publish --> deploy[Deploy workflow]
   deploy --> ssh[SSH deploy@VPS]
-  ssh --> pull[make stack-pull-registry]
-  pull --> up[make stack-up-registry]
-  up --> health[make stack-health]
+  ssh --> pull[make stack-pull-registry-bot]
+  pull --> up[make stack-up-registry-bot]
+  up --> health[make stack-health + bot Up]
 ```
 
 | Файл | Назначение |
@@ -234,7 +234,9 @@ git reset --hard origin/main
 git clean -fd
 ```
 
-**Почему не `git pull --ff-only`:** на prod накапливались локальные изменения (ручные правки, untracked) — pull отклонялся и CD падал. `reset --hard` + `clean -fd` приводит `/opt/diaai` к точному состоянию `main` перед `make stack-pull-registry`. Локальные секреты в `.env` не затрагиваются (не в git).
+**Почему не `git pull --ff-only`:** на prod накапливались локальные изменения (ручные правки, untracked) — pull отклонялся и CD падал. `reset --hard` + `clean -fd` приводит `/opt/diaai` к точному состоянию `main` перед `make stack-pull-registry-bot`. Локальные секреты в `.env` не затрагиваются (не в git).
+
+**Bot:** profile `bot` поднимается в CD (`stack-*-registry-bot`). На VPS в `.env` обязателен `TELEGRAM_BOT_TOKEN`; `compose.override.yml` задаёт `BACKEND_URL=http://172.18.0.1:8000` для bot/web (backend на host network).
 
 Trigger: **Deploy** после успешного **Docker Publish** на `main`, или `workflow_dispatch`.
 
