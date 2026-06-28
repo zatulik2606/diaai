@@ -18,8 +18,8 @@ def build_handlers(backend_client: BackendClient) -> Router:
     @router.message(CommandStart())
     async def start_handler(message: Message) -> None:
         await message.answer(
-            "Привет! Я помогу обсудить питание, ХЕ и контекст инсулина.\n"
-            "Отправьте вопрос текстом. Это справочная информация, не замена врачу."
+            "Привет! Я Ника — помогу обсудить питание, ХЕ и контекст инсулина.\n"
+            "Отправь вопрос текстом или фото. Это справочная информация, не замена врачу."
         )
 
     @router.message(F.text)
