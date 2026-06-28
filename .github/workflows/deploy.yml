@@ -45,7 +45,7 @@ jobs:
               sleep 2
             done
             make stack-health
-            docker compose --profile bot ps bot | grep -q Up
+            docker ps --filter name=diaai-bot --filter status=running --format '{{.Names}}' | grep -q diaai-bot
 
       - name: Smoke (public endpoints)
         env:
